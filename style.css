@@ -1,0 +1,94 @@
+/* Estilo geral */
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #f39c12;
+  margin-bottom: 30px;
+}
+
+/* Telas */
+.screen {
+  display: none;
+}
+.screen.active {
+  display: block;
+}
+
+/* Menu inicial */
+#main-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.menu-card {
+  background: #222;
+  border: 2px solid #f39c12;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.menu-card:hover {
+  transform: scale(1.05);
+  background: #333;
+}
+
+.menu-card h2 {
+  margin: 0 0 10px;
+  color: #f1c40f;
+}
+
+/* Digidex */
+#digidex {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.digidex-card {
+  background: #222;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.digidex-card:hover {
+  transform: scale(1.03);
+}
+
+.digidex-card h2 {
+  margin: 0 0 10px;
+  color: #3498db;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 15px;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.evolutions {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.evolutions strong {
+  color: #3498db;
+}

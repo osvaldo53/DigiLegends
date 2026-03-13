@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Digimon Legends</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Tela inicial -->
+  <div id="screen-home" class="screen active">
+    <div id="main-menu">
+      <div class="menu-card" onclick="navigate('hunts')">
+        <h2>Hunts</h2>
+        <p>Missões e batalhas</p>
+      </div>
+      <div class="menu-card" onclick="navigate('digifarm')">
+        <h2>DigiFarm</h2>
+        <p>Treine e evolua seus Digimons</p>
+      </div>
+      <div class="menu-card" onclick="navigate('digidex')">
+        <h2>DigiDex</h2>
+        <p>Veja todos os Digimons</p>
+      </div>
+      <div class="menu-card" onclick="navigate('options')">
+        <h2>Options</h2>
+        <p>Configurações do jogo</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tela Hunts -->
+  <div id="screen-hunts" class="screen">
+    <h2>Hunts</h2>
+    <p>Aqui ficarão as missões e batalhas.</p>
+    <button onclick="navigate('home')">Voltar</button>
+  </div>
+
+  <!-- Tela DigiFarm -->
+  <div id="screen-digifarm" class="screen">
+    <h2>DigiFarm</h2>
+    <p>Aqui você poderá treinar e evoluir seus Digimons.</p>
+    <button onclick="navigate('home')">Voltar</button>
+  </div>
+
+  <!-- Tela DigiDex -->
+  <div id="screen-digidex" class="screen">
+    <h2>DigiDex</h2>
+    <div id="digidex"></div>
+    <button onclick="navigate('home')">Voltar</button>
+  </div>
+
+  <!-- Tela Options -->
+  <div id="screen-options" class="screen">
+    <h2>Options</h2>
+    <p>Configurações do jogo.</p>
+    <button onclick="navigate('home')">Voltar</button>
+  </div>
+
+  <script src="./data/digimons.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
