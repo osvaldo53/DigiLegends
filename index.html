@@ -40,48 +40,97 @@
     </div>
   </div>
 
+  <div id="screen-hunts" class="screen">
 
-<div id="screen-newgame" class="screen">
+    <h2>Hunts</h2>
 
-  <div class="newgame-container">
+    <button id="hunt-search">Search Digimon</button>
 
-    <h1>NEW TAMER</h1>
+    <!-- Tela de batalha -->
+    <div id="hunt-battle" style="margin-top:20px;">
+      <div id="battle-screen" style="display:flex; justify-content:space-around; margin-bottom:20px;">
+        <!-- Jogador -->
+        <div id="player-container" style="text-align:center;">
+          <img id="player-sprite" src="assets/sprites/gabumon.png" alt="Player Digimon"
+            style="width:100px; height:100px;">
+          <div>
+            <div style="width:100px; height:10px; background:#555; margin-top:5px;">
+              <div id="player-hp-bar" style="height:10px; background:red; width:100%;"></div>
+            </div>
+            <div style="width:100px; height:5px; background:#555; margin-top:2px;">
+              <div id="player-sp-bar" style="height:5px; background:blue; width:100%;"></div>
+            </div>
+          </div>
+          <div id="player-name" style="margin-top:5px; font-weight:bold;"></div>
+        </div>
 
-    <div class="player-input">
-      <label>Seu nome</label>
-      <input id="player-name" type="text">
+        <!-- Inimigo -->
+        <div id="enemy-container" style="text-align:center;">
+          <img id="enemy-sprite" src="assets/sprites/biyomon.png" alt="Enemy Digimon"
+            style="width:100px; height:100px;">
+          <div>
+            <div style="width:100px; height:10px; background:#555; margin-top:5px;">
+              <div id="enemy-hp-bar" style="height:10px; background:red; width:100%;"></div>
+            </div>
+            <div style="width:100px; height:5px; background:#555; margin-top:2px;">
+              <div id="enemy-sp-bar" style="height:5px; background:blue; width:100%;"></div>
+            </div>
+          </div>
+          <div id="enemy-name" style="margin-top:5px; font-weight:bold;"></div>
+        </div>
+      </div>
+
+      <!-- Log dos turnos -->
+      <div id="battle-log" style="border-top:1px solid #aaa; padding-top:10px; max-height:200px; overflow-y:auto;">
+      </div>
     </div>
 
-    <h3>Escolha seu Digimon inicial</h3>
-
-    <div id="starter-select">
-
-      <div class="starter-card" data-digimon="Agumon">
-        <img src="assets/sprites/agumon.png">
-        <p>Agumon</p>
-      </div>
-
-      <div class="starter-card" data-digimon="Gabumon">
-        <img src="assets/sprites/gabumon.png">
-        <p>Gabumon</p>
-      </div>
-
-      <div class="starter-card" data-digimon="Patamon">
-        <img src="assets/sprites/patamon.png">
-        <p>Patamon</p>
-      </div>
-
-    </div>
-
-    <div id="starter-info"></div>
-
-    <button id="confirm-starter" disabled>
-      Confirmar escolha
-    </button>
+    <button class="back-home">Voltar</button>
 
   </div>
 
-</div>
+
+  <div id="screen-newgame" class="screen">
+
+    <div class="newgame-container">
+
+      <h1>NEW TAMER</h1>
+
+      <div class="player-input">
+        <label>Seu nome</label>
+        <input id="player-name-input" type="text">
+      </div>
+
+      <h3>Escolha seu Digimon inicial</h3>
+
+      <div id="starter-select">
+
+        <div class="starter-card" data-digimon="Agumon">
+          <img src="assets/sprites/agumon.png">
+          <p>Agumon</p>
+        </div>
+
+        <div class="starter-card" data-digimon="Gabumon">
+          <img src="assets/sprites/gabumon.png">
+          <p>Gabumon</p>
+        </div>
+
+        <div class="starter-card" data-digimon="Patamon">
+          <img src="assets/sprites/patamon.png">
+          <p>Patamon</p>
+        </div>
+
+      </div>
+
+      <div id="starter-info"></div>
+
+      <button id="confirm-starter" disabled>
+        Confirmar escolha
+      </button>
+
+    </div>
+
+  </div>
 
   <div id="screen-hunts" class="screen">
     <h2>Hunts</h2>
@@ -128,6 +177,8 @@
   <script src="scripts/digidex.js"></script>
   <script src="scripts/team.js"></script>
   <script src="scripts/newGame.js"></script>
+  <script src="scripts/hunts.js"></script>
+  <script src="scripts/battle.js"></script>
 
 </body>
 

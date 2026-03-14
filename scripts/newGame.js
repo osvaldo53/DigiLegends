@@ -22,7 +22,7 @@ Game.initNewGame = function(){
   // confirmar escolha
   $("#confirm-starter").on("click", function(){
 
-    const name = $("#player-name").val().trim();
+    const name = $("#player-name-input").val().trim();
 
     if(!name){
       alert("Digite seu nome primeiro");

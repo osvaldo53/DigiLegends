@@ -341,3 +341,19 @@ button:hover{
 .starter-meta div{
   margin:2px 0;
 }
+
+/* HUNTS */
+
+.battle {
+  display:flex;
+  justify-content:space-around;
+  margin-top:20px;
+}
+
+.battle-side {
+  text-align:center;
+}
+
+.battle img {
+  width:120px;
+}
