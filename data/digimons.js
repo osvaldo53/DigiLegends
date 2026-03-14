@@ -1,4 +1,4 @@
-const digimons = {
+Game.digimons = {
   "Agumon": {
     "stage": "Rookie",
     "type": "Vaccine",

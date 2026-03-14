@@ -33,8 +33,6 @@ body::before{
 
 .screen{
   display:none;
-  padding:40px;
-  min-height:100vh;
 }
 
 .screen.active{
@@ -222,7 +220,124 @@ button:hover{
   width:96px;
   height:96px;
 
-  image-rendering:pixelated;
-
   margin-bottom:5px;
+}
+
+/* TEAM */
+
+#team-container{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.team-card{
+  background:#1c2333;
+  border:2px solid #3a4a7a;
+  border-radius:10px;
+  padding:15px;
+  width:180px;
+  text-align:center;
+}
+
+/* SELECT STARTER - SCREEN NEW GAME */
+
+#screen-newgame{
+  
+  justify-content:center;
+  align-items:center;
+}
+
+.newgame-container{
+  text-align:center;
+  width:700px;
+}
+
+/* nome */
+.player-input{
+  margin:20px 0;
+}
+
+#player-name{
+  padding:8px;
+  font-size:16px;
+  margin-left:10px;
+}
+
+/* starters */
+#starter-select{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin-top:20px;
+}
+
+/* card */
+.starter-card{
+  width:150px;
+  background:#1c2333;
+  border:2px solid #3a4a7a;
+  border-radius:12px;
+  padding:15px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.starter-card img{
+  width:90px;
+}
+
+.starter-card:hover{
+  transform:translateY(-4px);
+  border-color:#6aa4ff;
+}
+
+/* selecionado */
+.starter-selected{
+  border-color:#00e0ff;
+  box-shadow:0 0 10px #00e0ff;
+}
+
+/* painel info */
+#starter-info{
+  margin:25px auto;
+  background:#141a2a;
+  border:2px solid #3a4a7a;
+  border-radius:10px;
+  padding:15px;
+  width:260px;
+}
+
+/* stats */
+.starter-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:10px;
+}
+
+/* botão */
+#confirm-starter{
+  padding:12px 25px;
+  font-size:16px;
+  background:#3a78ff;
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+
+#confirm-starter:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
+.starter-meta{
+  margin-bottom:12px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.starter-meta div{
+  margin:2px 0;
 }
