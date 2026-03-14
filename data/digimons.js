@@ -95,7 +95,7 @@ const digimons = {
     ]
   },
 
-  "MagnaAngemon": {
+  "HolyAngemon": {
     "stage": "Ultimate",
     "type": "Vaccine",
     "attribute": "Light",
@@ -208,7 +208,7 @@ const digimons = {
     ]
   },
 
-  "Lillymon": {
+  "Lilimon": {
     "stage": "Ultimate",
     "type": "Data",
     "attribute": "Plant",
