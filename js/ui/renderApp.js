@@ -1,18 +1,55 @@
 import { state } from "../core/state.js";
-import { renderTitle } from "./screens/titleScreen.js";
-import { renderHome } from "./screens/homeScreen.js";
+import { bindTitleScreen, renderTitleScreen } from "./screens/titleScreen.js";
+import { bindNewGameScreen, renderNewGameScreen } from "./screens/newGameScreen.js";
+import { bindHomeScreen, renderHomeScreen } from "./screens/homeScreen.js";
+import { bindTeamScreen, renderTeamScreen } from "./screens/teamScreen.js";
+import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.js";
+import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
+import { bindBattleScreen, renderBattleScreen } from "./screens/battleScreen.js";
+import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
 
 export function renderApp() {
   const app = document.getElementById("app");
+  if (!app) return;
 
   switch (state.app.currentScreen) {
     case "title":
-      app.innerHTML = renderTitle();
+      app.innerHTML = renderTitleScreen();
+      bindTitleScreen();
       break;
+
+    case "newGame":
+      app.innerHTML = renderNewGameScreen();
+      bindNewGameScreen();
+      break;
+
     case "home":
-      app.innerHTML = renderHome();
+      app.innerHTML = renderHomeScreen();
+      bindHomeScreen();
       break;
+
+    case "team":
+      app.innerHTML = renderTeamScreen();
+      bindTeamScreen();
+      break;
+
+    case "digidex":
+      app.innerHTML = renderDigiDexScreen();
+      bindDigiDexScreen();
+      break;
+
+    case "hunts":
+      app.innerHTML = renderHuntsScreen();
+      bindHuntsScreen();
+      break;
+
+    case "battle":
+      app.innerHTML = renderBattleScreen();
+      bindBattleScreen();
+      break;
+
     default:
-      app.innerHTML = "<p>Tela não encontrada</p>";
+      app.innerHTML = renderNotFoundScreen();
+      break;
   }
 }

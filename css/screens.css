@@ -1,0 +1,31 @@
+.screen {
+  display: grid;
+  gap: 18px;
+}
+
+.screen--centered {
+  min-height: calc(100vh - 64px);
+  place-items: center;
+}
+
+.new-game-panel {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.team-header {
+  margin-bottom: 10px;
+}
+
+.battle-result {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+
+@media (max-width: 760px) {
+  .battle-arena {
+    grid-template-columns: 1fr;
+  }
+}

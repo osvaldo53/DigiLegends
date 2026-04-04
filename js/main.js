@@ -1,17 +1,18 @@
 import { state } from "./core/state.js";
-import { loadGame } from "./core/saveManager.js";
+import { loadGame, migrateSaveIfNeeded } from "./core/saveManager.js";
 import { renderApp } from "./ui/renderApp.js";
 
 function bootstrap() {
-  const save = loadGame();
+  const loadedSave = loadGame();
 
-  if (save) {
-    state.save = save;
+  if (loadedSave) {
+    state.save = migrateSaveIfNeeded(loadedSave);
     state.app.currentScreen = "home";
   } else {
     state.app.currentScreen = "title";
   }
 
+  state.app.initialized = true;
   renderApp();
 }
 
