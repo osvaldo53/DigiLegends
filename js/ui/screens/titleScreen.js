@@ -9,7 +9,7 @@ export function renderTitleScreen() {
     <section class="screen screen--centered">
       <div class="panel title-panel">
         <h1 class="game-title">DigiLegends</h1>
-        <p class="subtitle">Protótipo reestruturado para navegador com progressão e save local.</p>
+        <p class="subtitle">Bem vindo ao Digimon Legends!</p>
 
         <div class="button-row" style="justify-content:center;">
           <button class="btn btn-primary" id="btn-new-game">Novo jogo</button>
