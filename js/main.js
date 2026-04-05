@@ -17,3 +17,11 @@ function bootstrap() {
 }
 
 bootstrap();
+
+/**
+ * Evento global de rerender.
+ * É usado principalmente pelo loop automático de hunts AFK.
+ */
+window.addEventListener("digilegends:rerender", () => {
+  renderApp();
+});

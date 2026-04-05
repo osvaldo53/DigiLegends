@@ -4,13 +4,12 @@
 }
 
 .screen--centered {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 48px);
   place-items: center;
 }
 
 .new-game-panel {
-  max-width: 720px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .team-header {
@@ -19,13 +18,18 @@
 
 .battle-result {
   padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(59,130,246,0.12);
-  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 16px;
+  background: rgba(53, 208, 255, 0.10);
+  border: 1px solid rgba(53, 208, 255, 0.18);
 }
 
-@media (max-width: 760px) {
-  .battle-arena {
-    grid-template-columns: 1fr;
+@media (min-width: 768px) {
+  .screen--centered {
+    min-height: calc(100vh - 64px);
+  }
+
+  .new-game-panel {
+    max-width: 760px;
+    margin: 0 auto;
   }
 }

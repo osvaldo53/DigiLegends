@@ -6,6 +6,7 @@ import { bindTeamScreen, renderTeamScreen } from "./screens/teamScreen.js";
 import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.js";
 import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
 import { bindBattleScreen, renderBattleScreen } from "./screens/battleScreen.js";
+import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
 
 export function renderApp() {
@@ -41,6 +42,11 @@ export function renderApp() {
     case "hunts":
       app.innerHTML = renderHuntsScreen();
       bindHuntsScreen();
+      break;
+
+    case "items":
+      app.innerHTML = renderItemsScreen();
+      bindItemsScreen();
       break;
 
     case "battle":

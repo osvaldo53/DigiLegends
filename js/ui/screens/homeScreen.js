@@ -14,7 +14,7 @@ export function renderHomeScreen() {
       </div>
 
       <div class="panel">
-        <p>Este pacote já inclui DigiDex, Hunts, encontros e uma primeira versão do sistema de batalha.</p>
+        <p>Base atual com hunt AFK, DigiDex, time e sistema inicial de itens.</p>
 
         <div class="menu-grid">
           <div class="menu-tile">
@@ -31,8 +31,14 @@ export function renderHomeScreen() {
 
           <div class="menu-tile">
             <h3>Hunts</h3>
-            <p>Escolher área e iniciar combate.</p>
+            <p>Escolher área e iniciar combate automático.</p>
             <button class="btn btn-primary" id="btn-go-hunts">Abrir hunts</button>
+          </div>
+
+          <div class="menu-tile">
+            <h3>Itens</h3>
+            <p>Usar itens de recuperação no líder do time.</p>
+            <button class="btn btn-primary" id="btn-go-items">Abrir itens</button>
           </div>
 
           <div class="menu-tile">
@@ -57,6 +63,10 @@ export function bindHomeScreen() {
 
   document.getElementById("btn-go-hunts")?.addEventListener("click", () => {
     goToScreen("hunts");
+  });
+
+  document.getElementById("btn-go-items")?.addEventListener("click", () => {
+    goToScreen("items");
   });
 
   document.getElementById("btn-reset-save")?.addEventListener("click", () => {
