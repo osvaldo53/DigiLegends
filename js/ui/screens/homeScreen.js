@@ -14,7 +14,7 @@ export function renderHomeScreen() {
       </div>
 
       <div class="panel">
-        <p>Base atual com hunt AFK, DigiDex, time e sistema inicial de itens.</p>
+        <p>Base atual com hunt AFK, DigiDex, time, itens e loja.</p>
 
         <div class="menu-grid">
           <div class="menu-tile">
@@ -39,6 +39,12 @@ export function renderHomeScreen() {
             <h3>Itens</h3>
             <p>Usar itens de recuperação no líder do time.</p>
             <button class="btn btn-primary" id="btn-go-items">Abrir itens</button>
+          </div>
+
+          <div class="menu-tile">
+            <h3>Loja</h3>
+            <p>Comprar itens de cura com seus Bits.</p>
+            <button class="btn btn-primary" id="btn-go-shop">Abrir loja</button>
           </div>
 
           <div class="menu-tile">
@@ -67,6 +73,10 @@ export function bindHomeScreen() {
 
   document.getElementById("btn-go-items")?.addEventListener("click", () => {
     goToScreen("items");
+  });
+
+  document.getElementById("btn-go-shop")?.addEventListener("click", () => {
+    goToScreen("shop");
   });
 
   document.getElementById("btn-reset-save")?.addEventListener("click", () => {

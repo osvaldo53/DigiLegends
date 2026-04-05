@@ -7,6 +7,7 @@ import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.
 import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
 import { bindBattleScreen, renderBattleScreen } from "./screens/battleScreen.js";
 import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
+import { bindShopScreen, renderShopScreen } from "./screens/shopScreen.js";
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
 
 export function renderApp() {
@@ -47,6 +48,11 @@ export function renderApp() {
     case "items":
       app.innerHTML = renderItemsScreen();
       bindItemsScreen();
+      break;
+
+    case "shop":
+      app.innerHTML = renderShopScreen();
+      bindShopScreen();
       break;
 
     case "battle":
