@@ -23,8 +23,11 @@ import {
  * NEXT_TURN_DELAY_MS:
  * pausa até o próximo ciclo completo de turnos
  *
+ * NEXT_BATTLE_DELAY_MS:
+ * tempo entre batalhas
+ *
  * RESOLVE_DELAY_MS:
- * pausa após vitória para ler resultado
+ * pausa após vitória para leitura do resultado
  */
 const FIRST_ENCOUNTER_DELAY_MS = 1200;
 const TURN_CHARGE_DELAY_MS = 1600;
@@ -34,34 +37,26 @@ const NEXT_BATTLE_DELAY_MS = 2400;
 const RESOLVE_DELAY_MS = 1400;
 
 let huntTimer = null;
-let uiRefreshInterval = null;
 
+/**
+ * Dispara rerender global.
+ */
 function rerender() {
   window.dispatchEvent(new Event("digilegends:rerender"));
 }
 
+/**
+ * Define a fase atual da hunt.
+ */
 function setPhase(label, durationMs) {
   state.huntSession.phaseLabel = label;
   state.huntSession.phaseDurationMs = durationMs;
   state.huntSession.phaseStartedAt = Date.now();
 }
 
-function startUiRefreshLoop() {
-  stopUiRefreshLoop();
-
-  uiRefreshInterval = setInterval(() => {
-    if (!state.huntSession.active) return;
-    rerender();
-  }, 100);
-}
-
-function stopUiRefreshLoop() {
-  if (uiRefreshInterval) {
-    clearInterval(uiRefreshInterval);
-    uiRefreshInterval = null;
-  }
-}
-
+/**
+ * Limpa timer atual.
+ */
 function clearHuntTimer() {
   if (huntTimer) {
     clearTimeout(huntTimer);
@@ -69,6 +64,9 @@ function clearHuntTimer() {
   }
 }
 
+/**
+ * Agenda próximo passo da sessão AFK.
+ */
 function scheduleNextStep(callback, delay) {
   clearHuntTimer();
   huntTimer = setTimeout(() => {
@@ -77,7 +75,7 @@ function scheduleNextStep(callback, delay) {
 }
 
 /**
- * Sistema simples de drop inicial.
+ * Sistema simples de drops.
  */
 function rollDrops() {
   const roll = Math.random();
@@ -97,6 +95,9 @@ function rollDrops() {
   return null;
 }
 
+/**
+ * Registra drop na sessão e no inventário real.
+ */
 function registerDrop(drop) {
   if (!drop) return;
 
@@ -111,6 +112,9 @@ function registerDrop(drop) {
   addItemToInventory(state.save, drop.id, drop.quantity);
 }
 
+/**
+ * Inicia a sessão AFK.
+ */
 export function startHuntSession(huntId) {
   const player = state.save.party[0];
 
@@ -133,7 +137,6 @@ export function startHuntSession(huntId) {
   state.huntSession.drops = [];
 
   setPhase("Procurando inimigo", FIRST_ENCOUNTER_DELAY_MS);
-  startUiRefreshLoop();
   rerender();
 
   scheduleNextStep(() => {
@@ -141,9 +144,11 @@ export function startHuntSession(huntId) {
   }, FIRST_ENCOUNTER_DELAY_MS);
 }
 
+/**
+ * Encerra a sessão AFK.
+ */
 export function stopHuntSession(shouldRerender = true) {
   clearHuntTimer();
-  stopUiRefreshLoop();
 
   state.huntSession.active = false;
   state.huntSession.huntId = null;
@@ -160,6 +165,9 @@ export function stopHuntSession(shouldRerender = true) {
   }
 }
 
+/**
+ * Inicia uma nova batalha da sessão.
+ */
 function beginNextBattle() {
   if (!state.huntSession.active) return;
 
@@ -176,8 +184,7 @@ function beginNextBattle() {
 }
 
 /**
- * Executa a ação do jogador.
- * Depois, se a batalha continuar, agenda a resposta do inimigo.
+ * Executa ação do jogador.
  */
 function runPlayerAction() {
   if (!state.huntSession.active) return;
@@ -192,12 +199,13 @@ function runPlayerAction() {
   }
 
   setPhase("Resposta inimiga", ENEMY_RESPONSE_DELAY_MS);
+  rerender();
+
   scheduleNextStep(runEnemyAction, ENEMY_RESPONSE_DELAY_MS);
 }
 
 /**
- * Executa a ação do inimigo.
- * Depois, se a batalha continuar, agenda o próximo turno completo.
+ * Executa ação do inimigo.
  */
 function runEnemyAction() {
   if (!state.huntSession.active) return;
@@ -212,9 +220,14 @@ function runEnemyAction() {
   }
 
   setPhase("Carregando ação", NEXT_TURN_DELAY_MS);
+  rerender();
+
   scheduleNextStep(runPlayerAction, NEXT_TURN_DELAY_MS);
 }
 
+/**
+ * Finaliza ciclo da batalha.
+ */
 function finishBattleCycle() {
   if (!state.huntSession.active) return;
 
