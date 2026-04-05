@@ -7,17 +7,21 @@ import { startHuntSession, stopHuntSession } from "../../systems/huntSessionSyst
 import { getDigimonSpecies } from "../../data/digimons.js";
 import { getItemById } from "../../data/items.js";
 import { useItemOnDigimon, getInventoryEntry } from "../../systems/itemSystem.js";
+import {
+  getSkillsForSpecies,
+  getSkillById
+} from "../../data/skills.js";
 import { escapeHtml, clamp } from "../../core/utils.js";
 
 /**
- * Duração curta em que a UI considera a ação "ativa"
- * para disparar a animação visual.
- *
- * Isso impede que os Digimons fiquem se mexendo o tempo todo
- * enquanto a tela é rerenderizada.
+ * Janela curta em que a UI considera a ação como "ativa"
+ * para disparar animação visual.
  */
 const ACTION_ANIMATION_WINDOW_MS = 420;
 
+/**
+ * Calcula o progresso visual da fase atual.
+ */
 function getPhaseProgressPercent() {
   const duration = state.huntSession.phaseDurationMs || 0;
   const startedAt = state.huntSession.phaseStartedAt || 0;
@@ -28,6 +32,9 @@ function getPhaseProgressPercent() {
   return clamp((elapsed / duration) * 100, 0, 100);
 }
 
+/**
+ * Renderiza barra de HP/SP.
+ */
 function renderStatBar(label, current, max, className = "") {
   const pct = max > 0 ? clamp((current / max) * 100, 0, 100) : 0;
 
@@ -44,6 +51,12 @@ function renderStatBar(label, current, max, className = "") {
   `;
 }
 
+/**
+ * Renderiza um dos lados da batalha.
+ *
+ * Mantivemos a animação de ataque/impacto,
+ * mas com card um pouco mais compacto visualmente.
+ */
 function renderBattleSide({
   title,
   sprite,
@@ -96,6 +109,9 @@ function renderBattleSide({
   `;
 }
 
+/**
+ * Renderiza os drops acumulados na sessão.
+ */
 function renderDrops() {
   if (!state.huntSession.drops.length) {
     return '<p class="hunt-session__muted">Nenhum item dropado até agora.</p>';
@@ -110,6 +126,9 @@ function renderDrops() {
   `;
 }
 
+/**
+ * Renderiza botões rápidos de item durante a hunt.
+ */
 function renderBattleSupportItems() {
   const allowedItemIds = ["bandage", "small_recovery", "small_sp_disk"];
 
@@ -137,6 +156,84 @@ function renderBattleSupportItems() {
   return html || '<p class="hunt-session__muted">Nenhum item utilizável disponível.</p>';
 }
 
+/**
+ * Renderiza até 4 skills ativas do Digimon do jogador.
+ *
+ * Regras atuais:
+ * - usamos as primeiras 4 skills da espécie
+ * - quando uma skill for usada, o card correspondente brilha
+ * - se for Basic Attack, nenhuma skill real recebe destaque
+ * - skill sem SP suficiente fica visualmente indisponível
+ */
+function renderActiveSkills(playerDigimon, playerSpecies) {
+  if (!playerDigimon || !playerSpecies) {
+    return "";
+  }
+
+  const skillIds = getSkillsForSpecies(playerSpecies.id).slice(0, 4);
+  const lastAction = state.battle.lastAction;
+
+  if (!skillIds.length) {
+    return `
+      <div class="hunt-skills-panel">
+        <h3>Skills ativas</h3>
+        <p class="hunt-session__muted">Este Digimon ainda não possui skills ativas.</p>
+      </div>
+    `;
+  }
+
+  const skillsHtml = skillIds
+    .map((skillId) => {
+      const skill = getSkillById(skillId);
+      if (!skill) return "";
+
+      const hasEnoughSP = (playerDigimon.currentSP ?? 0) >= (skill.cost ?? 0);
+
+      const isRecentAction =
+        !!lastAction &&
+        Date.now() - lastAction.timestamp <= ACTION_ANIMATION_WINDOW_MS;
+
+      const isUsedNow =
+        isRecentAction &&
+        lastAction.actor === "player" &&
+        !lastAction.isBasicAttack &&
+        lastAction.skillId === skill.id;
+
+      const classes = [
+        "hunt-skill-card",
+        isUsedNow ? "is-active" : "",
+        !hasEnoughSP ? "is-disabled" : ""
+      ].join(" ").trim();
+
+      return `
+        <article class="${classes}">
+          <div class="hunt-skill-card__top">
+            <strong>${escapeHtml(skill.name)}</strong>
+            <span>${escapeHtml(skill.element)}</span>
+          </div>
+
+          <div class="hunt-skill-card__meta">
+            <span>Power: ${skill.power}</span>
+            <span>SP: ${skill.cost}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  return `
+    <div class="hunt-skills-panel">
+      <h3>Skills ativas</h3>
+      <div class="hunt-skills-grid">
+        ${skillsHtml}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Painel principal da sessão de hunt ativa.
+ */
 function renderActiveSessionPanel() {
   const player = state.save.party[0];
   const activeHunt = state.huntSession.huntId ? getHuntById(state.huntSession.huntId) : null;
@@ -214,6 +311,8 @@ function renderActiveSessionPanel() {
               <div class="hunt-action-banner">
                 ${escapeHtml(actionText)}
               </div>
+
+              ${renderActiveSkills(player, playerSpecies)}
             `
             : `
               <div class="hunt-empty-battle">
@@ -252,6 +351,9 @@ function renderActiveSessionPanel() {
   `;
 }
 
+/**
+ * Tela de hunts.
+ */
 export function renderHuntsScreen() {
   const player = state.save.party[0];
   const playerLevel = player?.level || 1;
@@ -285,6 +387,9 @@ export function renderHuntsScreen() {
   `;
 }
 
+/**
+ * Eventos da tela de hunts.
+ */
 export function bindHuntsScreen() {
   document.getElementById("btn-back-home")?.addEventListener("click", () => {
     goToScreen("home");

@@ -1,6 +1,21 @@
 import { getDigimonSpecies } from "../data/digimons.js";
 import { clamp } from "../core/utils.js";
 
+/**
+ * Calcula os atributos finais do Digimon com base:
+ * - nos atributos base da espécie
+ * - no nível atual
+ * - em bônus adicionais
+ *
+ * Observação:
+ * esta fórmula continua simples de propósito,
+ * para facilitar balanceamento posterior.
+ *
+ * @param {object} baseStats
+ * @param {number} level
+ * @param {object} bonusStats
+ * @returns {object}
+ */
 function buildFinalStats(baseStats, level, bonusStats) {
   return {
     hp: baseStats.hp + (level - 1) * 6 + bonusStats.hp,
@@ -12,6 +27,17 @@ function buildFinalStats(baseStats, level, bonusStats) {
   };
 }
 
+/**
+ * Recalcula os atributos finais de um Digimon já existente.
+ *
+ * Isso é útil quando:
+ * - ele sobe de nível
+ * - recebe bônus
+ * - há rebalanceamento
+ *
+ * @param {object} playerDigimon
+ * @returns {object}
+ */
 export function recalculatePlayerDigimon(playerDigimon) {
   const species = getDigimonSpecies(playerDigimon.speciesId);
 
@@ -37,9 +63,32 @@ export function recalculatePlayerDigimon(playerDigimon) {
     playerDigimon.finalStats.sp
   );
 
+  /**
+   * Garante que o vínculo exista e fique no intervalo válido.
+   */
+  playerDigimon.bond = clamp(playerDigimon.bond ?? 0, 0, 200);
+
   return playerDigimon;
 }
 
+/**
+ * Cria uma instância de Digimon do jogador.
+ *
+ * Diferença importante:
+ * - a espécie define dados fixos
+ * - a instância define progresso individual
+ *
+ * Campos individuais relevantes:
+ * - level
+ * - exp
+ * - bond
+ * - currentHP/currentSP
+ * - learnedSkills
+ *
+ * @param {string} speciesId
+ * @param {object} options
+ * @returns {object}
+ */
 export function createPlayerDigimon(speciesId, options = {}) {
   const species = getDigimonSpecies(speciesId);
 
@@ -48,6 +97,7 @@ export function createPlayerDigimon(speciesId, options = {}) {
   }
 
   const level = options.level ?? 1;
+
   const bonusStats = {
     hp: 0,
     sp: 0,
@@ -66,16 +116,41 @@ export function createPlayerDigimon(speciesId, options = {}) {
     nickname: options.nickname || "",
     level,
     exp: options.exp ?? 0,
+
+    /**
+     * Sistema de vínculo:
+     * - varia de 0 a 200
+     * - ganho futuro: +0,1 por batalha vencida
+     */
+    bond: clamp(options.bond ?? 0, 0, 200),
+
     bonusStats,
     finalStats,
     currentHP: finalStats.hp,
     currentSP: finalStats.sp,
-    learnedSkills: [],
+
+    /**
+     * Lista de skills aprendidas.
+     * Ainda pode ser expandida depois para slots ativos.
+     */
+    learnedSkills: options.learnedSkills || [],
+
     personality: options.personality || "neutral",
     createdAt: Date.now()
   };
 }
 
+/**
+ * Cria uma instância temporária de inimigo para batalha.
+ *
+ * Observações:
+ * - inimigos não precisam de bond
+ * - learnedSkills não é necessário nesta fase
+ *
+ * @param {string} speciesId
+ * @param {number} level
+ * @returns {object}
+ */
 export function createEnemyDigimon(speciesId, level = 1) {
   const species = getDigimonSpecies(speciesId);
 
@@ -84,7 +159,12 @@ export function createEnemyDigimon(speciesId, level = 1) {
   }
 
   const scaledStats = buildFinalStats(species.baseStats, level, {
-    hp: 0, sp: 0, atk: 0, def: 0, int: 0, spd: 0
+    hp: 0,
+    sp: 0,
+    atk: 0,
+    def: 0,
+    int: 0,
+    spd: 0
   });
 
   return {

@@ -233,7 +233,7 @@
 
 .hunt-phase__bar {
   width: 100%;
-  height: 12px;
+  height: 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
@@ -250,7 +250,7 @@
 .hunt-battle-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 12px;
 }
 
 /* MOBILE: inimigo em cima, player embaixo */
@@ -266,27 +266,29 @@
   position: relative;
   background: linear-gradient(180deg, rgba(20, 30, 55, 0.95) 0%, rgba(27, 38, 69, 0.95) 100%);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 16px;
+  border-radius: 22px;
+  padding: 14px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .hunt-battle-card h3 {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 0.96rem;
 }
 
 .hunt-battle-card__sprite-wrap {
   position: relative;
-  height: 140px;
+  height: 112px;
   display: grid;
   place-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .hunt-battle-card__sprite {
-  width: 128px;
-  height: 128px;
+  width: 104px;
+  height: 104px;
   object-fit: contain;
 }
 
@@ -354,12 +356,21 @@
 
 .battle-stat {
   display: grid;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.battle-stat__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.84rem;
+  color: #dce8ff;
+  font-weight: 700;
 }
 
 .battle-bar {
-  height: 14px;
+  height: 12px;
   border-radius: 999px;
   overflow: hidden;
   background: rgba(255,255,255,0.08);
@@ -379,8 +390,198 @@
   background: linear-gradient(90deg, #8e7dff, #6aa6ff);
 }
 
-/* DESKTOP */
+.hunt-battle-card__stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #d5e1ff;
+  font-size: 0.84rem;
+  margin-top: 6px;
+}
+
+.hunt-action-banner {
+  border-radius: 18px;
+  background: rgba(53, 208, 255, 0.10);
+  border: 1px solid rgba(53, 208, 255, 0.18);
+  padding: 12px 14px;
+  color: #e8f9ff;
+  font-weight: 800;
+}
+
+.hunt-empty-battle {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed var(--border);
+  padding: 18px;
+}
+
+/* =========================
+   SKILLS ATIVAS
+   ========================= */
+
+.hunt-skills-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.hunt-skills-panel h3 {
+  margin-bottom: 0;
+}
+
+.hunt-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.hunt-skill-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(12, 20, 40, 0.86) 0%, rgba(19, 29, 54, 0.92) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 12px;
+  min-height: 78px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+}
+
+.hunt-skill-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hunt-skill-card__top strong {
+  display: block;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.hunt-skill-card__top span {
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hunt-skill-card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #d5e1ff;
+}
+
+.hunt-skill-card.is-active {
+  border-color: rgba(53, 208, 255, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(53, 208, 255, 0.18),
+    0 0 18px rgba(53, 208, 255, 0.24);
+  animation: skillGlowPulse 0.42s ease-out;
+}
+
+.hunt-skill-card.is-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(53, 208, 255, 0.14) 0%, rgba(142, 125, 255, 0.10) 100%);
+  pointer-events: none;
+}
+
+.hunt-skill-card.is-disabled {
+  opacity: 0.45;
+  filter: saturate(0.75);
+}
+
+@keyframes skillGlowPulse {
+  0% {
+    transform: scale(0.98);
+    box-shadow:
+      0 0 0 1px rgba(53, 208, 255, 0.10),
+      0 0 0 rgba(53, 208, 255, 0);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow:
+      0 0 0 1px rgba(53, 208, 255, 0.22),
+      0 0 22px rgba(53, 208, 255, 0.30);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 1px rgba(53, 208, 255, 0.18),
+      0 0 18px rgba(53, 208, 255, 0.24);
+  }
+}
+
+.hunt-session-extras {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.hunt-session-box {
+  background: rgba(9, 15, 30, 0.28);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 14px;
+}
+
+.hunt-session-box h3 {
+  margin-bottom: 10px;
+}
+
+.hunt-drop-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hunt-drop-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 184, 77, 0.12);
+  border: 1px solid rgba(255, 184, 77, 0.22);
+  color: #ffe6be;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.hunt-log {
+  max-height: 220px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+}
+
+.hunt-log p {
+  margin: 0;
+  color: #dbe7ff;
+  font-size: 0.94rem;
+}
+
 @media (min-width: 768px) {
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hunt-battle-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -390,4 +591,175 @@
   .hunt-battle-card--enemy {
     order: initial;
   }
+
+  .hunt-session-panel__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .hunt-session-extras {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hunt-skills-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .hunt-battle-card {
+    padding: 13px;
+  }
+
+  .hunt-battle-card__sprite-wrap {
+    height: 104px;
+  }
+
+  .hunt-battle-card__sprite {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hunt-session-extras {
+    grid-template-columns: 280px 1fr 1fr;
+  }
+}
+
+/* ============================= */
+/* DIGIDEX */
+/* ============================= */
+
+/* Grid da DigiDex */
+.dex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .dex-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Card base */
+.dex-card {
+  background: #121826;
+  border-radius: 14px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #1f2a44;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dex-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0, 180, 255, 0.15);
+}
+
+/* Estados do card */
+.dex-card.unknown {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.dex-card.seen {
+  border-color: #3b82f6;
+}
+
+.dex-card.owned {
+  border-color: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+}
+
+/* Imagem */
+.dex-card img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+/* Nome */
+.dex-card h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* Info */
+.dex-card .stat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* ============================= */
+/* FILTROS DIGIDEX */
+/* ============================= */
+
+.dex-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.dex-filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dex-filter-row.single {
+  grid-template-columns: 1fr;
+}
+
+/* Input e select mais compactos */
+.dex-filters .input {
+  height: 38px;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+/* ============================= */
+/* STATUS BADGES */
+/* ============================= */
+
+.status-pill {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #1f2a44;
+  border: 1px solid #2f3d63;
+}
+
+.status-pill.seen {
+  border-color: #3b82f6;
+}
+
+.status-pill.owned {
+  border-color: #22c55e;
+}
+
+/* ============================= */
+/* EMPTY STATE */
+/* ============================= */
+
+.empty-state {
+  text-align: center;
+  opacity: 0.6;
+  padding: 20px;
+  font-size: 14px;
 }

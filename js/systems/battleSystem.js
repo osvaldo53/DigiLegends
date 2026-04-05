@@ -3,8 +3,25 @@ import { saveGame } from "../core/saveManager.js";
 import { getDigimonSpecies } from "../data/digimons.js";
 import { getHuntById } from "../data/encounters.js";
 import { createEncounterFromHunt } from "./encounterSystem.js";
-import { uniquePush, clamp, randomInt } from "../core/utils.js";
+import { uniquePush, clamp } from "../core/utils.js";
 import { applyBattleRewards } from "./progressionSystem.js";
+import { calculateFinalDamage } from "./damageSystem.js";
+import { getElementMultiplier } from "./elementChart.js";
+import { getSkillsForSpecies, getSkillById } from "../data/skills.js";
+
+/**
+ * Skill fallback usada quando o Digimon não possui skill válida
+ * ou não tem SP suficiente para usar skills reais.
+ */
+const BASIC_ATTACK_SKILL = {
+  id: "basic_attack",
+  name: "Basic Attack",
+  kind: "attack",
+  power: 12,
+  cost: 0,
+  element: "Neutral",
+  scaling: "atk"
+};
 
 /**
  * Retorna o Digimon ativo do jogador na batalha atual.
@@ -15,54 +32,25 @@ function getActivePlayerDigimon() {
 }
 
 /**
- * Fórmula simples de dano.
- * Mantida propositalmente enxuta para facilitar balanceamento posterior.
- */
-function calculateAttackDamage(attacker, defender) {
-  const raw = attacker.finalStats.atk - Math.floor(defender.finalStats.def / 2);
-  const variance = randomInt(0, 2);
-  return Math.max(1, raw + variance);
-}
-
-/**
  * Define o último evento visual da batalha.
- * A UI usa isso para animar ataque e impacto.
+ * A UI usa isso para:
+ * - animar ataque/impacto
+ * - destacar a skill usada
+ *
+ * @param {"player"|"enemy"} actor
+ * @param {"player"|"enemy"} target
+ * @param {object} skill
+ * @param {boolean} isBasicAttack
  */
-function setLastAction(actor, target, moveName) {
+function setLastAction(actor, target, skill, isBasicAttack = false) {
   state.battle.lastAction = {
     actor,
     target,
-    moveName,
+    moveName: skill.name,
+    skillId: skill.id,
+    isBasicAttack,
     timestamp: Date.now()
   };
-}
-
-/**
- * Retorna um nome simples de golpe automático.
- * Por enquanto é só feedback visual.
- */
-function getAutoMoveName(species, actorType) {
-  const fallbackPlayerMoves = ["Auto Attack", "Claw Swipe", "Data Burst"];
-  const fallbackEnemyMoves = ["Wild Strike", "Charge", "Bite"];
-
-  if (!species) {
-    return actorType === "player" ? "Auto Attack" : "Wild Strike";
-  }
-
-  const moveMap = {
-    agumon: ["Pepper Breath", "Claw Attack", "Baby Flame"],
-    gabumon: ["Blue Blaster", "Horn Attack", "Body Slam"],
-    patamon: ["Air Shot", "Wing Hit", "Holy Tackle"],
-    koromon: ["Bubble Pop"],
-    tsunomon: ["Headbutt"],
-    tokomon: ["Petit Bite"],
-    greymon: ["Mega Flame", "Great Horn Attack"],
-    garurumon: ["Fox Fire", "Sharp Fang"],
-    angemon: ["Hand of Fate", "Heaven Knuckle"]
-  };
-
-  const moves = moveMap[species.id] || (actorType === "player" ? fallbackPlayerMoves : fallbackEnemyMoves);
-  return moves[randomInt(0, moves.length - 1)];
 }
 
 /**
@@ -71,6 +59,235 @@ function getAutoMoveName(species, actorType) {
 function pushLog(message) {
   state.battle.log.unshift(message);
   state.battle.log = state.battle.log.slice(0, 16);
+}
+
+/**
+ * Retorna a lista completa de skills reais que a espécie possui.
+ *
+ * @param {object} speciesData
+ * @returns {object[]}
+ */
+function getSpeciesSkills(speciesData) {
+  if (!speciesData) return [];
+
+  return getSkillsForSpecies(speciesData.id)
+    .map((skillId) => getSkillById(skillId))
+    .filter(Boolean);
+}
+
+/**
+ * Retorna skills utilizáveis com base no SP atual.
+ *
+ * @param {object} digimonInstance
+ * @param {object[]} skills
+ * @returns {object[]}
+ */
+function getUsableSkillsBySP(digimonInstance, skills) {
+  return skills.filter((skill) => (digimonInstance.currentSP ?? 0) >= (skill.cost ?? 0));
+}
+
+/**
+ * Verifica se o Digimon deve tentar usar cura.
+ *
+ * Regra:
+ * - apenas com HP abaixo de 50%
+ *
+ * @param {object} digimonInstance
+ * @returns {boolean}
+ */
+function shouldUseHealingSkill(digimonInstance) {
+  const hpRatio = (digimonInstance.currentHP ?? 0) / (digimonInstance.finalStats.hp || 1);
+  return hpRatio < 0.5;
+}
+
+/**
+ * Escolhe a melhor skill de cura disponível.
+ *
+ * Critério atual:
+ * - maior cura
+ * - em empate, menor custo
+ *
+ * @param {object[]} skills
+ * @returns {object|null}
+ */
+function chooseBestHealingSkill(skills) {
+  if (!skills.length) return null;
+
+  const sorted = [...skills].sort((a, b) => {
+    const healA = a.effect?.hpRestore ?? 0;
+    const healB = b.effect?.hpRestore ?? 0;
+
+    if (healB !== healA) {
+      return healB - healA;
+    }
+
+    return (a.cost ?? 0) - (b.cost ?? 0);
+  });
+
+  return sorted[0] || null;
+}
+
+/**
+ * Escolhe a melhor skill ofensiva disponível.
+ *
+ * Critério:
+ * - score = power * elementMultiplier
+ * - em empate, menor custo de SP
+ *
+ * @param {object[]} skills
+ * @param {object} defenderSpecies
+ * @returns {object|null}
+ */
+function chooseBestAttackSkill(skills, defenderSpecies) {
+  if (!skills.length) return null;
+
+  const scoredSkills = skills.map((skill) => {
+    const elementMultiplier = getElementMultiplier(
+      skill.element || "Neutral",
+      defenderSpecies?.element || "Neutral"
+    );
+
+    const score = (skill.power || 0) * elementMultiplier;
+
+    return {
+      skill,
+      score
+    };
+  });
+
+  scoredSkills.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
+    return (a.skill.cost ?? 0) - (b.skill.cost ?? 0);
+  });
+
+  return scoredSkills[0]?.skill || null;
+}
+
+/**
+ * Decide qual skill será usada.
+ *
+ * Regras:
+ * 1. se HP < 50% e houver cura utilizável, usa cura
+ * 2. se HP >= 50%, skills de cura são ignoradas
+ * 3. tenta usar a melhor skill ofensiva
+ * 4. se não houver skill ofensiva utilizável, usa Basic Attack
+ *
+ * @param {object} digimonInstance
+ * @param {object} attackerSpecies
+ * @param {object} defenderSpecies
+ * @returns {{ skill: object, isBasicAttack: boolean }}
+ */
+function chooseSkillForBattle(digimonInstance, attackerSpecies, defenderSpecies) {
+  const allSkills = getSpeciesSkills(attackerSpecies);
+  const usableSkills = getUsableSkillsBySP(digimonInstance, allSkills);
+
+  if (!usableSkills.length) {
+    return {
+      skill: BASIC_ATTACK_SKILL,
+      isBasicAttack: true
+    };
+  }
+
+  const healingSkills = usableSkills.filter((skill) => skill.kind === "healing");
+  const attackSkills = usableSkills.filter((skill) => skill.kind === "attack");
+
+  // Cura só abaixo de 50% do HP
+  if (shouldUseHealingSkill(digimonInstance) && healingSkills.length > 0) {
+    const bestHealingSkill = chooseBestHealingSkill(healingSkills);
+
+    if (bestHealingSkill) {
+      return {
+        skill: bestHealingSkill,
+        isBasicAttack: false
+      };
+    }
+  }
+
+  // Acima de 50%, skills de cura são ignoradas.
+  // Se houver skill ofensiva, usa a melhor.
+  const bestAttackSkill = chooseBestAttackSkill(attackSkills, defenderSpecies);
+
+  if (bestAttackSkill) {
+    return {
+      skill: bestAttackSkill,
+      isBasicAttack: false
+    };
+  }
+
+  // Se só houver cura disponível acima de 50%, ou não houver skill ofensiva utilizável,
+  // cai para ataque básico.
+  return {
+    skill: BASIC_ATTACK_SKILL,
+    isBasicAttack: true
+  };
+}
+
+/**
+ * Consome SP da skill usada.
+ *
+ * @param {object} digimonInstance
+ * @param {object} skill
+ */
+function consumeSkillCost(digimonInstance, skill) {
+  const currentSP = digimonInstance.currentSP ?? 0;
+  digimonInstance.currentSP = clamp(
+    currentSP - (skill.cost || 0),
+    0,
+    digimonInstance.finalStats.sp
+  );
+}
+
+/**
+ * Aplica o efeito de cura de uma skill no próprio usuário.
+ *
+ * @param {object} digimonInstance
+ * @param {object} skill
+ * @returns {number} valor efetivamente curado
+ */
+function applyHealingSkill(digimonInstance, skill) {
+  const healAmount = skill.effect?.hpRestore ?? 0;
+  const beforeHP = digimonInstance.currentHP ?? 0;
+
+  digimonInstance.currentHP = clamp(
+    beforeHP + healAmount,
+    0,
+    digimonInstance.finalStats.hp
+  );
+
+  return digimonInstance.currentHP - beforeHP;
+}
+
+/**
+ * Monta texto auxiliar para multiplicadores.
+ * Só exibe quando houver algo diferente de neutro.
+ *
+ * @param {number} typeMultiplier
+ * @param {number} elementMultiplier
+ * @returns {string}
+ */
+function buildMultiplierText(typeMultiplier, elementMultiplier) {
+  const parts = [];
+
+  if (typeMultiplier > 1) {
+    parts.push("vantagem de tipo");
+  } else if (typeMultiplier < 1) {
+    parts.push("desvantagem de tipo");
+  }
+
+  if (elementMultiplier > 1) {
+    parts.push("vantagem elemental");
+  } else if (elementMultiplier < 1) {
+    parts.push("resistência elemental");
+  }
+
+  if (!parts.length) {
+    return "";
+  }
+
+  return ` (${parts.join(" + ")})`;
 }
 
 /**
@@ -156,11 +373,7 @@ export function startBattleFromHunt(huntId) {
 }
 
 /**
- * Executa SOMENTE a ação ofensiva do jogador.
- * Esta separação permite uma sequência visual mais clara:
- * 1. jogador anima e aplica dano
- * 2. espera
- * 3. inimigo anima e aplica dano
+ * Executa SOMENTE a ação/ofensiva do jogador.
  */
 export function performPlayerAutoAttack() {
   if (!state.battle.active || state.battle.result) return;
@@ -171,15 +384,44 @@ export function performPlayerAutoAttack() {
   if (!player || !enemy) return;
 
   const playerSpecies = getDigimonSpecies(player.speciesId);
-  const playerMove = getAutoMoveName(playerSpecies, "player");
-  const damageToEnemy = calculateAttackDamage(player, enemy);
+  const enemySpecies = getDigimonSpecies(enemy.speciesId);
 
-  setLastAction("player", "enemy", playerMove);
+  if (!playerSpecies || !enemySpecies) return;
 
-  enemy.currentHP = clamp(enemy.currentHP - damageToEnemy, 0, enemy.finalStats.hp);
-  enemy.currentSP = clamp(enemy.currentSP - 3, 0, enemy.finalStats.sp);
+  const { skill, isBasicAttack } = chooseSkillForBattle(player, playerSpecies, enemySpecies);
 
-  pushLog(`${playerSpecies?.name || "Seu Digimon"} usou ${playerMove} e causou ${damageToEnemy} de dano.`);
+  consumeSkillCost(player, skill);
+  setLastAction("player", "enemy", skill, isBasicAttack);
+
+  if (skill.kind === "healing") {
+    const healedAmount = applyHealingSkill(player, skill);
+    pushLog(`${playerSpecies.name} usou ${skill.name} e recuperou ${healedAmount} de HP.`);
+    saveGame(state.save);
+    return;
+  }
+
+  const damageData = calculateFinalDamage({
+    attacker: player,
+    defender: enemy,
+    skill,
+    attackerSpecies: playerSpecies,
+    defenderSpecies: enemySpecies
+  });
+
+  enemy.currentHP = clamp(
+    enemy.currentHP - damageData.finalDamage,
+    0,
+    enemy.finalStats.hp
+  );
+
+  const multiplierText = buildMultiplierText(
+    damageData.typeMultiplier,
+    damageData.elementMultiplier
+  );
+
+  pushLog(
+    `${playerSpecies.name} usou ${skill.name} e causou ${damageData.finalDamage} de dano${multiplierText}.`
+  );
 
   if (enemy.currentHP <= 0) {
     finalizeVictory();
@@ -190,7 +432,7 @@ export function performPlayerAutoAttack() {
 }
 
 /**
- * Executa SOMENTE a ação ofensiva do inimigo.
+ * Executa SOMENTE a ação/ofensiva do inimigo.
  */
 export function performEnemyAutoAttack() {
   if (!state.battle.active || state.battle.result) return;
@@ -200,16 +442,45 @@ export function performEnemyAutoAttack() {
 
   if (!player || !enemy) return;
 
+  const playerSpecies = getDigimonSpecies(player.speciesId);
   const enemySpecies = getDigimonSpecies(enemy.speciesId);
-  const enemyMove = getAutoMoveName(enemySpecies, "enemy");
-  const damageToPlayer = calculateAttackDamage(enemy, player);
 
-  setLastAction("enemy", "player", enemyMove);
+  if (!playerSpecies || !enemySpecies) return;
 
-  player.currentHP = clamp(player.currentHP - damageToPlayer, 0, player.finalStats.hp);
-  player.currentSP = clamp(player.currentSP - 3, 0, player.finalStats.sp);
+  const { skill, isBasicAttack } = chooseSkillForBattle(enemy, enemySpecies, playerSpecies);
 
-  pushLog(`${enemySpecies?.name || "Inimigo"} usou ${enemyMove} e causou ${damageToPlayer} de dano.`);
+  consumeSkillCost(enemy, skill);
+  setLastAction("enemy", "player", skill, isBasicAttack);
+
+  if (skill.kind === "healing") {
+    const healedAmount = applyHealingSkill(enemy, skill);
+    pushLog(`${enemySpecies.name} usou ${skill.name} e recuperou ${healedAmount} de HP.`);
+    saveGame(state.save);
+    return;
+  }
+
+  const damageData = calculateFinalDamage({
+    attacker: enemy,
+    defender: player,
+    skill,
+    attackerSpecies: enemySpecies,
+    defenderSpecies: playerSpecies
+  });
+
+  player.currentHP = clamp(
+    player.currentHP - damageData.finalDamage,
+    0,
+    player.finalStats.hp
+  );
+
+  const multiplierText = buildMultiplierText(
+    damageData.typeMultiplier,
+    damageData.elementMultiplier
+  );
+
+  pushLog(
+    `${enemySpecies.name} usou ${skill.name} e causou ${damageData.finalDamage} de dano${multiplierText}.`
+  );
 
   if (player.currentHP <= 0) {
     finalizeDefeat();
@@ -221,8 +492,6 @@ export function performEnemyAutoAttack() {
 
 /**
  * Compatibilidade com fluxo antigo.
- * Agora executa a dupla de ações em sequência imediata.
- * Mantido apenas para evitar quebra em chamadas antigas.
  */
 export function performAutoBattleTurn() {
   performPlayerAutoAttack();
