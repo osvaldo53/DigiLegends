@@ -29,11 +29,13 @@ export function loadGame() {
 
     /**
      * Compatibilidade mínima com saves antigos.
-     * Isso evita quebrar o jogo caso o usuário já tenha
-     * um save salvo antes da adição do inventário.
      */
     if (!data.inventory) {
       data.inventory = [];
+    }
+
+    if (!data.scanData) {
+      data.scanData = {};
     }
 
     return data;
@@ -60,12 +62,6 @@ export function deleteSave() {
 /**
  * Migra saves antigos para a estrutura mais atual.
  *
- * Estratégia:
- * - cria uma base nova com todos os campos esperados
- * - mescla os dados existentes por cima
- * - garante subobjetos obrigatórios
- * - mantém compatibilidade futura
- *
  * @param {object} saveData
  * @returns {object}
  */
@@ -90,12 +86,14 @@ export function migrateSaveIfNeeded(saveData) {
       ...(saveData.progress || {})
     },
 
-    /**
-     * Se inventory vier ausente ou inválido, cai para o padrão.
-     */
     inventory: Array.isArray(saveData.inventory)
       ? saveData.inventory
-      : base.inventory
+      : base.inventory,
+
+    scanData:
+      saveData.scanData && typeof saveData.scanData === "object"
+        ? saveData.scanData
+        : base.scanData
   };
 
   migrated.version = SAVE_VERSION;

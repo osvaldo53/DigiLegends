@@ -14,7 +14,7 @@ export function renderHomeScreen() {
       </div>
 
       <div class="panel">
-        <p>Base atual com hunt AFK, DigiDex, time, itens e loja.</p>
+        <p>Base atual com hunt AFK, DigiDex, time, itens, loja, evolução e conversão por scan.</p>
 
         <div class="menu-grid">
           <div class="menu-tile">
@@ -48,6 +48,12 @@ export function renderHomeScreen() {
           </div>
 
           <div class="menu-tile">
+            <h3>Conversão</h3>
+            <p>Converter dados de scan em novos Digimons.</p>
+            <button class="btn btn-primary" id="btn-go-conversion">Abrir conversão</button>
+          </div>
+
+          <div class="menu-tile">
             <h3>Save</h3>
             <p>Apagar o save atual para reiniciar os testes.</p>
             <button class="btn btn-danger" id="btn-reset-save">Apagar save</button>
@@ -77,6 +83,10 @@ export function bindHomeScreen() {
 
   document.getElementById("btn-go-shop")?.addEventListener("click", () => {
     goToScreen("shop");
+  });
+
+  document.getElementById("btn-go-conversion")?.addEventListener("click", () => {
+    goToScreen("conversion");
   });
 
   document.getElementById("btn-reset-save")?.addEventListener("click", () => {

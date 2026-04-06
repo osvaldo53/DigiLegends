@@ -35,6 +35,41 @@ export const EVOLUTION_RULES = {
     }
   },
 
+  palmon: {
+    togemon: {
+      minLevel: 10,
+      minBond: 5
+    }
+  },
+
+  tentomon: {
+    kabuterimon: {
+      minLevel: 10,
+      minBond: 5
+    }
+  },
+
+  gomamon: {
+    ikkakumon: {
+      minLevel: 10,
+      minBond: 5
+    }
+  },
+
+  biyomon: {
+    birdramon: {
+      minLevel: 10,
+      minBond: 5
+    }
+  },
+
+  veemon: {
+    exveemon: {
+      minLevel: 10,
+      minBond: 6
+    }
+  },
+
   greymon: {
     metalgreymon: {
       minLevel: 22,
@@ -53,6 +88,41 @@ export const EVOLUTION_RULES = {
     holyangemon: {
       minLevel: 24,
       minBond: 25
+    }
+  },
+
+  togemon: {
+    lillymon: {
+      minLevel: 22,
+      minBond: 18
+    }
+  },
+
+  kabuterimon: {
+    megakabuterimon: {
+      minLevel: 22,
+      minBond: 18
+    }
+  },
+
+  ikkakumon: {
+    zudomon: {
+      minLevel: 22,
+      minBond: 18
+    }
+  },
+
+  birdramon: {
+    garudamon: {
+      minLevel: 22,
+      minBond: 18
+    }
+  },
+
+  exveemon: {
+    aeroveedramon: {
+      minLevel: 22,
+      minBond: 18
     }
   }
 };

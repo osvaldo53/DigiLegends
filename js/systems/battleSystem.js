@@ -8,6 +8,7 @@ import { applyBattleRewards } from "./progressionSystem.js";
 import { calculateFinalDamage } from "./damageSystem.js";
 import { getElementMultiplier } from "./elementChart.js";
 import { getSkillsForSpecies, getSkillById } from "../data/skills.js";
+import { addScanOnDefeat } from "./scanSystem.js";
 
 /**
  * Skill fallback usada quando o Digimon não possui skill válida
@@ -32,10 +33,38 @@ function getActivePlayerDigimon() {
 }
 
 /**
+ * Retorna o próximo Digimon vivo da party.
+ *
+ * Regras:
+ * - procura Digimons com HP > 0
+ * - ignora o UID informado, quando necessário
+ *
+ * @param {string|null} excludedUid
+ * @returns {object|null}
+ */
+function getNextAvailablePlayerDigimon(excludedUid = null) {
+  return (
+    state.save.party.find((digimon) => {
+      if (excludedUid && digimon.uid === excludedUid) {
+        return false;
+      }
+
+      return (digimon.currentHP ?? 0) > 0;
+    }) || null
+  );
+}
+
+/**
+ * Troca o Digimon ativo em batalha.
+ *
+ * @param {object} nextDigimon
+ */
+function switchActivePlayerDigimon(nextDigimon) {
+  state.battle.playerDigimonUid = nextDigimon.uid;
+}
+
+/**
  * Define o último evento visual da batalha.
- * A UI usa isso para:
- * - animar ataque/impacto
- * - destacar a skill usada
  *
  * @param {"player"|"enemy"} actor
  * @param {"player"|"enemy"} target
@@ -103,10 +132,6 @@ function shouldUseHealingSkill(digimonInstance) {
 /**
  * Escolhe a melhor skill de cura disponível.
  *
- * Critério atual:
- * - maior cura
- * - em empate, menor custo
- *
  * @param {object[]} skills
  * @returns {object|null}
  */
@@ -169,12 +194,6 @@ function chooseBestAttackSkill(skills, defenderSpecies) {
 /**
  * Decide qual skill será usada.
  *
- * Regras:
- * 1. se HP < 50% e houver cura utilizável, usa cura
- * 2. se HP >= 50%, skills de cura são ignoradas
- * 3. tenta usar a melhor skill ofensiva
- * 4. se não houver skill ofensiva utilizável, usa Basic Attack
- *
  * @param {object} digimonInstance
  * @param {object} attackerSpecies
  * @param {object} defenderSpecies
@@ -194,7 +213,6 @@ function chooseSkillForBattle(digimonInstance, attackerSpecies, defenderSpecies)
   const healingSkills = usableSkills.filter((skill) => skill.kind === "healing");
   const attackSkills = usableSkills.filter((skill) => skill.kind === "attack");
 
-  // Cura só abaixo de 50% do HP
   if (shouldUseHealingSkill(digimonInstance) && healingSkills.length > 0) {
     const bestHealingSkill = chooseBestHealingSkill(healingSkills);
 
@@ -206,8 +224,6 @@ function chooseSkillForBattle(digimonInstance, attackerSpecies, defenderSpecies)
     }
   }
 
-  // Acima de 50%, skills de cura são ignoradas.
-  // Se houver skill ofensiva, usa a melhor.
   const bestAttackSkill = chooseBestAttackSkill(attackSkills, defenderSpecies);
 
   if (bestAttackSkill) {
@@ -217,8 +233,6 @@ function chooseSkillForBattle(digimonInstance, attackerSpecies, defenderSpecies)
     };
   }
 
-  // Se só houver cura disponível acima de 50%, ou não houver skill ofensiva utilizável,
-  // cai para ataque básico.
   return {
     skill: BASIC_ATTACK_SKILL,
     isBasicAttack: true
@@ -245,7 +259,7 @@ function consumeSkillCost(digimonInstance, skill) {
  *
  * @param {object} digimonInstance
  * @param {object} skill
- * @returns {number} valor efetivamente curado
+ * @returns {number}
  */
 function applyHealingSkill(digimonInstance, skill) {
   const healAmount = skill.effect?.hpRestore ?? 0;
@@ -262,7 +276,6 @@ function applyHealingSkill(digimonInstance, skill) {
 
 /**
  * Monta texto auxiliar para multiplicadores.
- * Só exibe quando houver algo diferente de neutro.
  *
  * @param {number} typeMultiplier
  * @param {number} elementMultiplier
@@ -296,20 +309,28 @@ function buildMultiplierText(typeMultiplier, elementMultiplier) {
 function finalizeVictory() {
   const player = getActivePlayerDigimon();
   const hunt = getHuntById(state.battle.huntId);
+  const enemy = state.battle.enemy;
 
-  if (!player || !hunt) return;
+  if (!player || !hunt || !enemy) return;
 
   state.save.progress.huntsCompleted += 1;
 
   const progression = applyBattleRewards(player, hunt.rewards, state.save);
+  const scanResult = addScanOnDefeat(state.save, enemy.speciesId);
 
   state.battle.result = "victory";
   state.battle.rewards = {
     ...hunt.rewards,
-    gainedLevels: progression.gainedLevels
+    gainedLevels: progression.gainedLevels,
+    scanGained: scanResult.gained,
+    scanTotal: scanResult.total,
+    scannedSpeciesId: enemy.speciesId
   };
 
   pushLog(`Vitória. Recompensas: +${hunt.rewards.bits} Bits, +${hunt.rewards.exp} EXP.`);
+  pushLog(
+    `Scan obtido: +${scanResult.gained}% de ${getDigimonSpecies(enemy.speciesId)?.name || enemy.speciesId} (total: ${scanResult.total}%).`
+  );
 
   if (progression.gainedLevels > 0) {
     pushLog(`${getDigimonSpecies(player.speciesId)?.name || "Seu Digimon"} subiu ${progression.gainedLevels} nível(is).`);
@@ -319,7 +340,7 @@ function finalizeVictory() {
 }
 
 /**
- * Finaliza a batalha com derrota.
+ * Finaliza a batalha com derrota total da party.
  */
 function finalizeDefeat() {
   const player = getActivePlayerDigimon();
@@ -342,7 +363,6 @@ function finalizeDefeat() {
 
 /**
  * Prepara uma nova batalha.
- * Não troca de tela.
  */
 export function startBattleFromHunt(huntId) {
   const player = state.save.party[0];
@@ -368,12 +388,13 @@ export function startBattleFromHunt(huntId) {
 
   pushLog(`Encontro iniciado em ${hunt.name}.`);
   pushLog(`Inimigo: ${getDigimonSpecies(enemy.speciesId)?.name || enemy.speciesId} Lv. ${enemy.level}.`);
+  pushLog(`${getDigimonSpecies(player.speciesId)?.name || "Seu Digimon"} entrou em combate.`);
 
   saveGame(state.save);
 }
 
 /**
- * Executa SOMENTE a ação/ofensiva do jogador.
+ * Executa ação do jogador.
  */
 export function performPlayerAutoAttack() {
   if (!state.battle.active || state.battle.result) return;
@@ -432,7 +453,7 @@ export function performPlayerAutoAttack() {
 }
 
 /**
- * Executa SOMENTE a ação/ofensiva do inimigo.
+ * Executa ação do inimigo.
  */
 export function performEnemyAutoAttack() {
   if (!state.battle.active || state.battle.result) return;
@@ -483,6 +504,19 @@ export function performEnemyAutoAttack() {
   );
 
   if (player.currentHP <= 0) {
+    const defeatedSpeciesName = playerSpecies.name;
+    const nextDigimon = getNextAvailablePlayerDigimon(player.uid);
+
+    if (nextDigimon) {
+      const nextSpecies = getDigimonSpecies(nextDigimon.speciesId);
+
+      pushLog(`${defeatedSpeciesName} foi derrotado.`);
+      switchActivePlayerDigimon(nextDigimon);
+      pushLog(`${nextSpecies?.name || "Outro Digimon"} entrou em combate.`);
+      saveGame(state.save);
+      return;
+    }
+
     finalizeDefeat();
     return;
   }

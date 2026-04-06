@@ -8,6 +8,7 @@ import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
 import { bindBattleScreen, renderBattleScreen } from "./screens/battleScreen.js";
 import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
 import { bindShopScreen, renderShopScreen } from "./screens/shopScreen.js";
+import { bindConversionScreen, renderConversionScreen } from "./screens/conversionScreen.js";
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
 
 export function renderApp() {
@@ -53,6 +54,11 @@ export function renderApp() {
     case "shop":
       app.innerHTML = renderShopScreen();
       bindShopScreen();
+      break;
+
+    case "conversion":
+      app.innerHTML = renderConversionScreen();
+      bindConversionScreen();
       break;
 
     case "battle":

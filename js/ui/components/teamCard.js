@@ -3,25 +3,18 @@ import { escapeHtml } from "../../core/utils.js";
 import { getAvailableEvolutions } from "../../systems/evolutionSystem.js";
 
 /**
- * Card colapsável do Digimon do time.
+ * Card colapsável de Digimon.
  *
- * Estado fechado:
- * - sprite
- * - nome
- * - nível
+ * Pode ser usado tanto para Digimons da party quanto do storage.
  *
- * Estado aberto:
- * - tipo
- * - elemento
- * - família
- * - bond
- * - HP/SP
- * - atributos finais
- * - EXP
- * - opções de evolução
+ * Opções:
+ * - context: "party" | "storage"
+ * - isLeader: boolean
  */
-export function renderTeamCard(playerDigimon) {
+export function renderTeamCard(playerDigimon, options = {}) {
   const species = getDigimonSpecies(playerDigimon.speciesId);
+  const context = options.context || "party";
+  const isLeader = Boolean(options.isLeader);
 
   if (!species) {
     return `
@@ -35,40 +28,82 @@ export function renderTeamCard(playerDigimon) {
   const bond = Number(playerDigimon.bond ?? 0).toFixed(1);
   const evolutions = getAvailableEvolutions(playerDigimon);
 
-  const evolutionSection = evolutions.length
-    ? `
-      <div class="team-evolution-section">
-        <h4 class="team-evolution-section__title">Evoluções</h4>
+  const leaderAction =
+    context === "party"
+      ? isLeader
+        ? `
+          <span class="status-pill">Líder</span>
+        `
+        : `
+          <button
+            class="btn btn-secondary js-set-party-leader"
+            data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+          >
+            Definir líder
+          </button>
+        `
+      : "";
 
-        <div class="team-evolution-list">
-          ${evolutions.map((evolution) => `
-            <div class="team-evolution-item">
-              <div class="team-evolution-item__info">
-                <strong>${escapeHtml(evolution.targetSpecies.name)}</strong>
-                <small>
-                  Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}
-                </small>
+  const storageAction =
+    context === "party"
+      ? `
+        <button
+          class="btn btn-secondary js-send-to-storage"
+          data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+        >
+          Enviar ao Storage
+        </button>
+      `
+      : `
+        <button
+          class="btn btn-secondary js-send-to-party"
+          data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+        >
+          Adicionar ao Time
+        </button>
+      `;
+
+  const evolutionSection =
+    context === "party" && evolutions.length
+      ? `
+        <div class="team-evolution-section">
+          <h4 class="team-evolution-section__title">Evoluções</h4>
+
+          <div class="team-evolution-list">
+            ${evolutions
+              .map(
+                (evolution) => `
+              <div class="team-evolution-item">
+                <div class="team-evolution-item__info">
+                  <strong>${escapeHtml(evolution.targetSpecies.name)}</strong>
+                  <small>
+                    Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}
+                  </small>
+                </div>
+
+                <button
+                  class="btn ${evolution.isAvailable ? "btn-primary" : "btn-secondary"} js-evolve-digimon"
+                  data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
+                  data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+                  ${evolution.isAvailable ? "" : "disabled"}
+                >
+                  Evoluir
+                </button>
               </div>
-
-              <button
-                class="btn ${evolution.isAvailable ? "btn-primary" : "btn-secondary"} js-evolve-digimon"
-                data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
-                data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
-                ${evolution.isAvailable ? "" : "disabled"}
-              >
-                Evoluir
-              </button>
-            </div>
-          `).join("")}
+            `
+              )
+              .join("")}
+          </div>
         </div>
-      </div>
-    `
-    : `
-      <div class="team-evolution-section">
-        <h4 class="team-evolution-section__title">Evoluções</h4>
-        <p class="empty-state">Nenhuma evolução disponível para esta espécie no momento.</p>
-      </div>
-    `;
+      `
+      : context === "party"
+        ? `
+          <div class="team-evolution-section">
+            <h4 class="team-evolution-section__title">Evoluções</h4>
+            <p class="empty-state">Nenhuma evolução disponível para esta espécie no momento.</p>
+          </div>
+        `
+        : "";
 
   return `
     <details class="team-card team-card--collapsible">
@@ -166,6 +201,11 @@ export function renderTeamCard(playerDigimon) {
               <strong>${playerDigimon.exp}</strong>
             </div>
           </div>
+        </div>
+
+        <div class="button-row" style="margin-top:12px;">
+          ${leaderAction}
+          ${storageAction}
         </div>
 
         ${evolutionSection}
