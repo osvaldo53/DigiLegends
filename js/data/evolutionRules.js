@@ -14,6 +14,27 @@
  */
 
 export const EVOLUTION_RULES = {
+  koromon: {
+    agumon: {
+      minLevel: 3,
+      minBond: 1
+    }
+  },
+
+  tsunomon: {
+    gabumon: {
+      minLevel: 3,
+      minBond: 1
+    }
+  },
+
+  tokomon: {
+    patamon: {
+      minLevel: 3,
+      minBond: 1
+    }
+  },
+
   agumon: {
     greymon: {
       minLevel: 10,
