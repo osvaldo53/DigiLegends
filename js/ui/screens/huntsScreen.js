@@ -20,6 +20,23 @@ import { escapeHtml, clamp } from "../../core/utils.js";
 const ACTION_ANIMATION_WINDOW_MS = 420;
 
 /**
+ * Retorna o Digimon atualmente ativo na batalha.
+ *
+ * Importante:
+ * - não usar state.save.party[0] durante a hunt ativa
+ * - o Digimon em combate é controlado por state.battle.playerDigimonUid
+ */
+function getActiveBattlePlayerDigimon() {
+  const activeUid = state.battle.playerDigimonUid;
+
+  if (!activeUid) {
+    return state.save.party[0] || null;
+  }
+
+  return state.save.party.find((digimon) => digimon.uid === activeUid) || null;
+}
+
+/**
  * Calcula o progresso visual da fase atual.
  */
 function getPhaseProgressPercent() {
@@ -53,9 +70,6 @@ function renderStatBar(label, current, max, className = "") {
 
 /**
  * Renderiza um dos lados da batalha.
- *
- * Mantivemos a animação de ataque/impacto,
- * mas com card um pouco mais compacto visualmente.
  */
 function renderBattleSide({
   title,
@@ -131,6 +145,11 @@ function renderDrops() {
  */
 function renderBattleSupportItems() {
   const allowedItemIds = ["bandage", "small_recovery", "small_sp_disk"];
+  const activePlayer = getActiveBattlePlayerDigimon();
+
+  if (!activePlayer) {
+    return '<p class="hunt-session__muted">Nenhum Digimon ativo disponível.</p>';
+  }
 
   const html = allowedItemIds
     .map((itemId) => {
@@ -158,12 +177,6 @@ function renderBattleSupportItems() {
 
 /**
  * Renderiza até 4 skills ativas do Digimon do jogador.
- *
- * Regras atuais:
- * - usamos as primeiras 4 skills da espécie
- * - quando uma skill for usada, o card correspondente brilha
- * - se for Basic Attack, nenhuma skill real recebe destaque
- * - skill sem SP suficiente fica visualmente indisponível
  */
 function renderActiveSkills(playerDigimon, playerSpecies) {
   if (!playerDigimon || !playerSpecies) {
@@ -209,11 +222,11 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
         <article class="${classes}">
           <div class="hunt-skill-card__top">
             <strong>${escapeHtml(skill.name)}</strong>
-            <span>${escapeHtml(skill.element)}</span>
+            <span>${escapeHtml(skill.element || skill.kind || "")}</span>
           </div>
 
           <div class="hunt-skill-card__meta">
-            <span>Power: ${skill.power}</span>
+            <span>${skill.kind === "healing" ? "Heal" : `Power: ${skill.power ?? 0}`}</span>
             <span>SP: ${skill.cost}</span>
           </div>
         </article>
@@ -235,7 +248,7 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
  * Painel principal da sessão de hunt ativa.
  */
 function renderActiveSessionPanel() {
-  const player = state.save.party[0];
+  const player = getActiveBattlePlayerDigimon();
   const activeHunt = state.huntSession.huntId ? getHuntById(state.huntSession.huntId) : null;
   const enemy = state.battle.enemy;
   const enemySpecies = enemy ? getDigimonSpecies(enemy.speciesId) : null;
@@ -415,7 +428,7 @@ export function bindHuntsScreen() {
     button.addEventListener("click", () => {
       const itemId = button.dataset.itemId;
       const feedback = document.getElementById("huntItemFeedback");
-      const targetDigimon = state.save.party[0];
+      const targetDigimon = getActiveBattlePlayerDigimon();
 
       if (!targetDigimon) {
         if (feedback) {
