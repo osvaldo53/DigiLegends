@@ -1,5 +1,6 @@
 import { state } from "../core/state.js";
 import { saveGame } from "../core/saveManager.js";
+import { getDigimonSpecies } from "../data/digimons.js";
 import { addItemToInventory } from "./itemSystem.js";
 import {
   startBattleFromHunt,
@@ -8,27 +9,6 @@ import {
   closeBattle
 } from "./battleSystem.js";
 
-/**
- * Delays da hunt AFK.
- *
- * FIRST_ENCOUNTER_DELAY_MS:
- * tempo para encontrar o primeiro inimigo
- *
- * TURN_CHARGE_DELAY_MS:
- * tempo para carregar antes da ação do jogador
- *
- * ENEMY_RESPONSE_DELAY_MS:
- * pausa entre a ação do jogador e a resposta do inimigo
- *
- * NEXT_TURN_DELAY_MS:
- * pausa até o próximo ciclo completo de turnos
- *
- * NEXT_BATTLE_DELAY_MS:
- * tempo entre batalhas
- *
- * RESOLVE_DELAY_MS:
- * pausa após vitória para leitura do resultado
- */
 const FIRST_ENCOUNTER_DELAY_MS = 1200;
 const TURN_CHARGE_DELAY_MS = 1600;
 const ENEMY_RESPONSE_DELAY_MS = 900;
@@ -38,25 +18,16 @@ const RESOLVE_DELAY_MS = 1400;
 
 let huntTimer = null;
 
-/**
- * Dispara rerender global.
- */
 function rerender() {
   window.dispatchEvent(new Event("digilegends:rerender"));
 }
 
-/**
- * Define a fase atual da hunt.
- */
 function setPhase(label, durationMs) {
   state.huntSession.phaseLabel = label;
   state.huntSession.phaseDurationMs = durationMs;
   state.huntSession.phaseStartedAt = Date.now();
 }
 
-/**
- * Limpa timer atual.
- */
 function clearHuntTimer() {
   if (huntTimer) {
     clearTimeout(huntTimer);
@@ -64,9 +35,6 @@ function clearHuntTimer() {
   }
 }
 
-/**
- * Agenda próximo passo da sessão AFK.
- */
 function scheduleNextStep(callback, delay) {
   clearHuntTimer();
   huntTimer = setTimeout(() => {
@@ -74,13 +42,10 @@ function scheduleNextStep(callback, delay) {
   }, delay);
 }
 
-/**
- * Sistema simples de drops.
- */
 function rollDrops() {
   const roll = Math.random();
 
-  if (roll < 0.40) {
+  if (roll < 0.4) {
     return { id: "small_recovery", name: "Small Recovery", quantity: 1 };
   }
 
@@ -95,9 +60,6 @@ function rollDrops() {
   return null;
 }
 
-/**
- * Registra drop na sessão e no inventário real.
- */
 function registerDrop(drop) {
   if (!drop) return;
 
@@ -112,17 +74,93 @@ function registerDrop(drop) {
   addItemToInventory(state.save, drop.id, drop.quantity);
 }
 
-/**
- * Inicia a sessão AFK.
- */
-export function startHuntSession(huntId) {
-  const player = state.save.party[0];
+function resetActiveHuntSession() {
+  state.huntSession.active = false;
+  state.huntSession.huntId = null;
+  state.huntSession.playerDigimonUid = null;
+  state.huntSession.totalBattles = 0;
+  state.huntSession.totalWins = 0;
+  state.huntSession.totalDefeats = 0;
+  state.huntSession.totalBitsEarned = 0;
+  state.huntSession.totalExpEarned = 0;
+  state.huntSession.currentBattleNumber = 0;
+  state.huntSession.status = "stopped";
+  state.huntSession.drops = [];
+  state.huntSession.phaseLabel = "";
+  state.huntSession.phaseDurationMs = 0;
+  state.huntSession.phaseStartedAt = 0;
+}
 
-  if (!player) {
-    throw new Error("Não há Digimon no time.");
+function buildDropSummary() {
+  return state.huntSession.drops.map((drop) => ({ ...drop }));
+}
+
+function restorePartyAfterDefeat() {
+  const healedDigimons = [];
+
+  for (const digimon of state.save.party) {
+    const hpBefore = digimon.currentHP ?? 0;
+    const spBefore = digimon.currentSP ?? 0;
+
+    digimon.currentHP = digimon.finalStats.hp;
+    digimon.currentSP = digimon.finalStats.sp;
+
+    if (hpBefore < digimon.finalStats.hp || spBefore < digimon.finalStats.sp) {
+      healedDigimons.push(
+        getDigimonSpecies(digimon.speciesId)?.name || digimon.nickname || digimon.speciesId
+      );
+    }
   }
 
-  stopHuntSession(false);
+  return healedDigimons;
+}
+
+function finalizeHuntSummary(reason, options = {}) {
+  const activeHuntId = state.huntSession.huntId;
+
+  state.huntSession.summary = {
+    huntId: activeHuntId,
+    reason,
+    totalBattles: state.huntSession.totalBattles,
+    totalWins: state.huntSession.totalWins,
+    totalDefeats: state.huntSession.totalDefeats,
+    totalBitsEarned: state.huntSession.totalBitsEarned,
+    totalExpEarned: state.huntSession.totalExpEarned,
+    drops: buildDropSummary(),
+    penaltyBits: options.penaltyBits || 0,
+    healedDigimons: options.healedDigimons || [],
+    message: options.message || ""
+  };
+}
+
+function endHuntSession(reason, options = {}) {
+  clearHuntTimer();
+
+  if (!state.huntSession.active && !state.huntSession.huntId) {
+    return;
+  }
+
+  finalizeHuntSummary(reason, options);
+  resetActiveHuntSession();
+  closeBattle();
+  saveGame(state.save);
+  rerender();
+}
+
+export function clearHuntSummary() {
+  state.huntSession.summary = null;
+  rerender();
+}
+
+export function startHuntSession(huntId) {
+  const player = state.save.party.find((digimon) => (digimon.currentHP ?? 0) > 0);
+
+  if (!player) {
+    throw new Error("Nao ha Digimon com HP suficiente no time.");
+  }
+
+  clearHuntTimer();
+  state.huntSession.summary = null;
 
   state.huntSession.active = true;
   state.huntSession.huntId = huntId;
@@ -135,6 +173,9 @@ export function startHuntSession(huntId) {
   state.huntSession.currentBattleNumber = 0;
   state.huntSession.status = "searching";
   state.huntSession.drops = [];
+  state.huntSession.phaseLabel = "";
+  state.huntSession.phaseDurationMs = 0;
+  state.huntSession.phaseStartedAt = 0;
 
   setPhase("Procurando inimigo", FIRST_ENCOUNTER_DELAY_MS);
   rerender();
@@ -144,30 +185,12 @@ export function startHuntSession(huntId) {
   }, FIRST_ENCOUNTER_DELAY_MS);
 }
 
-/**
- * Encerra a sessão AFK.
- */
-export function stopHuntSession(shouldRerender = true) {
-  clearHuntTimer();
-
-  state.huntSession.active = false;
-  state.huntSession.huntId = null;
-  state.huntSession.playerDigimonUid = null;
-  state.huntSession.status = "stopped";
-  state.huntSession.phaseLabel = "";
-  state.huntSession.phaseDurationMs = 0;
-  state.huntSession.phaseStartedAt = 0;
-
-  closeBattle();
-
-  if (shouldRerender) {
-    rerender();
-  }
+export function stopHuntSession() {
+  endHuntSession("manual", {
+    message: "Hunt encerrada pelo jogador."
+  });
 }
 
-/**
- * Inicia uma nova batalha da sessão.
- */
 function beginNextBattle() {
   if (!state.huntSession.active) return;
 
@@ -177,15 +200,12 @@ function beginNextBattle() {
 
   startBattleFromHunt(state.huntSession.huntId);
 
-  setPhase("Carregando ação", TURN_CHARGE_DELAY_MS);
+  setPhase("Carregando acao", TURN_CHARGE_DELAY_MS);
   rerender();
 
   scheduleNextStep(runPlayerAction, TURN_CHARGE_DELAY_MS);
 }
 
-/**
- * Executa ação do jogador.
- */
 function runPlayerAction() {
   if (!state.huntSession.active) return;
   if (!state.battle.active || state.battle.result) return;
@@ -204,9 +224,6 @@ function runPlayerAction() {
   scheduleNextStep(runEnemyAction, ENEMY_RESPONSE_DELAY_MS);
 }
 
-/**
- * Executa ação do inimigo.
- */
 function runEnemyAction() {
   if (!state.huntSession.active) return;
   if (!state.battle.active || state.battle.result) return;
@@ -219,15 +236,12 @@ function runEnemyAction() {
     return;
   }
 
-  setPhase("Carregando ação", NEXT_TURN_DELAY_MS);
+  setPhase("Carregando acao", NEXT_TURN_DELAY_MS);
   rerender();
 
   scheduleNextStep(runPlayerAction, NEXT_TURN_DELAY_MS);
 }
 
-/**
- * Finaliza ciclo da batalha.
- */
 function finishBattleCycle() {
   if (!state.huntSession.active) return;
 
@@ -244,12 +258,19 @@ function finishBattleCycle() {
 
   if (state.battle.result === "defeat") {
     state.huntSession.totalDefeats += 1;
-    saveGame(state.save);
-    stopHuntSession();
+
+    const healedDigimons = restorePartyAfterDefeat();
+    const penaltyBits = state.battle.rewards?.bitsLost || 0;
+
+    endHuntSession("defeat", {
+      penaltyBits,
+      healedDigimons,
+      message: "Seu time foi derrotado e recebeu recuperacao completa para a proxima hunt."
+    });
     return;
   }
 
-  setPhase("Preparando próxima batalha", RESOLVE_DELAY_MS);
+  setPhase("Preparando proxima batalha", RESOLVE_DELAY_MS);
   saveGame(state.save);
   rerender();
 

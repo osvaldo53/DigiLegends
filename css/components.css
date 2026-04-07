@@ -278,6 +278,55 @@
   font-size: 0.96rem;
 }
 
+.battle-affinity-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.battle-affinity-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border);
+}
+
+.battle-affinity-pill--type {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e7f0ff;
+}
+
+.battle-affinity-pill--advantage.battle-affinity-pill--type {
+  background: rgba(53, 210, 111, 0.14);
+  border-color: rgba(53, 210, 111, 0.22);
+  color: #bff5cf;
+}
+
+.battle-affinity-pill--disadvantage.battle-affinity-pill--type {
+  background: rgba(255, 107, 107, 0.14);
+  border-color: rgba(255, 107, 107, 0.22);
+  color: #ffd0d0;
+}
+
+.battle-affinity-pill--neutral.battle-affinity-pill--type {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+  color: #e7f0ff;
+}
+
+.battle-affinity-pill--element {
+  background: rgba(53, 208, 255, 0.12);
+  color: #dff8ff;
+  border-color: rgba(53, 208, 255, 0.2);
+}
+
 .hunt-battle-card__sprite-wrap {
   position: relative;
   height: 112px;
@@ -473,6 +522,43 @@
   gap: 8px;
   font-size: 0.78rem;
   color: #d5e1ff;
+}
+
+.hunt-skill-card__matchup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.matchup-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.matchup-pill--advantage {
+  background: rgba(53, 210, 111, 0.14);
+  border-color: rgba(53, 210, 111, 0.22);
+  color: #bff5cf;
+}
+
+.matchup-pill--disadvantage {
+  background: rgba(255, 107, 107, 0.14);
+  border-color: rgba(255, 107, 107, 0.22);
+  color: #ffd0d0;
+}
+
+.matchup-pill--neutral {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+  color: #dbe7ff;
 }
 
 .hunt-skill-card.is-active {

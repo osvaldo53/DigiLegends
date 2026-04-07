@@ -25,7 +25,8 @@ const HUNT_LEVEL_RANGES = {
   "training-grounds": { min: 1, max: 3 },
   "rookie-forest": { min: 4, max: 8 },
   "champion-ridge": { min: 10, max: 16 },
-  "ultimate-domain": { min: 18, max: 28 }
+  "ultimate-domain": { min: 18, max: 28 },
+  "mega-sanctuary": { min: 32, max: 45 }
 };
 
 /**

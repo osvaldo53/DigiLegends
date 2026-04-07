@@ -3,29 +3,21 @@ import { goToScreen } from "../../core/router.js";
 import { saveGame } from "../../core/saveManager.js";
 import { state } from "../../core/state.js";
 import { renderHuntCard } from "../components/huntCard.js";
-import { startHuntSession, stopHuntSession } from "../../systems/huntSessionSystem.js";
+import {
+  startHuntSession,
+  stopHuntSession,
+  clearHuntSummary
+} from "../../systems/huntSessionSystem.js";
 import { getDigimonSpecies } from "../../data/digimons.js";
 import { getItemById } from "../../data/items.js";
 import { useItemOnDigimon, getInventoryEntry } from "../../systems/itemSystem.js";
-import {
-  getSkillsForSpecies,
-  getSkillById
-} from "../../data/skills.js";
+import { getSkillsForSpecies, getSkillById } from "../../data/skills.js";
+import { getElementMultiplier } from "../../systems/elementChart.js";
+import { getTypeMultiplier } from "../../systems/typeChart.js";
 import { escapeHtml, clamp } from "../../core/utils.js";
 
-/**
- * Janela curta em que a UI considera a ação como "ativa"
- * para disparar animação visual.
- */
 const ACTION_ANIMATION_WINDOW_MS = 420;
 
-/**
- * Retorna o Digimon atualmente ativo na batalha.
- *
- * Importante:
- * - não usar state.save.party[0] durante a hunt ativa
- * - o Digimon em combate é controlado por state.battle.playerDigimonUid
- */
 function getActiveBattlePlayerDigimon() {
   const activeUid = state.battle.playerDigimonUid;
 
@@ -36,9 +28,6 @@ function getActiveBattlePlayerDigimon() {
   return state.save.party.find((digimon) => digimon.uid === activeUid) || null;
 }
 
-/**
- * Calcula o progresso visual da fase atual.
- */
 function getPhaseProgressPercent() {
   const duration = state.huntSession.phaseDurationMs || 0;
   const startedAt = state.huntSession.phaseStartedAt || 0;
@@ -49,9 +38,6 @@ function getPhaseProgressPercent() {
   return clamp((elapsed / duration) * 100, 0, 100);
 }
 
-/**
- * Renderiza barra de HP/SP.
- */
 function renderStatBar(label, current, max, className = "") {
   const pct = max > 0 ? clamp((current / max) * 100, 0, 100) : 0;
 
@@ -68,12 +54,13 @@ function renderStatBar(label, current, max, className = "") {
   `;
 }
 
-/**
- * Renderiza um dos lados da batalha.
- */
 function renderBattleSide({
   title,
   sprite,
+  typeLabel,
+  elementLabel,
+  typeTone,
+  typeMultiplier,
   hpCurrent,
   hpMax,
   spCurrent,
@@ -101,6 +88,13 @@ function renderBattleSide({
     <article class="${sideClass}">
       <h3>${escapeHtml(title)}</h3>
 
+      <div class="battle-affinity-row">
+        <span class="battle-affinity-pill battle-affinity-pill--type battle-affinity-pill--${escapeHtml(typeTone || "neutral")}">
+          ${escapeHtml(typeLabel || "Unknown Type")} · ${typeMultiplier?.toFixed(2) || "1.00"}x
+        </span>
+        <span class="battle-affinity-pill battle-affinity-pill--element">${escapeHtml(elementLabel || "Neutral")}</span>
+      </div>
+
       <div class="hunt-battle-card__sprite-wrap">
         <img
           class="hunt-battle-card__sprite"
@@ -123,32 +117,26 @@ function renderBattleSide({
   `;
 }
 
-/**
- * Renderiza os drops acumulados na sessão.
- */
-function renderDrops() {
-  if (!state.huntSession.drops.length) {
-    return '<p class="hunt-session__muted">Nenhum item dropado até agora.</p>';
+function renderDrops(items) {
+  if (!items.length) {
+    return '<p class="hunt-session__muted">Nenhum item dropado ate agora.</p>';
   }
 
   return `
     <div class="hunt-drop-list">
-      ${state.huntSession.drops
+      ${items
         .map((item) => `<span class="hunt-drop-pill">${escapeHtml(item.name)} x${item.quantity}</span>`)
         .join("")}
     </div>
   `;
 }
 
-/**
- * Renderiza botões rápidos de item durante a hunt.
- */
 function renderBattleSupportItems() {
   const allowedItemIds = ["bandage", "small_recovery", "small_sp_disk"];
   const activePlayer = getActiveBattlePlayerDigimon();
 
   if (!activePlayer) {
-    return '<p class="hunt-session__muted">Nenhum Digimon ativo disponível.</p>';
+    return '<p class="hunt-session__muted">Nenhum Digimon ativo disponivel.</p>';
   }
 
   const html = allowedItemIds
@@ -172,14 +160,27 @@ function renderBattleSupportItems() {
     .filter(Boolean)
     .join("");
 
-  return html || '<p class="hunt-session__muted">Nenhum item utilizável disponível.</p>';
+  return html || '<p class="hunt-session__muted">Nenhum item utilizavel disponivel.</p>';
 }
 
-/**
- * Renderiza até 4 skills ativas do Digimon do jogador.
- */
-function renderActiveSkills(playerDigimon, playerSpecies) {
-  if (!playerDigimon || !playerSpecies) {
+function getMultiplierTone(multiplier) {
+  if (multiplier > 1) return "advantage";
+  if (multiplier < 1) return "disadvantage";
+  return "neutral";
+}
+
+function getMultiplierText(multiplier, labels) {
+  if (multiplier > 1) return labels.advantage;
+  if (multiplier < 1) return labels.disadvantage;
+  return labels.neutral;
+}
+
+function formatMultiplier(multiplier) {
+  return `${multiplier.toFixed(2)}x`;
+}
+
+function renderActiveSkills(playerDigimon, playerSpecies, enemySpecies) {
+  if (!playerDigimon || !playerSpecies || !enemySpecies) {
     return "";
   }
 
@@ -190,7 +191,7 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
     return `
       <div class="hunt-skills-panel">
         <h3>Skills ativas</h3>
-        <p class="hunt-session__muted">Este Digimon ainda não possui skills ativas.</p>
+        <p class="hunt-session__muted">Este Digimon ainda nao possui skills ativas.</p>
       </div>
     `;
   }
@@ -201,7 +202,6 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
       if (!skill) return "";
 
       const hasEnoughSP = (playerDigimon.currentSP ?? 0) >= (skill.cost ?? 0);
-
       const isRecentAction =
         !!lastAction &&
         Date.now() - lastAction.timestamp <= ACTION_ANIMATION_WINDOW_MS;
@@ -211,6 +211,11 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
         lastAction.actor === "player" &&
         !lastAction.isBasicAttack &&
         lastAction.skillId === skill.id;
+
+      const elementMultiplier = getElementMultiplier(
+        skill.element || "Neutral",
+        enemySpecies.element || "Neutral"
+      );
 
       const classes = [
         "hunt-skill-card",
@@ -229,6 +234,12 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
             <span>${skill.kind === "healing" ? "Heal" : `Power: ${skill.power ?? 0}`}</span>
             <span>SP: ${skill.cost}</span>
           </div>
+
+          <div class="hunt-skill-card__matchup">
+            <span class="matchup-pill matchup-pill--${getMultiplierTone(elementMultiplier)}">
+              Elemento ${formatMultiplier(elementMultiplier)}
+            </span>
+          </div>
         </article>
       `;
     })
@@ -237,6 +248,9 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
   return `
     <div class="hunt-skills-panel">
       <h3>Skills ativas</h3>
+      <p class="hunt-session__muted">
+        Alvo atual: ${escapeHtml(enemySpecies.name)} · Tipo ${escapeHtml(enemySpecies.type)} · Elemento ${escapeHtml(enemySpecies.element)}
+      </p>
       <div class="hunt-skills-grid">
         ${skillsHtml}
       </div>
@@ -244,9 +258,62 @@ function renderActiveSkills(playerDigimon, playerSpecies) {
   `;
 }
 
-/**
- * Painel principal da sessão de hunt ativa.
- */
+function renderHuntSummaryPanel() {
+  const summary = state.huntSession.summary;
+  const hunt = summary?.huntId ? getHuntById(summary.huntId) : null;
+
+  if (!summary) {
+    return "";
+  }
+
+  const reasonText =
+    summary.reason === "defeat"
+      ? "Seu time foi derrotado."
+      : "A hunt foi encerrada manualmente.";
+
+  const penaltyHtml = summary.penaltyBits
+    ? `<p>Penalidade por derrota: -${summary.penaltyBits} Bits.</p>`
+    : "";
+
+  const healHtml = summary.healedDigimons.length
+    ? `<p>Digimons recuperados para a proxima hunt: ${escapeHtml(summary.healedDigimons.join(", "))}.</p>`
+    : "";
+
+  return `
+    <section class="screen">
+      <div class="panel">
+        <h2>Resumo da Hunt</h2>
+        <p>${escapeHtml(hunt?.name || "Hunt")} encerrada. ${escapeHtml(reasonText)}</p>
+
+        <div class="button-row" style="margin-bottom:16px;">
+          <span class="status-pill">Batalhas: ${summary.totalBattles}</span>
+          <span class="status-pill">Vitorias: ${summary.totalWins}</span>
+          <span class="status-pill">Derrotas: ${summary.totalDefeats}</span>
+        </div>
+
+        <div class="hunt-session-box" style="margin-bottom:16px;">
+          <h3>Recompensas da sessao</h3>
+          <p>Bits ganhos: ${summary.totalBitsEarned}</p>
+          <p>EXP ganha: ${summary.totalExpEarned}</p>
+          ${penaltyHtml}
+          ${summary.message ? `<p>${escapeHtml(summary.message)}</p>` : ""}
+          ${healHtml}
+        </div>
+
+        <div class="hunt-session-box" style="margin-bottom:16px;">
+          <h3>Itens dropados</h3>
+          ${renderDrops(summary.drops)}
+        </div>
+
+        <div class="button-row">
+          <button class="btn btn-primary" id="btn-close-hunt-summary">Fechar resumo</button>
+          <button class="btn btn-secondary" id="btn-back-home">Voltar</button>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderActiveSessionPanel() {
   const player = getActiveBattlePlayerDigimon();
   const activeHunt = state.huntSession.huntId ? getHuntById(state.huntSession.huntId) : null;
@@ -254,10 +321,23 @@ function renderActiveSessionPanel() {
   const enemySpecies = enemy ? getDigimonSpecies(enemy.speciesId) : null;
   const playerSpecies = player ? getDigimonSpecies(player.speciesId) : null;
   const progressPercent = getPhaseProgressPercent();
+  const playerTypeMultiplier =
+    playerSpecies && enemySpecies
+      ? getTypeMultiplier(playerSpecies.type, enemySpecies.type)
+      : 1;
+  const enemyTypeMultiplier =
+    enemySpecies && playerSpecies
+      ? getTypeMultiplier(enemySpecies.type, playerSpecies.type)
+      : 1;
+
+  const actionActorName =
+    state.battle.lastAction?.actor === "player"
+      ? playerSpecies?.name || "Aliado"
+      : enemySpecies?.name || "Inimigo";
 
   const actionText = state.battle.lastAction
-    ? `${state.battle.lastAction.actor === "player" ? (playerSpecies?.name || "Aliado") : (enemySpecies?.name || "Inimigo")} usou ${state.battle.lastAction.moveName}`
-    : "Aguardando próxima ação";
+    ? `${actionActorName} usou ${state.battle.lastAction.moveName}`
+    : "Aguardando proxima acao";
 
   return `
     <section class="screen">
@@ -266,7 +346,7 @@ function renderActiveSessionPanel() {
           <div>
             <h2>Hunt em andamento</h2>
             <p class="hunt-session__muted">
-              ${escapeHtml(activeHunt?.name || "Área desconhecida")} · Status: ${escapeHtml(state.huntSession.status)}
+              ${escapeHtml(activeHunt?.name || "Area desconhecida")} · Status: ${escapeHtml(state.huntSession.status)}
             </p>
           </div>
 
@@ -277,7 +357,7 @@ function renderActiveSessionPanel() {
         </div>
 
         <div class="hunt-session-summary">
-          <span class="status-pill">Vitórias: ${state.huntSession.totalWins}</span>
+          <span class="status-pill">Vitorias: ${state.huntSession.totalWins}</span>
           <span class="status-pill">Derrotas: ${state.huntSession.totalDefeats}</span>
           <span class="status-pill">Bits: ${state.huntSession.totalBitsEarned}</span>
           <span class="status-pill">EXP: ${state.huntSession.totalExpEarned}</span>
@@ -296,9 +376,13 @@ function renderActiveSessionPanel() {
           player && enemy
             ? `
               <div class="hunt-battle-grid">
-                ${renderBattleSide({
+              ${renderBattleSide({
                   title: `${playerSpecies?.name || "Aliado"} · Lv. ${player.level}`,
                   sprite: playerSpecies?.sprite || "",
+                  typeLabel: playerSpecies?.type || "Unknown Type",
+                  elementLabel: playerSpecies?.element || "Neutral",
+                  typeTone: getMultiplierTone(playerTypeMultiplier),
+                  typeMultiplier: playerTypeMultiplier,
                   hpCurrent: player.currentHP,
                   hpMax: player.finalStats.hp,
                   spCurrent: player.currentSP,
@@ -311,6 +395,10 @@ function renderActiveSessionPanel() {
                 ${renderBattleSide({
                   title: `${enemySpecies?.name || "Inimigo"} · Lv. ${enemy.level}`,
                   sprite: enemySpecies?.sprite || "",
+                  typeLabel: enemySpecies?.type || "Unknown Type",
+                  elementLabel: enemySpecies?.element || "Neutral",
+                  typeTone: getMultiplierTone(enemyTypeMultiplier),
+                  typeMultiplier: enemyTypeMultiplier,
                   hpCurrent: enemy.currentHP,
                   hpMax: enemy.finalStats.hp,
                   spCurrent: enemy.currentSP,
@@ -325,7 +413,7 @@ function renderActiveSessionPanel() {
                 ${escapeHtml(actionText)}
               </div>
 
-              ${renderActiveSkills(player, playerSpecies)}
+              ${renderActiveSkills(player, playerSpecies, enemySpecies)}
             `
             : `
               <div class="hunt-empty-battle">
@@ -345,7 +433,7 @@ function renderActiveSessionPanel() {
 
           <div class="hunt-session-box">
             <h3>Itens dropados</h3>
-            ${renderDrops()}
+            ${renderDrops(state.huntSession.drops)}
           </div>
 
           <div class="hunt-session-box">
@@ -364,9 +452,6 @@ function renderActiveSessionPanel() {
   `;
 }
 
-/**
- * Tela de hunts.
- */
 export function renderHuntsScreen() {
   const player = state.save.party[0];
   const playerLevel = player?.level || 1;
@@ -375,17 +460,21 @@ export function renderHuntsScreen() {
     return renderActiveSessionPanel();
   }
 
+  if (state.huntSession.summary) {
+    return renderHuntSummaryPanel();
+  }
+
   const cards = HUNTS.map((hunt) => renderHuntCard(hunt, playerLevel)).join("");
 
   return `
     <section class="screen">
       <div class="panel">
         <h2>Hunts</h2>
-        <p>Escolha uma área para iniciar uma hunt automática.</p>
+        <p>Escolha uma area para iniciar uma hunt automatica.</p>
 
         <div class="button-row" style="margin-bottom:16px;">
-          <span class="status-pill">Nível do líder: ${playerLevel}</span>
-          <span class="status-pill">Hunts concluídas: ${state.save.progress.huntsCompleted}</span>
+          <span class="status-pill">Nivel do lider: ${playerLevel}</span>
+          <span class="status-pill">Hunts concluidas: ${state.save.progress.huntsCompleted}</span>
         </div>
 
         <div class="card-grid">
@@ -400,12 +489,13 @@ export function renderHuntsScreen() {
   `;
 }
 
-/**
- * Eventos da tela de hunts.
- */
 export function bindHuntsScreen() {
   document.getElementById("btn-back-home")?.addEventListener("click", () => {
     goToScreen("home");
+  });
+
+  document.getElementById("btn-close-hunt-summary")?.addEventListener("click", () => {
+    clearHuntSummary();
   });
 
   document.getElementById("btn-stop-hunt")?.addEventListener("click", () => {
@@ -419,7 +509,7 @@ export function bindHuntsScreen() {
       try {
         startHuntSession(huntId);
       } catch (error) {
-        window.alert(error.message || "Não foi possível iniciar a hunt.");
+        window.alert(error.message || "Nao foi possivel iniciar a hunt.");
       }
     });
   });
@@ -432,7 +522,7 @@ export function bindHuntsScreen() {
 
       if (!targetDigimon) {
         if (feedback) {
-          feedback.innerHTML = '<p class="hunt-session__muted">Não há Digimon válido para usar o item.</p>';
+          feedback.innerHTML = '<p class="hunt-session__muted">Nao ha Digimon valido para usar o item.</p>';
         }
         return;
       }
@@ -454,7 +544,7 @@ export function bindHuntsScreen() {
         window.dispatchEvent(new Event("digilegends:rerender"));
       } catch (error) {
         if (feedback) {
-          feedback.innerHTML = `<p class="hunt-session__muted">${escapeHtml(error.message || "Não foi possível usar o item.")}</p>`;
+          feedback.innerHTML = `<p class="hunt-session__muted">${escapeHtml(error.message || "Nao foi possivel usar o item.")}</p>`;
         }
       }
     });

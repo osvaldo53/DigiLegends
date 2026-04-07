@@ -1,170 +1,109 @@
-/**
- * Regras de evolução por espécie.
- *
- * Estrutura:
- * EVOLUTION_RULES[speciesId][targetSpeciesId] = {
- *   minLevel: number,
- *   minBond: number
- * }
- *
- * Observações:
- * - esta camada é separada de digimons.js para facilitar balanceamento
- * - species.evolutions continua sendo útil como referência de rota
- * - aqui ficam apenas os requisitos
- */
-
 export const EVOLUTION_RULES = {
   koromon: {
-    agumon: {
-      minLevel: 3,
-      minBond: 1
-    }
+    agumon: { minLevel: 3, minBond: 1 }
   },
-
   tsunomon: {
-    gabumon: {
-      minLevel: 3,
-      minBond: 1
-    }
+    gabumon: { minLevel: 3, minBond: 1 }
   },
-
   tokomon: {
-    patamon: {
-      minLevel: 3,
-      minBond: 1
-    }
+    patamon: { minLevel: 3, minBond: 1 }
+  },
+  tanemon: {
+    palmon: { minLevel: 3, minBond: 1 }
+  },
+  motimon: {
+    tentomon: { minLevel: 3, minBond: 1 }
+  },
+  bukamon: {
+    gomamon: { minLevel: 3, minBond: 1 }
+  },
+  yokomon: {
+    biyomon: { minLevel: 3, minBond: 1 }
+  },
+  demiveemon: {
+    veemon: { minLevel: 3, minBond: 1 }
   },
 
   agumon: {
-    greymon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    greymon: { minLevel: 10, minBond: 5 }
   },
-
   gabumon: {
-    garurumon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    garurumon: { minLevel: 10, minBond: 5 }
   },
-
   patamon: {
-    angemon: {
-      minLevel: 10,
-      minBond: 8
-    }
+    angemon: { minLevel: 10, minBond: 8 }
   },
-
   palmon: {
-    togemon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    togemon: { minLevel: 10, minBond: 5 }
   },
-
   tentomon: {
-    kabuterimon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    kabuterimon: { minLevel: 10, minBond: 5 }
   },
-
   gomamon: {
-    ikkakumon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    ikkakumon: { minLevel: 10, minBond: 5 }
   },
-
   biyomon: {
-    birdramon: {
-      minLevel: 10,
-      minBond: 5
-    }
+    birdramon: { minLevel: 10, minBond: 5 }
   },
-
   veemon: {
-    exveemon: {
-      minLevel: 10,
-      minBond: 6
-    }
+    exveemon: { minLevel: 10, minBond: 6 }
   },
 
   greymon: {
-    metalgreymon: {
-      minLevel: 22,
-      minBond: 20
-    }
+    metalgreymon: { minLevel: 22, minBond: 20 }
   },
-
   garurumon: {
-    weregarurumon: {
-      minLevel: 22,
-      minBond: 20
-    }
+    weregarurumon: { minLevel: 22, minBond: 20 }
   },
-
   angemon: {
-    holyangemon: {
-      minLevel: 24,
-      minBond: 25
-    }
+    holyangemon: { minLevel: 24, minBond: 25 }
   },
-
   togemon: {
-    lillymon: {
-      minLevel: 22,
-      minBond: 18
-    }
+    lillymon: { minLevel: 22, minBond: 18 }
   },
-
   kabuterimon: {
-    megakabuterimon: {
-      minLevel: 22,
-      minBond: 18
-    }
+    megakabuterimon: { minLevel: 22, minBond: 18 }
   },
-
   ikkakumon: {
-    zudomon: {
-      minLevel: 22,
-      minBond: 18
-    }
+    zudomon: { minLevel: 22, minBond: 18 }
   },
-
   birdramon: {
-    garudamon: {
-      minLevel: 22,
-      minBond: 18
-    }
+    garudamon: { minLevel: 22, minBond: 18 }
+  },
+  exveemon: {
+    aeroveedramon: { minLevel: 22, minBond: 18 }
   },
 
-  exveemon: {
-    aeroveedramon: {
-      minLevel: 22,
-      minBond: 18
-    }
+  metalgreymon: {
+    wargreymon: { minLevel: 34, minBond: 35 }
+  },
+  weregarurumon: {
+    metalgarurumon: { minLevel: 34, minBond: 35 }
+  },
+  holyangemon: {
+    seraphimon: { minLevel: 36, minBond: 40 }
+  },
+  lillymon: {
+    rosemon: { minLevel: 34, minBond: 32 }
+  },
+  megakabuterimon: {
+    herculeskabuterimon: { minLevel: 34, minBond: 32 }
+  },
+  zudomon: {
+    vikemon: { minLevel: 34, minBond: 32 }
+  },
+  garudamon: {
+    phoenixmon: { minLevel: 34, minBond: 32 }
+  },
+  aeroveedramon: {
+    ulforceveedramon: { minLevel: 36, minBond: 34 }
   }
 };
 
-/**
- * Retorna todas as regras de evolução de uma espécie.
- *
- * @param {string} speciesId
- * @returns {object}
- */
 export function getEvolutionRulesForSpecies(speciesId) {
   return EVOLUTION_RULES[speciesId] || {};
 }
 
-/**
- * Retorna a regra específica de evolução para um alvo.
- *
- * @param {string} speciesId
- * @param {string} targetSpeciesId
- * @returns {object|null}
- */
 export function getEvolutionRule(speciesId, targetSpeciesId) {
   return EVOLUTION_RULES[speciesId]?.[targetSpeciesId] || null;
 }

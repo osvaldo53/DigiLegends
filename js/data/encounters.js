@@ -2,15 +2,24 @@ export const HUNTS = [
   {
     id: "training-grounds",
     name: "Campo de Treino",
-    description: "Área inicial para testes de combate e ganho básico de EXP.",
+    description: "Area inicial para testes de combate com Baby e In-Training.",
     minLevel: 1,
     rewards: { bits: 12, exp: 18 },
-    enemyPool: ["koromon", "tsunomon", "tokomon"]
+    enemyPool: [
+      "koromon",
+      "tsunomon",
+      "tokomon",
+      "tanemon",
+      "motimon",
+      "bukamon",
+      "yokomon",
+      "demiveemon"
+    ]
   },
   {
     id: "rookie-forest",
     name: "Floresta Rookie",
-    description: "Primeira área de risco moderado, com inimigos Rookie.",
+    description: "Primeira area de risco moderado, com inimigos Rookie.",
     minLevel: 3,
     rewards: { bits: 22, exp: 28 },
     enemyPool: [
@@ -27,7 +36,7 @@ export const HUNTS = [
   {
     id: "champion-ridge",
     name: "Crista Champion",
-    description: "Área avançada para testes com inimigos Champion.",
+    description: "Area avancada para testes com inimigos Champion.",
     minLevel: 8,
     rewards: { bits: 45, exp: 48 },
     enemyPool: [
@@ -43,8 +52,8 @@ export const HUNTS = [
   },
   {
     id: "ultimate-domain",
-    name: "Domínio Ultimate",
-    description: "Área de alto risco com Digimons Ultimate e recompensas superiores.",
+    name: "Dominio Ultimate",
+    description: "Area de alto risco com Digimons Ultimate e recompensas superiores.",
     minLevel: 18,
     rewards: { bits: 85, exp: 92 },
     enemyPool: [
@@ -56,6 +65,23 @@ export const HUNTS = [
       "zudomon",
       "garudamon",
       "aeroveedramon"
+    ]
+  },
+  {
+    id: "mega-sanctuary",
+    name: "Santuario Mega",
+    description: "Area extrema para testar batalhas contra formas Mega.",
+    minLevel: 30,
+    rewards: { bits: 135, exp: 138 },
+    enemyPool: [
+      "wargreymon",
+      "metalgarurumon",
+      "seraphimon",
+      "rosemon",
+      "herculeskabuterimon",
+      "vikemon",
+      "phoenixmon",
+      "ulforceveedramon"
     ]
   }
 ];

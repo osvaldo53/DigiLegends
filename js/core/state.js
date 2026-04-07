@@ -26,7 +26,8 @@ export const state = {
     progress: {
       huntsCompleted: 0
     },
-    inventory: []
+    inventory: [],
+    scanData: {}
   },
 
   /**
@@ -91,6 +92,7 @@ export const state = {
      */
     phaseLabel: "",
     phaseDurationMs: 0,
-    phaseStartedAt: 0
+    phaseStartedAt: 0,
+    summary: null
   }
 };

@@ -1,3 +1,5 @@
+import { MAX_PARTY_SIZE } from "../config/constants.js";
+
 /**
  * Sistema de gerenciamento entre Party e Storage.
  *
@@ -10,7 +12,7 @@
  * - o líder é sempre o primeiro elemento da party
  */
 
-export const PARTY_LIMIT = 3;
+export const PARTY_LIMIT = MAX_PARTY_SIZE;
 
 /**
  * Verifica se a party está cheia.

@@ -1,4 +1,5 @@
 import { state } from "../core/state.js";
+import { MAX_PARTY_SIZE } from "../config/constants.js";
 import { getDigimonSpecies } from "../data/digimons.js";
 import { getScanRule } from "../data/scanRules.js";
 import { createPlayerDigimon } from "../factories/digimonFactory.js";
@@ -143,7 +144,7 @@ export function convertScanToDigimon(save, speciesId) {
   let destination = "storage";
 
   // Limite inicial simples de time
-  if ((save.party?.length ?? 0) < 3) {
+  if ((save.party?.length ?? 0) < MAX_PARTY_SIZE) {
     save.party.push(newDigimon);
     destination = "party";
   } else {
