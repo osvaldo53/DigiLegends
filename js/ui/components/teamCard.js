@@ -2,6 +2,86 @@ import { getDigimonSpecies } from "../../data/digimons.js";
 import { escapeHtml } from "../../core/utils.js";
 import { getAvailableEvolutions } from "../../systems/evolutionSystem.js";
 
+function formatPartnerOption(partner) {
+  const speciesName =
+    getDigimonSpecies(partner.speciesId)?.name || partner.speciesId;
+  const displayName = partner.nickname?.trim() || speciesName;
+
+  return `${displayName} · Lv. ${partner.level} · Bond ${Number(partner.bond ?? 0).toFixed(1)}`;
+}
+
+function formatEvolutionRequirements(evolution) {
+  if (evolution.requirements.type !== "dna") {
+    return `Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}`;
+  }
+
+  const partnerSpecies =
+    getDigimonSpecies(evolution.requirements.partnerSpeciesId)?.name ||
+    evolution.requirements.partnerSpeciesId;
+  const partnerHint =
+    evolution.dnaPartners.length > 0
+      ? ` · Parceiros elegíveis: ${evolution.dnaPartners.length}`
+      : "";
+
+  return `DNA: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond} + ${partnerSpecies} Lv. ${evolution.requirements.partnerMinLevel} · Bond ${evolution.requirements.partnerMinBond}${partnerHint}`;
+}
+
+function renderEvolutionAction(playerDigimon, evolution) {
+  const isDnaEvolution = evolution.requirements.type === "dna";
+
+  if (!isDnaEvolution) {
+    return `
+      <button
+        class="btn ${evolution.isAvailable ? "btn-primary" : "btn-secondary"} js-evolve-digimon"
+        data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
+        data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+        ${evolution.isAvailable ? "" : "disabled"}
+      >
+        Evoluir
+      </button>
+    `;
+  }
+
+  const hasPartners = evolution.dnaPartners.length > 0;
+  const selectId = `dna-partner-${playerDigimon.uid}-${evolution.targetSpeciesId}`;
+
+  return `
+    <div class="button-row">
+      <select
+        id="${escapeHtml(selectId)}"
+        class="js-dna-partner-select"
+        data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+        data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
+        ${hasPartners ? "" : "disabled"}
+      >
+        ${
+          hasPartners
+            ? evolution.dnaPartners
+                .map(
+                  (partner) => `
+            <option value="${escapeHtml(partner.uid)}">
+              ${escapeHtml(formatPartnerOption(partner))}
+            </option>
+          `
+                )
+                .join("")
+            : '<option value="">Nenhum parceiro elegível</option>'
+        }
+      </select>
+
+      <button
+        class="btn ${evolution.isAvailable ? "btn-primary" : "btn-secondary"} js-evolve-digimon"
+        data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
+        data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+        data-partner-select-id="${escapeHtml(selectId)}"
+        ${evolution.isAvailable ? "" : "disabled"}
+      >
+        DNA Evolve
+      </button>
+    </div>
+  `;
+}
+
 /**
  * Card colapsável de Digimon.
  *
@@ -10,11 +90,13 @@ import { getAvailableEvolutions } from "../../systems/evolutionSystem.js";
  * Opções:
  * - context: "party" | "storage"
  * - isLeader: boolean
+ * - save: object
  */
 export function renderTeamCard(playerDigimon, options = {}) {
   const species = getDigimonSpecies(playerDigimon.speciesId);
   const context = options.context || "party";
   const isLeader = Boolean(options.isLeader);
+  const save = options.save;
 
   if (!species) {
     return `
@@ -26,7 +108,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
 
   const displayName = playerDigimon.nickname?.trim() || species.name;
   const bond = Number(playerDigimon.bond ?? 0).toFixed(1);
-  const evolutions = getAvailableEvolutions(playerDigimon);
+  const evolutions = getAvailableEvolutions(playerDigimon, save);
 
   const leaderAction =
     context === "party"
@@ -76,19 +158,10 @@ export function renderTeamCard(playerDigimon, options = {}) {
               <div class="team-evolution-item">
                 <div class="team-evolution-item__info">
                   <strong>${escapeHtml(evolution.targetSpecies.name)}</strong>
-                  <small>
-                    Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}
-                  </small>
+                  <small>${escapeHtml(formatEvolutionRequirements(evolution))}</small>
                 </div>
 
-                <button
-                  class="btn ${evolution.isAvailable ? "btn-primary" : "btn-secondary"} js-evolve-digimon"
-                  data-target-species-id="${escapeHtml(evolution.targetSpeciesId)}"
-                  data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
-                  ${evolution.isAvailable ? "" : "disabled"}
-                >
-                  Evoluir
-                </button>
+                ${renderEvolutionAction(playerDigimon, evolution)}
               </div>
             `
               )

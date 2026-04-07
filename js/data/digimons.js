@@ -358,7 +358,7 @@ export const DIGIMONS = {
     element: "Fire",
     family: "Dragon Man",
     baseStats: { hp: 122, sp: 46, atk: 36, def: 25, int: 24, spd: 18 },
-    evolutions: [],
+    evolutions: ["omnimon"],
     sprite: "./assets/sprites/wargreymon.png"
   },
 
@@ -369,8 +369,19 @@ export const DIGIMONS = {
     element: "Water",
     family: "Machine",
     baseStats: { hp: 118, sp: 48, atk: 32, def: 24, int: 30, spd: 20 },
-    evolutions: [],
+    evolutions: ["omnimon"],
     sprite: "./assets/sprites/metalgarurumon.png"
+  },
+
+  omnimon: {
+    id: "omnimon",
+    name: "Omnimon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 138, sp: 56, atk: 40, def: 30, int: 34, spd: 24 },
+    evolutions: [],
+    sprite: "./assets/sprites/omnimon.png"
   },
 
   seraphimon: {

@@ -97,6 +97,27 @@ export const EVOLUTION_RULES = {
   },
   aeroveedramon: {
     ulforceveedramon: { minLevel: 36, minBond: 34 }
+  },
+
+  wargreymon: {
+    omnimon: {
+      type: "dna",
+      minLevel: 40,
+      minBond: 60,
+      partnerSpeciesId: "metalgarurumon",
+      partnerMinLevel: 40,
+      partnerMinBond: 60
+    }
+  },
+  metalgarurumon: {
+    omnimon: {
+      type: "dna",
+      minLevel: 40,
+      minBond: 60,
+      partnerSpeciesId: "wargreymon",
+      partnerMinLevel: 40,
+      partnerMinBond: 60
+    }
   }
 };
 

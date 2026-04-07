@@ -16,7 +16,8 @@ export function renderTeamScreen() {
         .map((digimon, index) =>
           renderTeamCard(digimon, {
             context: "party",
-            isLeader: index === 0
+            isLeader: index === 0,
+            save: state.save
           })
         )
         .join("")
@@ -27,7 +28,8 @@ export function renderTeamScreen() {
         .map((digimon) =>
           renderTeamCard(digimon, {
             context: "storage",
-            isLeader: false
+            isLeader: false,
+            save: state.save
           })
         )
         .join("")
@@ -82,6 +84,7 @@ export function bindTeamScreen() {
     button.addEventListener("click", () => {
       const digimonUid = button.dataset.digimonUid;
       const targetSpeciesId = button.dataset.targetSpeciesId;
+      const partnerSelectId = button.dataset.partnerSelectId;
 
       const playerDigimon = state.save.party.find(
         (digimon) => digimon.uid === digimonUid
@@ -92,8 +95,28 @@ export function bindTeamScreen() {
         return;
       }
 
+      const partnerUid = partnerSelectId
+        ? document.getElementById(partnerSelectId)?.value || ""
+        : "";
+
       try {
-        evolveDigimon(playerDigimon, targetSpeciesId, state.save);
+        if (targetSpeciesId === "omnimon") {
+          const partnerSelect = partnerSelectId
+            ? document.getElementById(partnerSelectId)
+            : null;
+          const partnerLabel =
+            partnerSelect?.selectedOptions?.[0]?.textContent?.trim() ||
+            "parceiro selecionado";
+          const confirmed = window.confirm(
+            `A DNA Evolution para Omnimon vai consumir ${partnerLabel}. Deseja continuar?`
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        evolveDigimon(playerDigimon, targetSpeciesId, state.save, { partnerUid });
         saveGame(state.save);
         window.dispatchEvent(new Event("digilegends:rerender"));
       } catch (error) {
