@@ -57,6 +57,28 @@ function setLastAction(actor, target, skill, isBasicAttack = false) {
   };
 }
 
+function setLastItemAction(actor, target, item) {
+  state.battle.lastAction = {
+    actor,
+    target,
+    moveName: item.name,
+    skillId: item.id,
+    isBasicAttack: false,
+    timestamp: Date.now()
+  };
+}
+
+function setLastSwitchAction(previousDigimon, nextDigimon) {
+  state.battle.lastAction = {
+    actor: "player",
+    target: "player",
+    moveName: `Troca: ${nextDigimon.name}`,
+    skillId: `switch:${previousDigimon.uid}:${nextDigimon.uid}`,
+    isBasicAttack: false,
+    timestamp: Date.now()
+  };
+}
+
 function pushLog(message) {
   state.battle.log.unshift(message);
   state.battle.log = state.battle.log.slice(0, 16);
@@ -159,6 +181,31 @@ function chooseSkillForBattle(digimonInstance, attackerSpecies, defenderSpecies)
   return {
     skill: BASIC_ATTACK_SKILL,
     isBasicAttack: true
+  };
+}
+
+function resolvePlayerSkillSelection(player, playerSpecies, enemySpecies, skillId = null) {
+  if (!skillId || skillId === BASIC_ATTACK_SKILL.id) {
+    return {
+      skill: BASIC_ATTACK_SKILL,
+      isBasicAttack: true
+    };
+  }
+
+  const availableSkills = getSpeciesSkills(playerSpecies);
+  const selectedSkill = availableSkills.find((skill) => skill.id === skillId);
+
+  if (!selectedSkill) {
+    throw new Error("Skill invalida para este Digimon.");
+  }
+
+  if ((player.currentSP ?? 0) < (selectedSkill.cost ?? 0)) {
+    throw new Error("SP insuficiente para usar esta skill.");
+  }
+
+  return {
+    skill: selectedSkill,
+    isBasicAttack: false
   };
 }
 
@@ -308,6 +355,13 @@ export function performPlayerAutoAttack() {
   if (!playerSpecies || !enemySpecies) return;
 
   const { skill, isBasicAttack } = chooseSkillForBattle(player, playerSpecies, enemySpecies);
+  return executePlayerAction(player, enemy, playerSpecies, enemySpecies, skill, isBasicAttack);
+}
+
+function executePlayerAction(player, enemy, playerSpecies, enemySpecies, skill, isBasicAttack) {
+  if (!player || !enemy || !playerSpecies || !enemySpecies || !skill) {
+    return;
+  }
 
   consumeSkillCost(player, skill);
   setLastAction("player", "enemy", skill, isBasicAttack);
@@ -347,6 +401,78 @@ export function performPlayerAutoAttack() {
     return;
   }
 
+  saveGame(state.save);
+}
+
+export function performPlayerBattleAction(skillId = null) {
+  if (!state.battle.active || state.battle.result) {
+    throw new Error("Nao ha batalha ativa.");
+  }
+
+  const player = getActivePlayerDigimon();
+  const enemy = state.battle.enemy;
+
+  if (!player || !enemy) {
+    throw new Error("Nao foi possivel localizar os combatentes.");
+  }
+
+  const playerSpecies = getDigimonSpecies(player.speciesId);
+  const enemySpecies = getDigimonSpecies(enemy.speciesId);
+
+  if (!playerSpecies || !enemySpecies) {
+    throw new Error("Nao foi possivel carregar os dados da batalha.");
+  }
+
+  const { skill, isBasicAttack } = resolvePlayerSkillSelection(
+    player,
+    playerSpecies,
+    enemySpecies,
+    skillId
+  );
+
+  executePlayerAction(player, enemy, playerSpecies, enemySpecies, skill, isBasicAttack);
+}
+
+export function performPlayerDigimonSwitch(nextDigimonUid) {
+  if (!state.battle.active || state.battle.result) {
+    throw new Error("Nao ha batalha ativa.");
+  }
+
+  const currentDigimon = getActivePlayerDigimon();
+
+  if (!currentDigimon) {
+    throw new Error("Nao foi possivel localizar o Digimon ativo.");
+  }
+
+  const nextDigimon = state.save.party.find((digimon) => digimon.uid === nextDigimonUid);
+
+  if (!nextDigimon) {
+    throw new Error("Digimon selecionado nao foi encontrado no time.");
+  }
+
+  if (nextDigimon.uid === currentDigimon.uid) {
+    throw new Error("Este Digimon ja esta em combate.");
+  }
+
+  if ((nextDigimon.currentHP ?? 0) <= 0) {
+    throw new Error("Nao e possivel trocar para um Digimon derrotado.");
+  }
+
+  const currentSpeciesName =
+    getDigimonSpecies(currentDigimon.speciesId)?.name ||
+    currentDigimon.nickname ||
+    currentDigimon.speciesId;
+  const nextSpeciesName =
+    getDigimonSpecies(nextDigimon.speciesId)?.name ||
+    nextDigimon.nickname ||
+    nextDigimon.speciesId;
+
+  switchActivePlayerDigimon(nextDigimon);
+  setLastSwitchAction(
+    { uid: currentDigimon.uid, name: currentSpeciesName },
+    { uid: nextDigimon.uid, name: nextSpeciesName }
+  );
+  pushLog(`${currentSpeciesName} recuou. ${nextSpeciesName} entrou em combate.`);
   saveGame(state.save);
 }
 
@@ -429,6 +555,36 @@ export function performAutoBattleTurn() {
 
 export function performPlayerAttack() {
   performAutoBattleTurn();
+}
+
+export function registerPlayerItemUse(item, targetDigimon, previousStats = {}) {
+  if (!item || !targetDigimon) {
+    return;
+  }
+
+  const speciesName =
+    getDigimonSpecies(targetDigimon.speciesId)?.name ||
+    targetDigimon.nickname ||
+    targetDigimon.speciesId;
+  const healedHP = Math.max(0, (targetDigimon.currentHP ?? 0) - (previousStats.hp ?? 0));
+  const healedSP = Math.max(0, (targetDigimon.currentSP ?? 0) - (previousStats.sp ?? 0));
+  const recoveredParts = [];
+
+  if (healedHP > 0) {
+    recoveredParts.push(`${healedHP} HP`);
+  }
+
+  if (healedSP > 0) {
+    recoveredParts.push(`${healedSP} SP`);
+  }
+
+  setLastItemAction("player", "player", item);
+  pushLog(
+    `${speciesName} usou ${item.name}${
+      recoveredParts.length ? ` e recuperou ${recoveredParts.join(" e ")}.` : "."
+    }`
+  );
+  saveGame(state.save);
 }
 
 export function fleeBattle() {

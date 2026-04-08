@@ -439,6 +439,10 @@
   background: linear-gradient(90deg, #8e7dff, #6aa6ff);
 }
 
+.battle-bar--exp > span {
+  background: linear-gradient(90deg, #ffd24a, #ff9f43);
+}
+
 .hunt-battle-card__stats {
   display: flex;
   justify-content: space-between;

@@ -2,6 +2,7 @@ import { state } from "../core/state.js";
 import { bindTitleScreen, renderTitleScreen } from "./screens/titleScreen.js";
 import { bindNewGameScreen, renderNewGameScreen } from "./screens/newGameScreen.js";
 import { bindHomeScreen, renderHomeScreen } from "./screens/homeScreen.js";
+import { bindOptionsScreen, renderOptionsScreen } from "./screens/optionsScreen.js";
 import { bindTeamScreen, renderTeamScreen } from "./screens/teamScreen.js";
 import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.js";
 import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
@@ -28,6 +29,11 @@ export function renderApp() {
     case "home":
       app.innerHTML = renderHomeScreen();
       bindHomeScreen();
+      break;
+
+    case "options":
+      app.innerHTML = renderOptionsScreen();
+      bindOptionsScreen();
       break;
 
     case "team":

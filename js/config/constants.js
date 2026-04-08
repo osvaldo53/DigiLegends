@@ -6,6 +6,7 @@ export const SUPPORTED_SCREENS = [
   "title",
   "newGame",
   "home",
+  "options",
   "team",
   "digidex",
   "hunts",

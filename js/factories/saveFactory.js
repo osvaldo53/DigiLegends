@@ -38,6 +38,27 @@ export function createEmptySave() {
       huntsCompleted: 0
     },
 
+    combat: {
+      autoBattleEnabled: true,
+      autoItemRules: {
+        bandage: {
+          enabled: false,
+          resource: "hp",
+          thresholdPercent: 35
+        },
+        small_recovery: {
+          enabled: false,
+          resource: "hp",
+          thresholdPercent: 55
+        },
+        small_sp_disk: {
+          enabled: false,
+          resource: "sp",
+          thresholdPercent: 25
+        }
+      }
+    },
+
     /**
      * Inventário do jogador
      */

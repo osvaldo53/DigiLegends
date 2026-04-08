@@ -131,6 +131,35 @@ function normalizeDigidexEntries(entries) {
   return normalized;
 }
 
+function normalizeAutoItemRule(rule, fallbackRule) {
+  const thresholdPercent = Math.max(
+    1,
+    Math.min(100, Math.floor(toSafeNumber(rule?.thresholdPercent, fallbackRule.thresholdPercent)))
+  );
+
+  return {
+    enabled: Boolean(rule?.enabled),
+    resource: rule?.resource === "sp" ? "sp" : "hp",
+    thresholdPercent
+  };
+}
+
+function normalizeCombatSettings(combat, baseCombat) {
+  const normalizedRules = {};
+
+  for (const [itemId, fallbackRule] of Object.entries(baseCombat.autoItemRules)) {
+    normalizedRules[itemId] = normalizeAutoItemRule(combat?.autoItemRules?.[itemId], fallbackRule);
+  }
+
+  return {
+    autoBattleEnabled:
+      typeof combat?.autoBattleEnabled === "boolean"
+        ? combat.autoBattleEnabled
+        : baseCombat.autoBattleEnabled,
+    autoItemRules: normalizedRules
+  };
+}
+
 /**
  * Salva os dados do jogo no localStorage.
  *
@@ -138,6 +167,10 @@ function normalizeDigidexEntries(entries) {
  */
 export function saveGame(saveData) {
   localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+}
+
+export function serializeSaveForExport(saveData) {
+  return JSON.stringify(saveData, null, 2);
 }
 
 /**
@@ -176,6 +209,29 @@ export function deleteSave() {
   localStorage.removeItem(SAVE_KEY);
 }
 
+export function importSaveFromText(rawText) {
+  if (!rawText || typeof rawText !== "string") {
+    throw new Error("Arquivo de save invalido.");
+  }
+
+  let parsedSave = null;
+
+  try {
+    parsedSave = JSON.parse(rawText);
+  } catch {
+    throw new Error("Nao foi possivel ler o arquivo de save.");
+  }
+
+  const migratedSave = migrateSaveIfNeeded(parsedSave);
+
+  if (!migratedSave.party.length) {
+    throw new Error("O save importado nao possui Digimons validos no time.");
+  }
+
+  saveGame(migratedSave);
+  return migratedSave;
+}
+
 /**
  * Migra saves antigos para a estrutura mais atual.
  *
@@ -196,6 +252,7 @@ export function migrateSaveIfNeeded(saveData) {
   const normalizedScanData = normalizeScanData(saveData.scanData);
   const normalizedSeen = normalizeDigidexEntries(saveData.digidex?.seen);
   const normalizedOwned = normalizeDigidexEntries(saveData.digidex?.owned);
+  const normalizedCombat = normalizeCombatSettings(saveData.combat, base.combat);
 
   for (const digimon of [...normalizedParty, ...normalizedStorage]) {
     uniquePush(normalizedSeen, digimon.speciesId);
@@ -234,6 +291,7 @@ export function migrateSaveIfNeeded(saveData) {
       )
     },
 
+    combat: normalizedCombat,
     inventory: normalizedInventory,
     scanData: normalizedScanData
   };

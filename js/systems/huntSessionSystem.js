@@ -1,20 +1,23 @@
 import { state } from "../core/state.js";
 import { saveGame } from "../core/saveManager.js";
 import { getDigimonSpecies } from "../data/digimons.js";
-import { addItemToInventory } from "./itemSystem.js";
+import { addItemToInventory, getInventoryEntry, useItemOnDigimon } from "./itemSystem.js";
 import {
   startBattleFromHunt,
   performPlayerAutoAttack,
+  performPlayerBattleAction,
+  performPlayerDigimonSwitch,
   performEnemyAutoAttack,
-  closeBattle
+  closeBattle,
+  registerPlayerItemUse
 } from "./battleSystem.js";
 
 const FIRST_ENCOUNTER_DELAY_MS = 1200;
 const TURN_CHARGE_DELAY_MS = 1600;
 const ENEMY_RESPONSE_DELAY_MS = 900;
-const NEXT_TURN_DELAY_MS = 1300;
 const NEXT_BATTLE_DELAY_MS = 2400;
 const RESOLVE_DELAY_MS = 1400;
+const AUTO_ITEM_ORDER = ["small_recovery", "bandage", "small_sp_disk"];
 
 let huntTimer = null;
 
@@ -22,10 +25,24 @@ function rerender() {
   window.dispatchEvent(new Event("digilegends:rerender"));
 }
 
-function setPhase(label, durationMs) {
+function getActiveBattlePlayerDigimon() {
+  const activeUid = state.battle.playerDigimonUid;
+
+  return (
+    state.save.party.find(
+      (digimon) => digimon.uid === activeUid && (digimon.currentHP ?? 0) > 0
+    ) || null
+  );
+}
+
+function isAutoBattleEnabled() {
+  return state.save.combat?.autoBattleEnabled !== false;
+}
+
+function setPhase(label, durationMs = 0) {
   state.huntSession.phaseLabel = label;
   state.huntSession.phaseDurationMs = durationMs;
-  state.huntSession.phaseStartedAt = Date.now();
+  state.huntSession.phaseStartedAt = durationMs > 0 ? Date.now() : 0;
 }
 
 function clearHuntTimer() {
@@ -84,6 +101,7 @@ function resetActiveHuntSession() {
   state.huntSession.totalBitsEarned = 0;
   state.huntSession.totalExpEarned = 0;
   state.huntSession.currentBattleNumber = 0;
+  state.huntSession.turnOwner = null;
   state.huntSession.status = "stopped";
   state.huntSession.drops = [];
   state.huntSession.phaseLabel = "";
@@ -95,7 +113,7 @@ function buildDropSummary() {
   return state.huntSession.drops.map((drop) => ({ ...drop }));
 }
 
-function restorePartyAfterDefeat() {
+function restorePartyAfterHuntEnd() {
   const healedDigimons = [];
 
   for (const digimon of state.save.party) {
@@ -147,6 +165,199 @@ function endHuntSession(reason, options = {}) {
   rerender();
 }
 
+function getCombatRule(itemId) {
+  return state.save.combat?.autoItemRules?.[itemId] || null;
+}
+
+function shouldTriggerAutoItem(playerDigimon, rule) {
+  if (!playerDigimon || !rule?.enabled) {
+    return false;
+  }
+
+  const resource = rule.resource === "sp" ? "sp" : "hp";
+  const currentValue =
+    resource === "sp" ? playerDigimon.currentSP ?? 0 : playerDigimon.currentHP ?? 0;
+  const maxValue =
+    resource === "sp" ? playerDigimon.finalStats.sp || 1 : playerDigimon.finalStats.hp || 1;
+  const currentPercent = (currentValue / maxValue) * 100;
+
+  return currentPercent <= Number(rule.thresholdPercent ?? 0);
+}
+
+function setPlayerTurnReady() {
+  state.huntSession.turnOwner = "player";
+
+  if (!state.battle.active || state.battle.result) {
+    return;
+  }
+
+  if (isAutoBattleEnabled()) {
+    setPhase("Carregando acao", TURN_CHARGE_DELAY_MS);
+    rerender();
+    scheduleNextStep(runAutoPlayerTurn, TURN_CHARGE_DELAY_MS);
+    return;
+  }
+
+  clearHuntTimer();
+  setPhase("Aguardando comando", 0);
+  saveGame(state.save);
+  rerender();
+}
+
+function scheduleEnemyTurn() {
+  state.huntSession.turnOwner = "enemy";
+  setPhase("Resposta inimiga", ENEMY_RESPONSE_DELAY_MS);
+  saveGame(state.save);
+  rerender();
+  scheduleNextStep(runEnemyAction, ENEMY_RESPONSE_DELAY_MS);
+}
+
+function handlePostPlayerAction() {
+  if (state.battle.result) {
+    finishBattleCycle();
+    return;
+  }
+
+  scheduleEnemyTurn();
+}
+
+function useBattleItemCore(itemId) {
+  const targetDigimon = getActiveBattlePlayerDigimon();
+
+  if (!targetDigimon) {
+    throw new Error("Nao ha Digimon valido para usar o item.");
+  }
+
+  const previousStats = {
+    hp: targetDigimon.currentHP ?? 0,
+    sp: targetDigimon.currentSP ?? 0
+  };
+
+  const result = useItemOnDigimon({
+    save: state.save,
+    itemId,
+    targetDigimon,
+    context: "battle"
+  });
+
+  registerPlayerItemUse(result.item, result.target, previousStats);
+  return result;
+}
+
+function tryUseConfiguredAutoItem() {
+  const player = getActiveBattlePlayerDigimon();
+
+  if (!player) {
+    return null;
+  }
+
+  for (const itemId of AUTO_ITEM_ORDER) {
+    const inventoryEntry = getInventoryEntry(state.save, itemId);
+    const rule = getCombatRule(itemId);
+
+    if (!inventoryEntry || inventoryEntry.quantity <= 0 || !shouldTriggerAutoItem(player, rule)) {
+      continue;
+    }
+
+    try {
+      return useBattleItemCore(itemId);
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
+function runAutoPlayerTurn() {
+  if (!state.huntSession.active) return;
+  if (!state.battle.active || state.battle.result) return;
+  if (state.huntSession.turnOwner !== "player") return;
+
+  const itemResult = tryUseConfiguredAutoItem();
+
+  if (!itemResult) {
+    performPlayerAutoAttack();
+  }
+
+  rerender();
+  handlePostPlayerAction();
+}
+
+function runEnemyAction() {
+  if (!state.huntSession.active) return;
+  if (!state.battle.active || state.battle.result) return;
+  if (state.huntSession.turnOwner !== "enemy") return;
+
+  performEnemyAutoAttack();
+  rerender();
+
+  if (state.battle.result) {
+    finishBattleCycle();
+    return;
+  }
+
+  setPlayerTurnReady();
+}
+
+function beginNextBattle() {
+  if (!state.huntSession.active) return;
+
+  state.huntSession.status = "battling";
+  state.huntSession.currentBattleNumber += 1;
+  state.huntSession.totalBattles += 1;
+
+  startBattleFromHunt(state.huntSession.huntId);
+  setPlayerTurnReady();
+}
+
+function finishBattleCycle() {
+  if (!state.huntSession.active) return;
+
+  state.huntSession.turnOwner = null;
+  state.huntSession.status = "resolving";
+
+  if (state.battle.result === "victory") {
+    state.huntSession.totalWins += 1;
+    state.huntSession.totalBitsEarned += state.battle.rewards?.bits || 0;
+    state.huntSession.totalExpEarned += state.battle.rewards?.exp || 0;
+
+    const drop = rollDrops();
+    registerDrop(drop);
+  }
+
+  if (state.battle.result === "defeat") {
+    state.huntSession.totalDefeats += 1;
+
+    const healedDigimons = restorePartyAfterHuntEnd();
+    const penaltyBits = state.battle.rewards?.bitsLost || 0;
+
+    endHuntSession("defeat", {
+      penaltyBits,
+      healedDigimons,
+      message: "Seu time foi derrotado e recebeu recuperacao completa para a proxima hunt."
+    });
+    return;
+  }
+
+  setPhase("Preparando proxima batalha", RESOLVE_DELAY_MS);
+  saveGame(state.save);
+  rerender();
+
+  scheduleNextStep(() => {
+    closeBattle();
+
+    if (!state.huntSession.active) return;
+
+    state.huntSession.status = "searching";
+    state.huntSession.turnOwner = null;
+    setPhase("Procurando inimigo", NEXT_BATTLE_DELAY_MS);
+    rerender();
+
+    scheduleNextStep(beginNextBattle, NEXT_BATTLE_DELAY_MS);
+  }, RESOLVE_DELAY_MS);
+}
+
 export function clearHuntSummary() {
   state.huntSession.summary = null;
   rerender();
@@ -171,6 +382,7 @@ export function startHuntSession(huntId) {
   state.huntSession.totalBitsEarned = 0;
   state.huntSession.totalExpEarned = 0;
   state.huntSession.currentBattleNumber = 0;
+  state.huntSession.turnOwner = null;
   state.huntSession.status = "searching";
   state.huntSession.drops = [];
   state.huntSession.phaseLabel = "";
@@ -179,112 +391,104 @@ export function startHuntSession(huntId) {
 
   setPhase("Procurando inimigo", FIRST_ENCOUNTER_DELAY_MS);
   rerender();
-
-  scheduleNextStep(() => {
-    beginNextBattle();
-  }, FIRST_ENCOUNTER_DELAY_MS);
+  scheduleNextStep(beginNextBattle, FIRST_ENCOUNTER_DELAY_MS);
 }
 
 export function stopHuntSession() {
+  const healedDigimons = restorePartyAfterHuntEnd();
+
   endHuntSession("manual", {
-    message: "Hunt encerrada pelo jogador."
+    healedDigimons,
+    message: "Hunt encerrada pelo jogador. Seu time foi totalmente recuperado."
   });
 }
 
-function beginNextBattle() {
-  if (!state.huntSession.active) return;
+export function toggleAutoBattleMode() {
+  state.save.combat.autoBattleEnabled = !isAutoBattleEnabled();
+  saveGame(state.save);
 
-  state.huntSession.status = "battling";
-  state.huntSession.currentBattleNumber += 1;
-  state.huntSession.totalBattles += 1;
-
-  startBattleFromHunt(state.huntSession.huntId);
-
-  setPhase("Carregando acao", TURN_CHARGE_DELAY_MS);
-  rerender();
-
-  scheduleNextStep(runPlayerAction, TURN_CHARGE_DELAY_MS);
-}
-
-function runPlayerAction() {
-  if (!state.huntSession.active) return;
-  if (!state.battle.active || state.battle.result) return;
-
-  performPlayerAutoAttack();
-  rerender();
-
-  if (state.battle.result) {
-    finishBattleCycle();
+  if (state.huntSession.active && state.battle.active && !state.battle.result) {
+    if (state.huntSession.turnOwner === "player") {
+      setPlayerTurnReady();
+    } else {
+      rerender();
+    }
     return;
   }
 
-  setPhase("Resposta inimiga", ENEMY_RESPONSE_DELAY_MS);
   rerender();
-
-  scheduleNextStep(runEnemyAction, ENEMY_RESPONSE_DELAY_MS);
 }
 
-function runEnemyAction() {
-  if (!state.huntSession.active) return;
-  if (!state.battle.active || state.battle.result) return;
+export function updateAutoItemRule(itemId, patch = {}) {
+  const existingRule = getCombatRule(itemId);
 
-  performEnemyAutoAttack();
-  rerender();
-
-  if (state.battle.result) {
-    finishBattleCycle();
+  if (!existingRule) {
     return;
   }
 
-  setPhase("Carregando acao", NEXT_TURN_DELAY_MS);
-  rerender();
+  state.save.combat.autoItemRules[itemId] = {
+    ...existingRule,
+    ...patch,
+    resource: patch.resource === "sp" ? "sp" : patch.resource === "hp" ? "hp" : existingRule.resource,
+    thresholdPercent: Math.max(
+      1,
+      Math.min(
+        100,
+        Math.floor(
+          Number.isFinite(Number(patch.thresholdPercent))
+            ? Number(patch.thresholdPercent)
+            : existingRule.thresholdPercent
+        )
+      )
+    )
+  };
 
-  scheduleNextStep(runPlayerAction, NEXT_TURN_DELAY_MS);
-}
-
-function finishBattleCycle() {
-  if (!state.huntSession.active) return;
-
-  state.huntSession.status = "resolving";
-
-  if (state.battle.result === "victory") {
-    state.huntSession.totalWins += 1;
-    state.huntSession.totalBitsEarned += state.battle.rewards?.bits || 0;
-    state.huntSession.totalExpEarned += state.battle.rewards?.exp || 0;
-
-    const drop = rollDrops();
-    registerDrop(drop);
-  }
-
-  if (state.battle.result === "defeat") {
-    state.huntSession.totalDefeats += 1;
-
-    const healedDigimons = restorePartyAfterDefeat();
-    const penaltyBits = state.battle.rewards?.bitsLost || 0;
-
-    endHuntSession("defeat", {
-      penaltyBits,
-      healedDigimons,
-      message: "Seu time foi derrotado e recebeu recuperacao completa para a proxima hunt."
-    });
-    return;
-  }
-
-  setPhase("Preparando proxima batalha", RESOLVE_DELAY_MS);
   saveGame(state.save);
   rerender();
+}
 
-  scheduleNextStep(() => {
-    closeBattle();
+export function performManualBattleAction(skillId = null) {
+  if (!state.huntSession.active || !state.battle.active || state.battle.result) {
+    throw new Error("Nao ha batalha ativa.");
+  }
 
-    if (!state.huntSession.active) return;
+  if (state.huntSession.turnOwner !== "player") {
+    throw new Error("Ainda nao e o turno do jogador.");
+  }
 
-    state.huntSession.status = "searching";
-    setPhase("Procurando inimigo", NEXT_BATTLE_DELAY_MS);
-    rerender();
+  clearHuntTimer();
+  performPlayerBattleAction(skillId);
+  rerender();
+  handlePostPlayerAction();
+}
 
-    scheduleNextStep(() => {
-      beginNextBattle();
-    }, NEXT_BATTLE_DELAY_MS);
-  }, RESOLVE_DELAY_MS);
+export function useBattleItemTurn(itemId) {
+  if (!state.huntSession.active || !state.battle.active || state.battle.result) {
+    throw new Error("Nao ha batalha ativa.");
+  }
+
+  if (state.huntSession.turnOwner !== "player") {
+    throw new Error("Ainda nao e o turno do jogador.");
+  }
+
+  clearHuntTimer();
+  const result = useBattleItemCore(itemId);
+  rerender();
+  handlePostPlayerAction();
+  return result;
+}
+
+export function switchBattleDigimonTurn(nextDigimonUid) {
+  if (!state.huntSession.active || !state.battle.active || state.battle.result) {
+    throw new Error("Nao ha batalha ativa.");
+  }
+
+  if (state.huntSession.turnOwner !== "player") {
+    throw new Error("Ainda nao e o turno do jogador.");
+  }
+
+  clearHuntTimer();
+  performPlayerDigimonSwitch(nextDigimonUid);
+  rerender();
+  handlePostPlayerAction();
 }

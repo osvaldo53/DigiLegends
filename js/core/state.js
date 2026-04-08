@@ -26,6 +26,10 @@ export const state = {
     progress: {
       huntsCompleted: 0
     },
+    combat: {
+      autoBattleEnabled: true,
+      autoItemRules: {}
+    },
     inventory: [],
     scanData: {}
   },
@@ -48,7 +52,7 @@ export const state = {
      * lastAction:
      * - actor: "player" | "enemy"
      * - target: "player" | "enemy"
-     * - moveName: nome do ataque exibido
+     * - moveName: nome da ação exibida
      * - timestamp: momento da ação
      */
     lastAction: null
@@ -67,6 +71,7 @@ export const state = {
     totalBitsEarned: 0,
     totalExpEarned: 0,
     currentBattleNumber: 0,
+    turnOwner: null, // null | "player" | "enemy"
     status: "idle", // idle | searching | battling | resolving | stopped
 
     /**
@@ -80,16 +85,6 @@ export const state = {
 
     /**
      * Controle visual da barra de carregamento.
-     * phaseLabel:
-     * - "Procurando inimigo"
-     * - "Próximo turno"
-     * - "Preparando próxima batalha"
-     *
-     * phaseDurationMs:
-     * Duração da fase atual.
-     *
-     * phaseStartedAt:
-     * Timestamp de início da fase.
      */
     phaseLabel: "",
     phaseDurationMs: 0,

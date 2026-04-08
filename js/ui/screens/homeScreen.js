@@ -1,6 +1,5 @@
 import { goToScreen } from "../../core/router.js";
 import { state } from "../../core/state.js";
-import { deleteSave } from "../../core/saveManager.js";
 
 export function renderHomeScreen() {
   return `
@@ -54,9 +53,9 @@ export function renderHomeScreen() {
           </div>
 
           <div class="menu-tile">
-            <h3>Save</h3>
-            <p>Apagar o save atual para reiniciar os testes.</p>
-            <button class="btn btn-danger" id="btn-reset-save">Apagar save</button>
+            <h3>Opcoes</h3>
+            <p>Exportar, importar ou apagar o save atual.</p>
+            <button class="btn btn-secondary" id="btn-go-options">Abrir opcoes</button>
           </div>
         </div>
       </div>
@@ -89,11 +88,7 @@ export function bindHomeScreen() {
     goToScreen("conversion");
   });
 
-  document.getElementById("btn-reset-save")?.addEventListener("click", () => {
-    const confirmed = window.confirm("Deseja apagar o save atual e voltar para a tela inicial?");
-    if (!confirmed) return;
-
-    deleteSave();
-    goToScreen("title");
+  document.getElementById("btn-go-options")?.addEventListener("click", () => {
+    goToScreen("options");
   });
 }
