@@ -150,7 +150,7 @@ export const DIGIMONS = {
     family: "Lesser",
     baseStats: { hp: 23, sp: 12, atk: 4, def: 5, int: 5, spd: 5 },
     evolutions: ["hagurumon"],
-    sprite: ""
+    sprite: "./assets/sprites/kapurimon.png"
   },
 
   tentomon: {
@@ -249,7 +249,7 @@ export const DIGIMONS = {
     family: "Machine",
     baseStats: { hp: 41, sp: 18, atk: 9, def: 10, int: 9, spd: 7 },
     evolutions: ["guardromon"],
-    sprite: ""
+    sprite: "./assets/sprites/hagurumon.png"
   },
 
   greymon: {
@@ -381,7 +381,7 @@ export const DIGIMONS = {
     family: "Machine",
     baseStats: { hp: 68, sp: 24, atk: 16, def: 17, int: 14, spd: 8 },
     evolutions: ["andromon"],
-    sprite: ""
+    sprite: "./assets/sprites/guardromon.png"
   },
 
   flamedramon: {
@@ -568,7 +568,7 @@ export const DIGIMONS = {
     family: "Cyborg",
     baseStats: { hp: 92, sp: 34, atk: 24, def: 22, int: 20, spd: 12 },
     evolutions: ["craniamon"],
-    sprite: ""
+    sprite: "./assets/sprites/andromon.png"
   },
 
   wargreymon: {
@@ -733,7 +733,7 @@ export const DIGIMONS = {
     family: "Holy Warrior",
     baseStats: { hp: 136, sp: 48, atk: 34, def: 32, int: 28, spd: 18 },
     evolutions: [],
-    sprite: ""
+    sprite: "./assets/sprites/craniamon.png"
   }
 };
 
