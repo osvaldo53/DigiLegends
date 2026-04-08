@@ -10,7 +10,8 @@
 export const state = {
   app: {
     initialized: false,
-    currentScreen: "title"
+    currentScreen: "title",
+    evolutionAnimation: null
   },
 
   save: {

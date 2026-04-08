@@ -142,6 +142,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/motimon.png"
   },
 
+  kapurimon: {
+    id: "kapurimon",
+    name: "Kapurimon",
+    type: "Free",
+    element: "Electric",
+    family: "Lesser",
+    baseStats: { hp: 23, sp: 12, atk: 4, def: 5, int: 5, spd: 5 },
+    evolutions: ["hagurumon"],
+    sprite: ""
+  },
+
   tentomon: {
     id: "tentomon",
     name: "Tentomon",
@@ -228,6 +239,17 @@ export const DIGIMONS = {
     baseStats: { hp: 43, sp: 15, atk: 12, def: 8, int: 7, spd: 10 },
     evolutions: ["exveemon", "flamedramon", "lighdramon"],
     sprite: "./assets/sprites/veemon.png"
+  },
+
+  hagurumon: {
+    id: "hagurumon",
+    name: "Hagurumon",
+    type: "Virus",
+    element: "Electric",
+    family: "Machine",
+    baseStats: { hp: 41, sp: 18, atk: 9, def: 10, int: 9, spd: 7 },
+    evolutions: ["guardromon"],
+    sprite: ""
   },
 
   greymon: {
@@ -349,6 +371,17 @@ export const DIGIMONS = {
     baseStats: { hp: 64, sp: 26, atk: 18, def: 12, int: 14, spd: 12 },
     evolutions: ["paildramon"],
     sprite: "./assets/sprites/stingmon.png"
+  },
+
+  guardromon: {
+    id: "guardromon",
+    name: "Guardromon",
+    type: "Virus",
+    element: "Electric",
+    family: "Machine",
+    baseStats: { hp: 68, sp: 24, atk: 16, def: 17, int: 14, spd: 8 },
+    evolutions: ["andromon"],
+    sprite: ""
   },
 
   flamedramon: {
@@ -527,6 +560,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/infermon.png"
   },
 
+  andromon: {
+    id: "andromon",
+    name: "Andromon",
+    type: "Vaccine",
+    element: "Electric",
+    family: "Cyborg",
+    baseStats: { hp: 92, sp: 34, atk: 24, def: 22, int: 20, spd: 12 },
+    evolutions: ["craniamon"],
+    sprite: ""
+  },
+
   wargreymon: {
     id: "wargreymon",
     name: "WarGreymon",
@@ -679,6 +723,17 @@ export const DIGIMONS = {
     baseStats: { hp: 132, sp: 52, atk: 40, def: 27, int: 30, spd: 22 },
     evolutions: [],
     sprite: "./assets/sprites/imperialdramon_fm.png"
+  },
+
+  craniamon: {
+    id: "craniamon",
+    name: "Craniamon",
+    type: "Vaccine",
+    element: "Dark",
+    family: "Holy Warrior",
+    baseStats: { hp: 136, sp: 48, atk: 34, def: 32, int: 28, spd: 18 },
+    evolutions: [],
+    sprite: ""
   }
 };
 

@@ -10,68 +10,111 @@ import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
 import { bindShopScreen, renderShopScreen } from "./screens/shopScreen.js";
 import { bindConversionScreen, renderConversionScreen } from "./screens/conversionScreen.js";
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
+import { renderEvolutionModal } from "./components/evolutionModal.js";
 
 export function renderApp() {
   const app = document.getElementById("app");
   if (!app) return;
 
+  let screenMarkup = "";
+
   switch (state.app.currentScreen) {
     case "title":
-      app.innerHTML = renderTitleScreen();
+      screenMarkup = renderTitleScreen();
+      break;
+
+    case "newGame":
+      screenMarkup = renderNewGameScreen();
+      break;
+
+    case "home":
+      screenMarkup = renderHomeScreen();
+      break;
+
+    case "options":
+      screenMarkup = renderOptionsScreen();
+      break;
+
+    case "team":
+      screenMarkup = renderTeamScreen();
+      break;
+
+    case "digidex":
+      screenMarkup = renderDigiDexScreen();
+      break;
+
+    case "hunts":
+      screenMarkup = renderHuntsScreen();
+      break;
+
+    case "items":
+      screenMarkup = renderItemsScreen();
+      break;
+
+    case "shop":
+      screenMarkup = renderShopScreen();
+      break;
+
+    case "conversion":
+      screenMarkup = renderConversionScreen();
+      break;
+
+    case "notFound":
+      screenMarkup = renderNotFoundScreen();
+      break;
+
+    default:
+      screenMarkup = renderNotFoundScreen();
+      break;
+  }
+
+  app.innerHTML = `
+    ${screenMarkup}
+    ${renderEvolutionModal(state.app.evolutionAnimation)}
+  `;
+
+  switch (state.app.currentScreen) {
+    case "title":
       bindTitleScreen();
       break;
 
     case "newGame":
-      app.innerHTML = renderNewGameScreen();
       bindNewGameScreen();
       break;
 
     case "home":
-      app.innerHTML = renderHomeScreen();
       bindHomeScreen();
       break;
 
     case "options":
-      app.innerHTML = renderOptionsScreen();
       bindOptionsScreen();
       break;
 
     case "team":
-      app.innerHTML = renderTeamScreen();
       bindTeamScreen();
       break;
 
     case "digidex":
-      app.innerHTML = renderDigiDexScreen();
       bindDigiDexScreen();
       break;
 
     case "hunts":
-      app.innerHTML = renderHuntsScreen();
       bindHuntsScreen();
       break;
 
     case "items":
-      app.innerHTML = renderItemsScreen();
       bindItemsScreen();
       break;
 
     case "shop":
-      app.innerHTML = renderShopScreen();
       bindShopScreen();
       break;
 
     case "conversion":
-      app.innerHTML = renderConversionScreen();
       bindConversionScreen();
       break;
 
-    case "notFound":
-      app.innerHTML = renderNotFoundScreen();
-      break;
-
     default:
-      app.innerHTML = renderNotFoundScreen();
       break;
   }
 }

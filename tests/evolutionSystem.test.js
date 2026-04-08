@@ -63,6 +63,15 @@ describe("evolutionSystem", () => {
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
 
+  it("permite a nova linha Kapurimon ate Hagurumon", () => {
+    const kapurimon = createPlayerDigimon("kapurimon", {
+      level: 3,
+      bond: 1
+    });
+
+    expect(canEvolveTo(kapurimon, "hagurumon")).toBe(true);
+  });
+
   it("evolui e registra a especie no digidex", () => {
     const save = createEmptySave();
     const agumon = createPlayerDigimon("agumon", {
@@ -95,6 +104,15 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(wormmon, "stingmon")).toBe(true);
+  });
+
+  it("permite evoluir Hagurumon para Guardromon", () => {
+    const hagurumon = createPlayerDigimon("hagurumon", {
+      level: 10,
+      bond: 5
+    });
+
+    expect(canEvolveTo(hagurumon, "guardromon")).toBe(true);
   });
 
   it("exige Digi-Ovo da Coragem para evoluir Veemon em Flamedramon", () => {
@@ -168,6 +186,15 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(imperialdramonDm, "imperialdramon_fm")).toBe(true);
+  });
+
+  it("permite evoluir Andromon para Craniamon", () => {
+    const andromon = createPlayerDigimon("andromon", {
+      level: 36,
+      bond: 34
+    });
+
+    expect(canEvolveTo(andromon, "craniamon")).toBe(true);
   });
 
   it("permite DNA evolution de WarGreymon para Omnimon quando o parceiro existe", () => {

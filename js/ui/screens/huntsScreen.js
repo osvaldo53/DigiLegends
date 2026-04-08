@@ -110,7 +110,10 @@ function renderBattleSide({
   attackValue,
   defValue,
   sideType,
-  showExp = false
+  showExp = false,
+  isPlaceholder = false,
+  placeholderMessage = "",
+  placeholderDetail = ""
 }) {
   const lastAction = state.battle.lastAction;
   const isRecentAction =
@@ -123,9 +126,54 @@ function renderBattleSide({
   const sideClass = [
     "hunt-battle-card",
     sideType === "player" ? "hunt-battle-card--player" : "hunt-battle-card--enemy",
+    isPlaceholder ? "hunt-battle-card--placeholder" : "",
     isAttacking ? "is-attacking" : "",
     isTarget ? "is-hit" : ""
   ].join(" ").trim();
+
+  if (isPlaceholder) {
+    return `
+      <article class="${sideClass}">
+        <h3>${escapeHtml(title)}</h3>
+
+        <div class="battle-affinity-row">
+          <span class="battle-affinity-pill battle-affinity-pill--type battle-affinity-pill--neutral">
+            Aguardando
+          </span>
+          <span class="battle-affinity-pill battle-affinity-pill--element">Standby</span>
+        </div>
+
+        <div class="hunt-battle-card__sprite-wrap hunt-battle-card__sprite-wrap--placeholder">
+          <div class="hunt-battle-card__placeholder-orb"></div>
+        </div>
+
+        <div class="battle-stat battle-stat--placeholder">
+          <div class="battle-stat__top">
+            <span>${escapeHtml(placeholderMessage || "Preparando")}</span>
+            <span>${escapeHtml(placeholderDetail || "...")}</span>
+          </div>
+          <div class="battle-bar battle-bar--placeholder">
+            <span></span>
+          </div>
+        </div>
+
+        <div class="battle-stat battle-stat--placeholder">
+          <div class="battle-stat__top">
+            <span>Assinatura</span>
+            <span>--</span>
+          </div>
+          <div class="battle-bar battle-bar--placeholder">
+            <span></span>
+          </div>
+        </div>
+
+        <div class="hunt-battle-card__stats hunt-battle-card__stats--placeholder">
+          <span>ATK: --</span>
+          <span>DEF: --</span>
+        </div>
+      </article>
+    `;
+  }
 
   return `
     <article class="${sideClass}">
@@ -156,6 +204,56 @@ function renderBattleSide({
       <div class="hunt-battle-card__stats">
         <span>ATK: ${attackValue}</span>
         <span>DEF: ${defValue}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderBattlePlaceholder({ title, sideType, message, detail = "" }) {
+  const sideClass = [
+    "hunt-battle-card",
+    "hunt-battle-card--placeholder",
+    sideType === "player" ? "hunt-battle-card--player" : "hunt-battle-card--enemy"
+  ].join(" ").trim();
+
+  return `
+    <article class="${sideClass}">
+      <h3>${escapeHtml(title)}</h3>
+
+      <div class="battle-affinity-row">
+        <span class="battle-affinity-pill battle-affinity-pill--type battle-affinity-pill--neutral">
+          Aguardando
+        </span>
+        <span class="battle-affinity-pill battle-affinity-pill--element">Standby</span>
+      </div>
+
+      <div class="hunt-battle-card__sprite-wrap hunt-battle-card__sprite-wrap--placeholder">
+        <div class="hunt-battle-card__placeholder-orb"></div>
+      </div>
+
+      <div class="battle-stat battle-stat--placeholder">
+        <div class="battle-stat__top">
+          <span>${escapeHtml(message)}</span>
+          <span>${escapeHtml(detail)}</span>
+        </div>
+        <div class="battle-bar battle-bar--placeholder">
+          <span></span>
+        </div>
+      </div>
+
+      <div class="battle-stat battle-stat--placeholder">
+        <div class="battle-stat__top">
+          <span>Preparando</span>
+          <span>...</span>
+        </div>
+        <div class="battle-bar battle-bar--placeholder">
+          <span></span>
+        </div>
+      </div>
+
+      <div class="hunt-battle-card__stats hunt-battle-card__stats--placeholder">
+        <span>ATK: --</span>
+        <span>DEF: --</span>
       </div>
     </article>
   `;
@@ -317,7 +415,7 @@ function formatMultiplier(multiplier) {
 }
 
 function renderActiveSkills(playerDigimon, playerSpecies, enemySpecies) {
-  if (!playerDigimon || !playerSpecies || !enemySpecies) {
+  if (!playerDigimon || !playerSpecies || !enemySpecies || enemySpecies.isPlaceholder) {
     return "";
   }
 
@@ -495,7 +593,12 @@ function renderCombatControlPanel() {
 function renderActiveSessionPanel() {
   const player = getActiveBattlePlayerDigimon();
   const activeHunt = state.huntSession.huntId ? getHuntById(state.huntSession.huntId) : null;
-  const enemy = state.battle.enemy;
+  const enemy = state.battle.enemy || {
+    level: 0,
+    currentHP: 0,
+    currentSP: 0,
+    finalStats: { hp: 0, sp: 0, atk: 0, def: 0 }
+  };
   const enemySpecies = enemy ? getDigimonSpecies(enemy.speciesId) : null;
   const playerSpecies = player ? getDigimonSpecies(player.speciesId) : null;
   const progressPercent = getPhaseProgressPercent();
@@ -507,15 +610,89 @@ function renderActiveSessionPanel() {
     enemySpecies && playerSpecies
       ? getTypeMultiplier(enemySpecies.type, playerSpecies.type)
       : 1;
+  const hasLiveBattle = Boolean(player && enemy && enemySpecies);
+  const displayEnemy = hasLiveBattle
+    ? enemy
+    : {
+        level: 0,
+        currentHP: 0,
+        finalStats: { hp: 0, sp: 0, atk: 0, def: 0 }
+      };
+  const displayEnemySpecies = hasLiveBattle
+    ? enemySpecies
+    : {
+        name: state.huntSession.status === "searching" ? "Procurando inimigo" : "Inimigo",
+        type: "Aguardando",
+        element: "Standby",
+        sprite: "",
+        isPlaceholder: true
+      };
 
   const actionActorName =
     state.battle.lastAction?.actor === "player"
       ? playerSpecies?.name || "Aliado"
-      : enemySpecies?.name || "Inimigo";
+      : displayEnemySpecies?.name || "Inimigo";
 
   const actionText = state.battle.lastAction
     ? `${actionActorName} usou ${state.battle.lastAction.moveName}`
     : "Aguardando proxima acao";
+
+  const playerCardMarkup = player
+    ? renderBattleSide({
+        title: `${playerSpecies?.name || "Aliado"} Â· Lv. ${player.level}`,
+        sprite: playerSpecies?.sprite || "",
+        typeLabel: playerSpecies?.type || "Unknown Type",
+        elementLabel: playerSpecies?.element || "Neutral",
+        typeTone: getMultiplierTone(playerTypeMultiplier),
+        typeMultiplier: playerTypeMultiplier,
+        hpCurrent: player.currentHP,
+        hpMax: player.finalStats.hp,
+        spCurrent: player.currentSP,
+        spMax: player.finalStats.sp,
+        expCurrent: player.exp ?? 0,
+        level: player.level,
+        attackValue: player.finalStats.atk,
+        defValue: player.finalStats.def,
+        sideType: "player",
+        showExp: true
+      })
+    : renderBattlePlaceholder({
+        title: "Aliado",
+        sideType: "player",
+        message: "Nenhum Digimon pronto",
+        detail: "Time indisponivel"
+      });
+
+  const enemyCardMarkup = enemy && enemySpecies
+    ? renderBattleSide({
+                title: displayEnemySpecies.isPlaceholder
+                  ? displayEnemySpecies.name
+                  : `${displayEnemySpecies?.name || "Inimigo"} Â· Lv. ${displayEnemy.level}`,
+        sprite: enemySpecies?.sprite || "",
+        typeLabel: enemySpecies?.type || "Unknown Type",
+        elementLabel: enemySpecies?.element || "Neutral",
+        typeTone: getMultiplierTone(enemyTypeMultiplier),
+        typeMultiplier: enemyTypeMultiplier,
+        hpCurrent: enemy.currentHP,
+        hpMax: enemy.finalStats.hp,
+        spCurrent: enemy.currentSP,
+        spMax: enemy.finalStats.sp,
+        attackValue: enemy.finalStats.atk,
+        defValue: enemy.finalStats.def,
+        sideType: "enemy"
+      })
+    : renderBattlePlaceholder({
+        title: "Inimigo",
+        sideType: "enemy",
+        message:
+          state.huntSession.status === "searching"
+            ? "Procurando inimigo"
+            : "Sem batalha ativa",
+        detail:
+          state.huntSession.status === "searching"
+            ? "Escaneando area"
+            : "Aguardando encontro"
+      });
 
   return `
     <section class="screen">
@@ -551,7 +728,7 @@ function renderActiveSessionPanel() {
         </div>
 
         ${
-          player && enemy
+          player
             ? `
               <div class="hunt-battle-grid">
               ${renderBattleSide({
@@ -575,20 +752,29 @@ function renderActiveSessionPanel() {
 
               ${renderBattleSide({
                 title: `${enemySpecies?.name || "Inimigo"} · Lv. ${enemy.level}`,
-                sprite: enemySpecies?.sprite || "",
-                typeLabel: enemySpecies?.type || "Unknown Type",
-                elementLabel: enemySpecies?.element || "Neutral",
+                sprite: displayEnemySpecies?.sprite || "",
+                typeLabel: displayEnemySpecies?.type || "Unknown Type",
+                elementLabel: displayEnemySpecies?.element || "Neutral",
                 typeTone: getMultiplierTone(enemyTypeMultiplier),
                 typeMultiplier: enemyTypeMultiplier,
-                hpCurrent: enemy.currentHP,
-                hpMax: enemy.finalStats.hp,
-                spCurrent: enemy.currentSP,
-                spMax: enemy.finalStats.sp,
+                hpCurrent: displayEnemy.currentHP,
+                hpMax: displayEnemy.finalStats.hp,
+                spCurrent: displayEnemy.currentSP ?? 0,
+                spMax: displayEnemy.finalStats.sp,
                 expCurrent: 0,
-                level: enemy.level,
-                attackValue: enemy.finalStats.atk,
-                defValue: enemy.finalStats.def,
-                sideType: "enemy"
+                level: displayEnemy.level,
+                attackValue: displayEnemy.finalStats.atk,
+                defValue: displayEnemy.finalStats.def,
+                sideType: "enemy",
+                isPlaceholder: displayEnemySpecies.isPlaceholder,
+                placeholderMessage:
+                  state.huntSession.status === "searching"
+                    ? "Procurando inimigo"
+                    : "Aguardando proximo combate",
+                placeholderDetail:
+                  state.huntSession.status === "searching"
+                    ? "Escaneando area"
+                    : "Preparando encontro"
               })}
               </div>
 
@@ -596,7 +782,15 @@ function renderActiveSessionPanel() {
                 ${escapeHtml(actionText)}
               </div>
 
-              ${renderActiveSkills(player, playerSpecies, enemySpecies)}
+              ${
+                hasLiveBattle
+                  ? renderActiveSkills(player, playerSpecies, enemySpecies)
+                  : `
+                    <div class="hunt-empty-battle">
+                      <p class="hunt-session__muted">Os cards permanecem na tela enquanto a proxima batalha e preparada.</p>
+                    </div>
+                  `
+              }
             `
             : `
               <div class="hunt-empty-battle">

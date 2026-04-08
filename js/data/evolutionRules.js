@@ -19,6 +19,9 @@ export const EVOLUTION_RULES = {
   motimon: {
     tentomon: { minLevel: 3, minBond: 1 }
   },
+  kapurimon: {
+    hagurumon: { minLevel: 3, minBond: 1 }
+  },
   bukamon: {
     gomamon: { minLevel: 3, minBond: 1 }
   },
@@ -81,6 +84,9 @@ export const EVOLUTION_RULES = {
       requiredItemId: "digi_egg_friendship"
     }
   },
+  hagurumon: {
+    guardromon: { minLevel: 10, minBond: 5 }
+  },
   wormmon: {
     stingmon: { minLevel: 10, minBond: 5 }
   },
@@ -126,6 +132,9 @@ export const EVOLUTION_RULES = {
       partnerMinBond: 24
     }
   },
+  guardromon: {
+    andromon: { minLevel: 22, minBond: 18 }
+  },
   stingmon: {
     paildramon: {
       type: "dna",
@@ -154,6 +163,9 @@ export const EVOLUTION_RULES = {
   },
   infermon: {
     diaboromon: { minLevel: 36, minBond: 34 }
+  },
+  andromon: {
+    craniamon: { minLevel: 36, minBond: 34 }
   },
   lillymon: {
     rosemon: { minLevel: 34, minBond: 32 }

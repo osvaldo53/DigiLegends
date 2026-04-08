@@ -12,6 +12,7 @@ export const HUNTS = [
       "tokomon",
       "tanemon",
       "motimon",
+      "kapurimon",
       "bukamon",
       "yokomon",
       "demiveemon"
@@ -30,6 +31,7 @@ export const HUNTS = [
       "patamon",
       "palmon",
       "tentomon",
+      "hagurumon",
       "gomamon",
       "biyomon",
       "veemon"
@@ -48,6 +50,7 @@ export const HUNTS = [
       "angemon",
       "togemon",
       "kabuterimon",
+      "guardromon",
       "ikkakumon",
       "birdramon",
       "exveemon"

@@ -1,6 +1,9 @@
 import { state } from "../../core/state.js";
 import { goToScreen } from "../../core/router.js";
 import { saveGame } from "../../core/saveManager.js";
+import { getDigimonSpecies } from "../../data/digimons.js";
+import { getEvolutionRule } from "../../data/evolutionRules.js";
+import { getItemById } from "../../data/items.js";
 import { evolveDigimon } from "../../systems/evolutionSystem.js";
 import {
   moveDigimonToParty,
@@ -9,6 +12,109 @@ import {
   setPartyLeader
 } from "../../systems/storageSystem.js";
 import { renderTeamCard } from "../components/teamCard.js";
+
+let evolutionAnimationTimer = null;
+
+function clearEvolutionAnimation() {
+  if (evolutionAnimationTimer) {
+    window.clearTimeout(evolutionAnimationTimer);
+    evolutionAnimationTimer = null;
+  }
+
+  if (!state.app.evolutionAnimation) {
+    return;
+  }
+
+  state.app.evolutionAnimation = null;
+  window.dispatchEvent(new Event("digilegends:rerender"));
+}
+
+function showEvolutionAnimation(animationData) {
+  if (!animationData?.from || !animationData?.to) {
+    return;
+  }
+
+  if (evolutionAnimationTimer) {
+    window.clearTimeout(evolutionAnimationTimer);
+  }
+
+  state.app.evolutionAnimation = animationData;
+
+  evolutionAnimationTimer = window.setTimeout(() => {
+    evolutionAnimationTimer = null;
+
+    if (!state.app.evolutionAnimation) {
+      return;
+    }
+
+    state.app.evolutionAnimation = null;
+    window.dispatchEvent(new Event("digilegends:rerender"));
+  }, 5500);
+}
+
+function buildEvolutionAnimationData({
+  previousSpecies,
+  nextSpecies,
+  rule,
+  partnerDigimon,
+  partnerSpecies,
+  requiredItem
+}) {
+  const animation = {
+    heading: "Evolucao completa",
+    subheading: `${previousSpecies.name} agora e ${nextSpecies.name}`,
+    mode: "standard",
+    from: {
+      name: previousSpecies.name,
+      sprite: previousSpecies.sprite
+    },
+    to: {
+      name: nextSpecies.name,
+      sprite: nextSpecies.sprite
+    }
+  };
+
+  if (rule?.type === "dna" && partnerSpecies) {
+    const partnerName =
+      partnerDigimon?.nickname?.trim() || partnerSpecies.name;
+
+    animation.mode = "dna";
+    animation.heading = "DNA Evolution completa";
+    animation.subheading = `${previousSpecies.name} e ${partnerName} se fundiram em ${nextSpecies.name}`;
+    animation.sources = [
+      {
+        label: "Base 1",
+        name: previousSpecies.name,
+        sprite: previousSpecies.sprite
+      },
+      {
+        label: "Base 2",
+        name: partnerName,
+        sprite: partnerSpecies.sprite
+      }
+    ];
+  }
+
+  if (rule?.type === "armor" && requiredItem) {
+    animation.mode = "armor";
+    animation.heading = "Armor Evolution completa";
+    animation.subheading = `${previousSpecies.name} despertou ${nextSpecies.name} com ${requiredItem.name}`;
+    animation.sources = [
+      {
+        label: "Base",
+        name: previousSpecies.name,
+        sprite: previousSpecies.sprite
+      },
+      {
+        label: "Digi-Ovo",
+        name: requiredItem.name,
+        sprite: requiredItem.sprite || ""
+      }
+    ];
+  }
+
+  return animation;
+}
 
 export function renderTeamScreen() {
   const partyCards = state.save.party.length
@@ -76,6 +182,12 @@ export function renderTeamScreen() {
 }
 
 export function bindTeamScreen() {
+  document.querySelectorAll(".js-close-evolution-modal").forEach((button) => {
+    button.addEventListener("click", () => {
+      clearEvolutionAnimation();
+    });
+  });
+
   document.getElementById("btn-back-home")?.addEventListener("click", () => {
     goToScreen("home");
   });
@@ -100,6 +212,20 @@ export function bindTeamScreen() {
         : "";
 
       try {
+        const previousSpecies = getDigimonSpecies(playerDigimon.speciesId);
+        const rule = getEvolutionRule(playerDigimon.speciesId, targetSpeciesId);
+        const partnerDigimon = partnerUid
+          ? state.save.party.find((digimon) => digimon.uid === partnerUid) ||
+            state.save.storage.find((digimon) => digimon.uid === partnerUid) ||
+            null
+          : null;
+        const partnerSpecies = rule?.partnerSpeciesId
+          ? getDigimonSpecies(rule.partnerSpeciesId)
+          : null;
+        const requiredItem = rule?.requiredItemId
+          ? getItemById(rule.requiredItemId)
+          : null;
+
         if (targetSpeciesId === "omnimon") {
           const partnerSelect = partnerSelectId
             ? document.getElementById(partnerSelectId)
@@ -117,7 +243,17 @@ export function bindTeamScreen() {
         }
 
         evolveDigimon(playerDigimon, targetSpeciesId, state.save, { partnerUid });
+        const nextSpecies = getDigimonSpecies(playerDigimon.speciesId);
         saveGame(state.save);
+        const animationData = buildEvolutionAnimationData({
+          previousSpecies,
+          nextSpecies,
+          rule,
+          partnerDigimon,
+          partnerSpecies,
+          requiredItem
+        });
+        showEvolutionAnimation(animationData);
         window.dispatchEvent(new Event("digilegends:rerender"));
       } catch (error) {
         window.alert(error.message || "Não foi possível evoluir o Digimon.");

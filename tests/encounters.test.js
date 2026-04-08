@@ -3,12 +3,14 @@ import { HUNTS, getHuntById } from "../js/data/encounters.js";
 import { createEncounterFromHunt } from "../js/systems/encounterSystem.js";
 
 describe("encounters", () => {
-  it("inclui os novos In-Training no campo de treino", () => {
-    const hunt = getHuntById("training-grounds");
+  it("inclui Kapurimon, Hagurumon e Guardromon nas hunts corretas", () => {
+    const trainingHunt = getHuntById("training-grounds");
+    const rookieHunt = getHuntById("rookie-forest");
+    const championHunt = getHuntById("champion-ridge");
 
-    expect(hunt.enemyPool).toEqual(
-      expect.arrayContaining(["tanemon", "motimon", "bukamon", "yokomon", "demiveemon"])
-    );
+    expect(trainingHunt.enemyPool).toEqual(expect.arrayContaining(["kapurimon"]));
+    expect(rookieHunt.enemyPool).toEqual(expect.arrayContaining(["hagurumon"]));
+    expect(championHunt.enemyPool).toEqual(expect.arrayContaining(["guardromon"]));
   });
 
   it("inclui uma hunt simples para as formas Mega", () => {
