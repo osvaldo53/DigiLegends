@@ -56,6 +56,18 @@ export function renderShopScreen() {
 
           return `
             <article class="hunt-session-box">
+              ${
+                item.sprite
+                  ? `
+                    <img
+                      class="item-mini-sprite"
+                      src="${escapeHtml(item.sprite)}"
+                      alt="${escapeHtml(item.name)}"
+                      onerror="this.style.display='none'"
+                    />
+                  `
+                  : ""
+              }
               <h3>${escapeHtml(item.name)}</h3>
               <p class="hunt-session__muted">${escapeHtml(item.description)}</p>
 

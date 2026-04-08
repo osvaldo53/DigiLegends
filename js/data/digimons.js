@@ -94,7 +94,7 @@ export const DIGIMONS = {
     element: "Wind",
     family: "Mammal",
     baseStats: { hp: 38, sp: 20, atk: 8, def: 8, int: 10, spd: 9 },
-    evolutions: ["angemon"],
+    evolutions: ["angemon", "pegasusmon"],
     sprite: "./assets/sprites/patamon.png"
   },
 
@@ -182,8 +182,19 @@ export const DIGIMONS = {
     element: "Fire",
     family: "Lesser",
     baseStats: { hp: 23, sp: 11, atk: 4, def: 4, int: 5, spd: 6 },
-    evolutions: ["biyomon"],
+    evolutions: ["biyomon", "wormmon"],
     sprite: "./assets/sprites/yokomon.png"
+  },
+
+  wormmon: {
+    id: "wormmon",
+    name: "Wormmon",
+    type: "Free",
+    element: "Plant",
+    family: "Insect",
+    baseStats: { hp: 39, sp: 18, atk: 8, def: 8, int: 10, spd: 9 },
+    evolutions: ["stingmon"],
+    sprite: "./assets/sprites/wormmon.png"
   },
 
   biyomon: {
@@ -215,7 +226,7 @@ export const DIGIMONS = {
     element: "Neutral",
     family: "Dragon Man",
     baseStats: { hp: 43, sp: 15, atk: 12, def: 8, int: 7, spd: 10 },
-    evolutions: ["exveemon"],
+    evolutions: ["exveemon", "flamedramon", "lighdramon"],
     sprite: "./assets/sprites/veemon.png"
   },
 
@@ -325,8 +336,52 @@ export const DIGIMONS = {
     element: "Neutral",
     family: "Dragon Man",
     baseStats: { hp: 69, sp: 23, atk: 20, def: 12, int: 10, spd: 12 },
-    evolutions: ["aeroveedramon"],
+    evolutions: ["aeroveedramon", "paildramon"],
     sprite: "./assets/sprites/exveemon.png"
+  },
+
+  stingmon: {
+    id: "stingmon",
+    name: "Stingmon",
+    type: "Free",
+    element: "Plant",
+    family: "Insect",
+    baseStats: { hp: 64, sp: 26, atk: 18, def: 12, int: 14, spd: 12 },
+    evolutions: ["paildramon"],
+    sprite: "./assets/sprites/stingmon.png"
+  },
+
+  flamedramon: {
+    id: "flamedramon",
+    name: "Flamedramon",
+    type: "Free",
+    element: "Fire",
+    family: "Dragonkin",
+    baseStats: { hp: 66, sp: 24, atk: 19, def: 12, int: 13, spd: 12 },
+    evolutions: [],
+    sprite: "./assets/sprites/flamedramon.png"
+  },
+
+  lighdramon: {
+    id: "lighdramon",
+    name: "Lighdramon",
+    type: "Free",
+    element: "Electric",
+    family: "Holy Beast",
+    baseStats: { hp: 65, sp: 25, atk: 18, def: 12, int: 14, spd: 13 },
+    evolutions: [],
+    sprite: "./assets/sprites/lighdramon.png"
+  },
+
+  pegasusmon: {
+    id: "pegasusmon",
+    name: "Pegasusmon",
+    type: "Free",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 62, sp: 28, atk: 15, def: 12, int: 17, spd: 12 },
+    evolutions: [],
+    sprite: "./assets/sprites/pegasusmon.png"
   },
 
   chrysalimon: {
@@ -437,6 +492,17 @@ export const DIGIMONS = {
     baseStats: { hp: 84, sp: 36, atk: 20, def: 16, int: 22, spd: 15 },
     evolutions: ["phoenixmon"],
     sprite: "./assets/sprites/garudamon.png"
+  },
+
+  paildramon: {
+    id: "paildramon",
+    name: "Paildramon",
+    type: "Free",
+    element: "Neutral",
+    family: "Dragonkin",
+    baseStats: { hp: 92, sp: 35, atk: 27, def: 17, int: 18, spd: 16 },
+    evolutions: ["imperialdramon_dm"],
+    sprite: "./assets/sprites/paildramon.png"
   },
 
   aeroveedramon: {
@@ -591,6 +657,28 @@ export const DIGIMONS = {
     baseStats: { hp: 116, sp: 46, atk: 34, def: 24, int: 27, spd: 24 },
     evolutions: [],
     sprite: "./assets/sprites/ulforceveedramon.png"
+  },
+
+  imperialdramon_dm: {
+    id: "imperialdramon_dm",
+    name: "Imperialdramon DM",
+    type: "Free",
+    element: "Neutral",
+    family: "Ancient Dragon",
+    baseStats: { hp: 126, sp: 48, atk: 36, def: 24, int: 26, spd: 20 },
+    evolutions: ["imperialdramon_fm"],
+    sprite: "./assets/sprites/imperialdramon_dm.png"
+  },
+
+  imperialdramon_fm: {
+    id: "imperialdramon_fm",
+    name: "Imperialdramon FM",
+    type: "Free",
+    element: "Light",
+    family: "Ancient Dragon",
+    baseStats: { hp: 132, sp: 52, atk: 40, def: 27, int: 30, spd: 22 },
+    evolutions: [],
+    sprite: "./assets/sprites/imperialdramon_fm.png"
   }
 };
 

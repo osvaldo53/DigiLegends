@@ -23,7 +23,8 @@ export const EVOLUTION_RULES = {
     gomamon: { minLevel: 3, minBond: 1 }
   },
   yokomon: {
-    biyomon: { minLevel: 3, minBond: 1 }
+    biyomon: { minLevel: 3, minBond: 1 },
+    wormmon: { minLevel: 3, minBond: 1 }
   },
   demiveemon: {
     veemon: { minLevel: 3, minBond: 1 }
@@ -42,7 +43,13 @@ export const EVOLUTION_RULES = {
     chrysalimon: { minLevel: 10, minBond: 5 }
   },
   patamon: {
-    angemon: { minLevel: 10, minBond: 8 }
+    angemon: { minLevel: 10, minBond: 8 },
+    pegasusmon: {
+      type: "armor",
+      minLevel: 10,
+      minBond: 8,
+      requiredItemId: "digi_egg_hope"
+    }
   },
   demidevimon: {
     devimon: { minLevel: 10, minBond: 6 }
@@ -60,7 +67,22 @@ export const EVOLUTION_RULES = {
     birdramon: { minLevel: 10, minBond: 5 }
   },
   veemon: {
-    exveemon: { minLevel: 10, minBond: 6 }
+    exveemon: { minLevel: 10, minBond: 6 },
+    flamedramon: {
+      type: "armor",
+      minLevel: 10,
+      minBond: 6,
+      requiredItemId: "digi_egg_courage"
+    },
+    lighdramon: {
+      type: "armor",
+      minLevel: 10,
+      minBond: 6,
+      requiredItemId: "digi_egg_friendship"
+    }
+  },
+  wormmon: {
+    stingmon: { minLevel: 10, minBond: 5 }
   },
 
   greymon: {
@@ -94,7 +116,25 @@ export const EVOLUTION_RULES = {
     garudamon: { minLevel: 22, minBond: 18 }
   },
   exveemon: {
-    aeroveedramon: { minLevel: 22, minBond: 18 }
+    aeroveedramon: { minLevel: 22, minBond: 18 },
+    paildramon: {
+      type: "dna",
+      minLevel: 24,
+      minBond: 24,
+      partnerSpeciesId: "stingmon",
+      partnerMinLevel: 24,
+      partnerMinBond: 24
+    }
+  },
+  stingmon: {
+    paildramon: {
+      type: "dna",
+      minLevel: 24,
+      minBond: 24,
+      partnerSpeciesId: "exveemon",
+      partnerMinLevel: 24,
+      partnerMinBond: 24
+    }
   },
 
   metalgreymon: {
@@ -127,8 +167,14 @@ export const EVOLUTION_RULES = {
   garudamon: {
     phoenixmon: { minLevel: 34, minBond: 32 }
   },
+  paildramon: {
+    imperialdramon_dm: { minLevel: 34, minBond: 32 }
+  },
   aeroveedramon: {
     ulforceveedramon: { minLevel: 36, minBond: 34 }
+  },
+  imperialdramon_dm: {
+    imperialdramon_fm: { minLevel: 40, minBond: 40 }
   },
 
   wargreymon: {

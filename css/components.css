@@ -621,6 +621,14 @@
   padding: 14px;
 }
 
+.item-mini-sprite {
+  display: block;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+}
+
 .hunt-session-box h3 {
   margin-bottom: 10px;
 }

@@ -12,10 +12,13 @@ export const SKILLS = {
 
   pepper_breath: { id: "pepper_breath", name: "Pepper Breath", kind: "attack", power: 24, cost: 6, element: "Fire", scaling: "int" },
   black_pepper_breath: { id: "black_pepper_breath", name: "Black Pepper Breath", kind: "attack", power: 24, cost: 6, element: "Fire", scaling: "int" },
+  flame_fist: { id: "flame_fist", name: "Flame Fist", kind: "attack", power: 24, cost: 6, element: "Fire", scaling: "atk" },
   horn_attack: { id: "horn_attack", name: "Horn Attack", kind: "attack", power: 20, cost: 4, element: "Neutral", scaling: "atk" },
   blue_blaster: { id: "blue_blaster", name: "Blue Blaster", kind: "attack", power: 24, cost: 6, element: "Water", scaling: "int" },
+  lightning_blade: { id: "lightning_blade", name: "Lightning Blade", kind: "attack", power: 24, cost: 6, element: "Electric", scaling: "atk" },
   air_shot: { id: "air_shot", name: "Air Shot", kind: "attack", power: 22, cost: 5, element: "Wind", scaling: "int" },
   holy_tackle: { id: "holy_tackle", name: "Holy Tackle", kind: "attack", power: 20, cost: 4, element: "Light", scaling: "atk" },
+  star_shower: { id: "star_shower", name: "Star Shower", kind: "attack", power: 24, cost: 6, element: "Light", scaling: "int" },
   web_wrecker: { id: "web_wrecker", name: "Web Wrecker", kind: "attack", power: 23, cost: 5, element: "Dark", scaling: "int" },
   evil_wing: { id: "evil_wing", name: "Evil Wing", kind: "attack", power: 22, cost: 5, element: "Dark", scaling: "int" },
 
@@ -65,6 +68,12 @@ export const SKILLS = {
   v_wing_blade: { id: "v_wing_blade", name: "V-Wing Blade", kind: "attack", power: 36, cost: 10, element: "Wind", scaling: "atk" },
   ray_of_victory: { id: "ray_of_victory", name: "Ray of Victory", kind: "attack", power: 40, cost: 12, element: "Wind", scaling: "int" },
   ulforce_saber: { id: "ulforce_saber", name: "Ulforce Saber", kind: "attack", power: 36, cost: 10, element: "Neutral", scaling: "atk" },
+  desperado_blaster: { id: "desperado_blaster", name: "Desperado Blaster", kind: "attack", power: 38, cost: 11, element: "Neutral", scaling: "int" },
+  sting_strike: { id: "sting_strike", name: "Sting Strike", kind: "attack", power: 35, cost: 9, element: "Plant", scaling: "atk" },
+  giga_death: { id: "giga_death", name: "Giga Death", kind: "attack", power: 42, cost: 13, element: "Neutral", scaling: "int" },
+  mega_crusher: { id: "mega_crusher", name: "Mega Crusher", kind: "attack", power: 39, cost: 11, element: "Neutral", scaling: "atk" },
+  posi_tron_laser: { id: "posi_tron_laser", name: "Positron Laser", kind: "attack", power: 45, cost: 14, element: "Light", scaling: "int" },
+  omega_blade: { id: "omega_blade", name: "Omega Blade", kind: "attack", power: 41, cost: 12, element: "Light", scaling: "atk" },
 
   terra_force: { id: "terra_force", name: "Terra Force", kind: "attack", power: 42, cost: 13, element: "Fire", scaling: "int" },
   brave_tornado: { id: "brave_tornado", name: "Brave Tornado", kind: "attack", power: 37, cost: 10, element: "Neutral", scaling: "atk" },
@@ -108,6 +117,7 @@ export const SPECIES_SKILLS = {
   gomamon: ["marching_fishes", "bubble_pop"],
   biyomon: ["spiral_twister", "body_slam"],
   veemon: ["vee_headbutt", "vee_laser"],
+  wormmon: ["web_wrecker", "poison_ivy"],
 
   greymon: ["great_horn_attack", "mega_flame"],
   greymon_blue: ["great_horn_attack", "blue_mega_flame"],
@@ -119,6 +129,10 @@ export const SPECIES_SKILLS = {
   ikkakumon: ["harpoon_torpedo", "body_slam"],
   birdramon: ["meteor_wing", "spiral_twister"],
   exveemon: ["vee_headbutt", "vee_laser"],
+  stingmon: ["kaiser_nail", "poison_ivy"],
+  flamedramon: ["flame_fist", "baby_flame"],
+  lighdramon: ["lightning_blade", "static_buzz"],
+  pegasusmon: ["star_shower", "air_shot"],
   chrysalimon: ["data_crusher", "web_wrecker"],
 
   metalgreymon: ["giga_destroyer", "trident_arm"],
@@ -129,6 +143,7 @@ export const SPECIES_SKILLS = {
   megakabuterimon: ["giga_blaster", "horn_attack"],
   zudomon: ["hammer_spark", "body_slam"],
   garudamon: ["phoenix_blaze", "meteor_wing"],
+  paildramon: ["desperado_blaster", "sting_strike"],
   aeroveedramon: ["v_wing_blade", "vee_laser"],
   myotismon: ["night_raid", "poison_stream"],
   infermon: ["catastro_disaster", "spider_shooter"],
@@ -144,7 +159,9 @@ export const SPECIES_SKILLS = {
   herculeskabuterimon: ["giga_blaster", "horn_buster"],
   vikemon: ["arctic_blizzard", "hammer_spark"],
   phoenixmon: ["crimson_flare", "phoenix_blaze"],
-  ulforceveedramon: ["ray_of_victory", "ulforce_saber"]
+  ulforceveedramon: ["ray_of_victory", "ulforce_saber"],
+  imperialdramon_dm: ["giga_death", "mega_crusher"],
+  imperialdramon_fm: ["posi_tron_laser", "omega_blade"]
 };
 
 export function getSkillsForSpecies(speciesId) {

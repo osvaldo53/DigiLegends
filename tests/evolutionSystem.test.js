@@ -47,6 +47,22 @@ describe("evolutionSystem", () => {
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
 
+  it("lista as duas linhas evolutivas da Yokomon", () => {
+    const yokomon = createPlayerDigimon("yokomon", {
+      level: 3,
+      bond: 1
+    });
+
+    const evolutions = getAvailableEvolutions(yokomon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "biyomon",
+      "wormmon"
+    ]);
+    expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
+  });
+
   it("evolui e registra a especie no digidex", () => {
     const save = createEmptySave();
     const agumon = createPlayerDigimon("agumon", {
@@ -70,6 +86,88 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(metalgreymon, "wargreymon")).toBe(true);
+  });
+
+  it("permite a nova linha de Wormmon para Stingmon", () => {
+    const wormmon = createPlayerDigimon("wormmon", {
+      level: 10,
+      bond: 5
+    });
+
+    expect(canEvolveTo(wormmon, "stingmon")).toBe(true);
+  });
+
+  it("exige Digi-Ovo da Coragem para evoluir Veemon em Flamedramon", () => {
+    const save = createEmptySave();
+    const veemon = createPlayerDigimon("veemon", {
+      level: 10,
+      bond: 6
+    });
+
+    save.party = [veemon];
+
+    expect(canEvolveTo(veemon, "flamedramon", save)).toBe(false);
+
+    save.inventory.push({
+      itemId: "digi_egg_courage",
+      quantity: 1
+    });
+
+    expect(canEvolveTo(veemon, "flamedramon", save)).toBe(true);
+  });
+
+  it("consome o Digi-Ovo ao realizar Armor Evolution", () => {
+    const save = createEmptySave();
+    const veemon = createPlayerDigimon("veemon", {
+      level: 10,
+      bond: 6
+    });
+
+    save.party = [veemon];
+    save.inventory.push({
+      itemId: "digi_egg_friendship",
+      quantity: 1
+    });
+
+    evolveDigimon(veemon, "lighdramon", save);
+
+    expect(veemon.speciesId).toBe("lighdramon");
+    expect(save.inventory.find((entry) => entry.itemId === "digi_egg_friendship")).toBeUndefined();
+    expect(save.digidex.owned).toContain("lighdramon");
+  });
+
+  it("permite Armor Evolution de Patamon para Pegasusmon com Digi-Ovo da Esperanca", () => {
+    const save = createEmptySave();
+    const patamon = createPlayerDigimon("patamon", {
+      level: 10,
+      bond: 8
+    });
+
+    save.party = [patamon];
+    save.inventory.push({
+      itemId: "digi_egg_hope",
+      quantity: 1
+    });
+
+    expect(canEvolveTo(patamon, "pegasusmon", save)).toBe(true);
+  });
+
+  it("permite evoluir Paildramon para Imperialdramon DM", () => {
+    const paildramon = createPlayerDigimon("paildramon", {
+      level: 34,
+      bond: 32
+    });
+
+    expect(canEvolveTo(paildramon, "imperialdramon_dm")).toBe(true);
+  });
+
+  it("permite evoluir Imperialdramon DM para Imperialdramon FM", () => {
+    const imperialdramonDm = createPlayerDigimon("imperialdramon_dm", {
+      level: 40,
+      bond: 40
+    });
+
+    expect(canEvolveTo(imperialdramonDm, "imperialdramon_fm")).toBe(true);
   });
 
   it("permite DNA evolution de WarGreymon para Omnimon quando o parceiro existe", () => {
@@ -106,6 +204,40 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(metalgarurumon, "omnimon", save)).toBe(true);
   });
 
+  it("permite DNA evolution de ExVeemon para Paildramon quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const exveemon = createPlayerDigimon("exveemon", {
+      level: 24,
+      bond: 24
+    });
+    const stingmon = createPlayerDigimon("stingmon", {
+      level: 24,
+      bond: 24
+    });
+
+    save.party = [exveemon];
+    save.storage = [stingmon];
+
+    expect(canEvolveTo(exveemon, "paildramon", save)).toBe(true);
+  });
+
+  it("permite DNA evolution de Stingmon para Paildramon quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const stingmon = createPlayerDigimon("stingmon", {
+      level: 24,
+      bond: 24
+    });
+    const exveemon = createPlayerDigimon("exveemon", {
+      level: 24,
+      bond: 24
+    });
+
+    save.party = [stingmon];
+    save.storage = [exveemon];
+
+    expect(canEvolveTo(stingmon, "paildramon", save)).toBe(true);
+  });
+
   it("consome o parceiro ao realizar DNA evolution", () => {
     const save = createEmptySave();
     const wargreymon = createPlayerDigimon("wargreymon", {
@@ -125,6 +257,27 @@ describe("evolutionSystem", () => {
     expect(wargreymon.speciesId).toBe("omnimon");
     expect(save.storage).toHaveLength(0);
     expect(save.digidex.owned).toContain("omnimon");
+  });
+
+  it("consome o parceiro ao realizar DNA evolution para Paildramon", () => {
+    const save = createEmptySave();
+    const exveemon = createPlayerDigimon("exveemon", {
+      level: 24,
+      bond: 24
+    });
+    const stingmon = createPlayerDigimon("stingmon", {
+      level: 24,
+      bond: 24
+    });
+
+    save.party = [exveemon];
+    save.storage = [stingmon];
+
+    evolveDigimon(exveemon, "paildramon", save);
+
+    expect(exveemon.speciesId).toBe("paildramon");
+    expect(save.storage).toHaveLength(0);
+    expect(save.digidex.owned).toContain("paildramon");
   });
 
   it("permite escolher qual parceiro sera consumido na DNA evolution", () => {

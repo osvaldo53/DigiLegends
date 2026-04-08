@@ -22,6 +22,18 @@ export const SHOP_CATALOG = [
   {
     itemId: "small_sp_disk",
     price: 35
+  },
+  {
+    itemId: "digi_egg_courage",
+    price: 20000
+  },
+  {
+    itemId: "digi_egg_friendship",
+    price: 20000
+  },
+  {
+    itemId: "digi_egg_hope",
+    price: 20000
   }
 ];
 

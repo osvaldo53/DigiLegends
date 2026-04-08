@@ -5,9 +5,14 @@ import {
 } from "../data/evolutionRules.js";
 import { recalculatePlayerDigimon } from "../factories/digimonFactory.js";
 import { uniquePush } from "../core/utils.js";
+import { consumeItem, getInventoryEntry } from "./itemSystem.js";
 
 function isDnaEvolutionRule(rule) {
   return rule?.type === "dna";
+}
+
+function isArmorEvolutionRule(rule) {
+  return rule?.type === "armor";
 }
 
 function getAllOwnedDigimons(save) {
@@ -83,6 +88,15 @@ function removeDigimonFromSave(save, digimonUid) {
   return null;
 }
 
+function hasRequiredEvolutionItem(save, itemId) {
+  if (!save || !itemId) {
+    return false;
+  }
+
+  const inventoryEntry = getInventoryEntry(save, itemId);
+  return Boolean(inventoryEntry && inventoryEntry.quantity > 0);
+}
+
 /**
  * Verifica se uma instância de Digimon pode evoluir para a espécie alvo.
  *
@@ -113,6 +127,10 @@ export function canEvolveTo(playerDigimon, targetSpeciesId, save, options = {}) 
   }
 
   if (bond < Number(rule.minBond ?? 0)) {
+    return false;
+  }
+
+  if (isArmorEvolutionRule(rule) && !hasRequiredEvolutionItem(save, rule.requiredItemId)) {
     return false;
   }
 
@@ -153,6 +171,9 @@ export function getAvailableEvolutions(playerDigimon, save) {
       const dnaPartners = isDnaEvolutionRule(requirements)
         ? getDnaPartners(playerDigimon, requirements, save)
         : [];
+      const hasRequiredItem = isArmorEvolutionRule(requirements)
+        ? hasRequiredEvolutionItem(save, requirements.requiredItemId)
+        : false;
 
       return {
         targetSpeciesId,
@@ -160,6 +181,7 @@ export function getAvailableEvolutions(playerDigimon, save) {
         requirements,
         dnaPartners,
         dnaPartner: dnaPartners[0] || null,
+        hasRequiredItem,
         isAvailable: canEvolveTo(playerDigimon, targetSpeciesId, save)
       };
     })
@@ -201,6 +223,14 @@ export function evolveDigimon(playerDigimon, targetSpeciesId, save, options = {}
 
   if (!rule) {
     throw new Error("Regra de evolução inválida.");
+  }
+
+  if (isArmorEvolutionRule(rule)) {
+    if (!hasRequiredEvolutionItem(save, rule.requiredItemId)) {
+      throw new Error("O Digi-Ovo necessario para esta evolucao nao foi encontrado.");
+    }
+
+    consumeItem(save, rule.requiredItemId, 1);
   }
 
   if (isDnaEvolutionRule(rule)) {

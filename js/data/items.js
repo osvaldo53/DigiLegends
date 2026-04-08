@@ -44,6 +44,42 @@ export const ITEMS = {
     },
     usableInMenu: true,
     usableInBattle: true
+  },
+
+  digi_egg_courage: {
+    id: "digi_egg_courage",
+    name: "Digi-Egg of Courage",
+    description: "Permite a Armor Evolution para Flamedramon.",
+    sprite: "./assets/items/digi_egg_courage.png",
+    category: "evolution",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  digi_egg_friendship: {
+    id: "digi_egg_friendship",
+    name: "Digi-Egg of Friendship",
+    description: "Permite a Armor Evolution para Lighdramon.",
+    sprite: "./assets/items/digi_egg_friendship.png",
+    category: "evolution",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  digi_egg_hope: {
+    id: "digi_egg_hope",
+    name: "Digi-Egg of Hope",
+    description: "Permite a Armor Evolution para Pegasusmon.",
+    sprite: "./assets/items/digi_egg_hope.png",
+    category: "evolution",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
   }
 };
 

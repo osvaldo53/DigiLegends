@@ -20,6 +20,7 @@ export const SCAN_RULES = {
   gomamon: { stage: "Rookie", scanPercentOnDefeat: 4 },
   biyomon: { stage: "Rookie", scanPercentOnDefeat: 4 },
   veemon: { stage: "Rookie", scanPercentOnDefeat: 4 },
+  wormmon: { stage: "Rookie", scanPercentOnDefeat: 4 },
 
   greymon: { stage: "Champion", scanPercentOnDefeat: 2 },
   greymon_blue: { stage: "Champion", scanPercentOnDefeat: 2 },
@@ -32,6 +33,10 @@ export const SCAN_RULES = {
   ikkakumon: { stage: "Champion", scanPercentOnDefeat: 2 },
   birdramon: { stage: "Champion", scanPercentOnDefeat: 2 },
   exveemon: { stage: "Champion", scanPercentOnDefeat: 2 },
+  stingmon: { stage: "Champion", scanPercentOnDefeat: 2 },
+  flamedramon: { stage: "Armor", scanPercentOnDefeat: 2 },
+  lighdramon: { stage: "Armor", scanPercentOnDefeat: 2 },
+  pegasusmon: { stage: "Armor", scanPercentOnDefeat: 2 },
 
   metalgreymon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   metalgreymon_blue: { stage: "Ultimate", scanPercentOnDefeat: 1 },
@@ -43,6 +48,7 @@ export const SCAN_RULES = {
   megakabuterimon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   zudomon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   garudamon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
+  paildramon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   aeroveedramon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
 
   wargreymon: { stage: "Mega", scanPercentOnDefeat: 1 },
@@ -55,7 +61,9 @@ export const SCAN_RULES = {
   herculeskabuterimon: { stage: "Mega", scanPercentOnDefeat: 1 },
   vikemon: { stage: "Mega", scanPercentOnDefeat: 1 },
   phoenixmon: { stage: "Mega", scanPercentOnDefeat: 1 },
-  ulforceveedramon: { stage: "Mega", scanPercentOnDefeat: 1 }
+  ulforceveedramon: { stage: "Mega", scanPercentOnDefeat: 1 },
+  imperialdramon_dm: { stage: "Mega", scanPercentOnDefeat: 1 },
+  imperialdramon_fm: { stage: "Ultra", scanPercentOnDefeat: 1 }
 };
 
 export function getScanRule(speciesId) {

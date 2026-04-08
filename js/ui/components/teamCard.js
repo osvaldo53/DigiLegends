@@ -1,4 +1,5 @@
 import { getDigimonSpecies } from "../../data/digimons.js";
+import { getItemById } from "../../data/items.js";
 import { escapeHtml } from "../../core/utils.js";
 import { getAvailableEvolutions } from "../../systems/evolutionSystem.js";
 
@@ -11,6 +12,15 @@ function formatPartnerOption(partner) {
 }
 
 function formatEvolutionRequirements(evolution) {
+  if (evolution.requirements.type === "armor") {
+    const requiredItem =
+      getItemById(evolution.requirements.requiredItemId)?.name ||
+      evolution.requirements.requiredItemId;
+    const itemStatus = evolution.hasRequiredItem ? "Disponivel" : "Nao possui";
+
+    return `Armor: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond} · ${requiredItem} (${itemStatus})`;
+  }
+
   if (evolution.requirements.type !== "dna") {
     return `Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}`;
   }

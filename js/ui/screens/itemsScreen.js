@@ -9,8 +9,8 @@ import { escapeHtml } from "../../core/utils.js";
 /**
  * Renderiza a tela de itens.
  *
- * Nesta primeira versão:
- * - o alvo é sempre o primeiro Digimon do time
+ * Nesta primeira versao:
+ * - o alvo e sempre o primeiro Digimon do time
  * - isso simplifica o fluxo e reduz complexidade de UI
  */
 export function renderItemsScreen() {
@@ -23,32 +23,50 @@ export function renderItemsScreen() {
           const item = getItemById(entry.itemId);
           if (!item) return "";
 
-          return `
-            <article class="hunt-session-box">
-              <h3>${escapeHtml(item.name)}</h3>
-              <p class="hunt-session__muted">${escapeHtml(item.description)}</p>
-              <p>Quantidade: ${entry.quantity}</p>
-
-              <div class="button-row" style="margin-top:12px;">
+          const actionHtml = item.usableInMenu
+            ? `
                 <button
                   class="btn btn-primary js-use-item"
                   data-item-id="${escapeHtml(item.id)}"
                   ${leader ? "" : "disabled"}
                 >
-                  Usar no líder
+                  Usar no lider
                 </button>
+              `
+            : '<span class="status-pill">Usado em evolucoes</span>';
+
+          return `
+            <article class="hunt-session-box">
+              ${
+                item.sprite
+                  ? `
+                    <img
+                      class="item-mini-sprite"
+                      src="${escapeHtml(item.sprite)}"
+                      alt="${escapeHtml(item.name)}"
+                      onerror="this.style.display='none'"
+                    />
+                  `
+                  : ""
+              }
+              <h3>${escapeHtml(item.name)}</h3>
+              <p class="hunt-session__muted">${escapeHtml(item.description)}</p>
+              <p>Quantidade: ${entry.quantity}</p>
+
+              <div class="button-row" style="margin-top:12px;">
+                ${actionHtml}
               </div>
             </article>
           `;
         })
         .join("")
-    : '<p class="hunt-session__muted">Seu inventário está vazio.</p>';
+    : '<p class="hunt-session__muted">Seu inventario esta vazio.</p>';
 
   return `
     <section class="screen">
       <div class="panel">
         <h2>Itens</h2>
-        <p>Use itens no Digimon líder do time.</p>
+        <p>Use itens no Digimon lider do time.</p>
 
         ${
           leader
@@ -62,7 +80,7 @@ export function renderItemsScreen() {
             `
             : `
               <div class="hunt-session-box" style="margin-bottom:16px;">
-                <p class="hunt-session__muted">Você não possui Digimon no time.</p>
+                <p class="hunt-session__muted">Voce nao possui Digimon no time.</p>
               </div>
             `
         }
@@ -98,7 +116,7 @@ export function bindItemsScreen() {
       if (!targetDigimon) {
         if (feedback) {
           feedback.style.display = "block";
-          feedback.textContent = "Não há Digimon no time para receber o item.";
+          feedback.textContent = "Nao ha Digimon no time para receber o item.";
         }
         return;
       }
@@ -122,7 +140,7 @@ export function bindItemsScreen() {
       } catch (error) {
         if (feedback) {
           feedback.style.display = "block";
-          feedback.textContent = error.message || "Não foi possível usar o item.";
+          feedback.textContent = error.message || "Nao foi possivel usar o item.";
         }
       }
     });
