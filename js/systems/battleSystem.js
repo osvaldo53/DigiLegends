@@ -210,24 +210,26 @@ function finalizeVictory() {
   const player = getActivePlayerDigimon();
   const hunt = getHuntById(state.battle.huntId);
   const enemy = state.battle.enemy;
+  const battleRewards = state.battle.encounterRewards || hunt?.rewards;
 
-  if (!player || !hunt || !enemy) return;
+  if (!player || !hunt || !enemy || !battleRewards) return;
 
   state.save.progress.huntsCompleted += 1;
 
-  const progression = applyBattleRewards(player, hunt.rewards, state.save);
+  const progression = applyBattleRewards(player, battleRewards, state.save);
   const scanResult = addScanOnDefeat(state.save, enemy.speciesId);
 
   state.battle.result = "victory";
   state.battle.rewards = {
     ...hunt.rewards,
+    ...battleRewards,
     gainedLevels: progression.gainedLevels,
     scanGained: scanResult.gained,
     scanTotal: scanResult.total,
     scannedSpeciesId: enemy.speciesId
   };
 
-  pushLog(`Vitoria. Recompensas: +${hunt.rewards.bits} Bits, +${hunt.rewards.exp} EXP.`);
+  pushLog(`Vitoria. Recompensas: +${battleRewards.bits} Bits, +${battleRewards.exp} EXP.`);
   pushLog(
     `Scan obtido: +${scanResult.gained}% de ${getDigimonSpecies(enemy.speciesId)?.name || enemy.speciesId} (total: ${scanResult.total}%).`
   );
@@ -267,7 +269,7 @@ export function startBattleFromHunt(huntId) {
     throw new Error("Nao ha Digimon com HP suficiente no time.");
   }
 
-  const { hunt, enemy } = createEncounterFromHunt(huntId, player.level);
+  const { hunt, enemy, rewards } = createEncounterFromHunt(huntId, player.level);
 
   uniquePush(state.save.digidex.seen, enemy.speciesId);
 
@@ -276,6 +278,7 @@ export function startBattleFromHunt(huntId) {
     huntId: hunt.id,
     playerDigimonUid: player.uid,
     enemy,
+    encounterRewards: rewards,
     log: [],
     result: null,
     rewards: null,
@@ -450,6 +453,7 @@ export function closeBattle() {
     huntId: null,
     playerDigimonUid: null,
     enemy: null,
+    encounterRewards: null,
     log: [],
     result: null,
     rewards: null,

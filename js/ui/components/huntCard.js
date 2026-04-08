@@ -24,7 +24,7 @@ export function renderHuntCard(hunt, playerLevel) {
 
       <div class="kv-list">
         <span>Nível mínimo recomendado: ${hunt.minLevel}</span>
-        <span>Recompensa: ${hunt.rewards.bits} Bits / ${hunt.rewards.exp} EXP</span>
+        <span>Recompensa: ${escapeHtml(hunt.rewardLabel || `${hunt.rewards.bits} Bits / ${hunt.rewards.exp} EXP`)}</span>
       </div>
 
       <div class="button-row" style="margin-top:14px;">

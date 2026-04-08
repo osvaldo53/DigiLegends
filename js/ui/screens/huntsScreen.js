@@ -20,12 +20,15 @@ const ACTION_ANIMATION_WINDOW_MS = 420;
 
 function getActiveBattlePlayerDigimon() {
   const activeUid = state.battle.playerDigimonUid;
+  const activeDigimon = state.save.party.find(
+    (digimon) => digimon.uid === activeUid && (digimon.currentHP ?? 0) > 0
+  );
 
-  if (!activeUid) {
-    return state.save.party[0] || null;
+  if (activeDigimon) {
+    return activeDigimon;
   }
 
-  return state.save.party.find((digimon) => digimon.uid === activeUid) || null;
+  return state.save.party.find((digimon) => (digimon.currentHP ?? 0) > 0) || null;
 }
 
 function getPhaseProgressPercent() {

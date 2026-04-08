@@ -48,7 +48,6 @@ export function consumeItem(save, itemId, quantity = 1) {
 
   entry.quantity -= quantity;
 
-  // Remove completamente se zerar
   if (entry.quantity <= 0) {
     save.inventory = save.inventory.filter((i) => i.itemId !== itemId);
   }
@@ -78,11 +77,16 @@ function applyItemEffect(item, digimon) {
   }
 }
 
+function canItemAffectDefeatedDigimon(item) {
+  return Boolean(item.effect?.revive);
+}
+
 /**
  * Usa um item em um Digimon.
  *
  * Regras:
  * - valida contexto (menu ou battle)
+ * - bloqueia cura comum em Digimon derrotado
  * - verifica se houve efeito real (evita desperdício)
  * - consome o item apenas se houver efeito
  *
@@ -116,6 +120,10 @@ export function useItemOnDigimon({
 
   if (context === "battle" && !item.usableInBattle) {
     throw new Error("Item não pode ser usado em batalha.");
+  }
+
+  if ((targetDigimon.currentHP ?? 0) <= 0 && !canItemAffectDefeatedDigimon(item)) {
+    throw new Error("Digimon derrotado não pode ser curado sem item de revive.");
   }
 
   const beforeHP = targetDigimon.currentHP;

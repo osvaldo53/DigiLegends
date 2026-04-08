@@ -21,6 +21,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/agumon.png"
   },
 
+  agumon_black: {
+    id: "agumon_black",
+    name: "Agumon (Black)",
+    type: "Virus",
+    element: "Fire",
+    family: "Reptile",
+    baseStats: { hp: 43, sp: 15, atk: 13, def: 8, int: 7, spd: 8 },
+    evolutions: ["greymon_blue"],
+    sprite: "./assets/sprites/agumon_black.png"
+  },
+
   tsunomon: {
     id: "tsunomon",
     name: "Tsunomon",
@@ -32,6 +43,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/tsunomon.png"
   },
 
+  tsumemon: {
+    id: "tsumemon",
+    name: "Tsumemon",
+    type: "Free",
+    element: "Dark",
+    family: "Lesser",
+    baseStats: { hp: 25, sp: 11, atk: 5, def: 4, int: 5, spd: 5 },
+    evolutions: ["agumon_black", "keramon", "demidevimon"],
+    sprite: "./assets/sprites/tsumemon.png"
+  },
+
   gabumon: {
     id: "gabumon",
     name: "Gabumon",
@@ -41,6 +63,17 @@ export const DIGIMONS = {
     baseStats: { hp: 40, sp: 18, atk: 10, def: 8, int: 9, spd: 8 },
     evolutions: ["garurumon"],
     sprite: "./assets/sprites/gabumon.png"
+  },
+
+  keramon: {
+    id: "keramon",
+    name: "Keramon",
+    type: "Virus",
+    element: "Dark",
+    family: "Nightmare Soldier",
+    baseStats: { hp: 39, sp: 20, atk: 9, def: 7, int: 11, spd: 9 },
+    evolutions: ["chrysalimon"],
+    sprite: "./assets/sprites/keramon.png"
   },
 
   tokomon: {
@@ -63,6 +96,17 @@ export const DIGIMONS = {
     baseStats: { hp: 38, sp: 20, atk: 8, def: 8, int: 10, spd: 9 },
     evolutions: ["angemon"],
     sprite: "./assets/sprites/patamon.png"
+  },
+
+  demidevimon: {
+    id: "demidevimon",
+    name: "DemiDevimon",
+    type: "Virus",
+    element: "Dark",
+    family: "Dark Animal",
+    baseStats: { hp: 37, sp: 21, atk: 8, def: 7, int: 11, spd: 10 },
+    evolutions: ["devimon"],
+    sprite: "./assets/sprites/demidevimon.png"
   },
 
   tanemon: {
@@ -186,6 +230,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/greymon.png"
   },
 
+  greymon_blue: {
+    id: "greymon_blue",
+    name: "Greymon (Blue)",
+    type: "Virus",
+    element: "Fire",
+    family: "Dinosaur",
+    baseStats: { hp: 69, sp: 23, atk: 21, def: 13, int: 10, spd: 10 },
+    evolutions: ["metalgreymon_blue"],
+    sprite: "./assets/sprites/greymon_blue.png"
+  },
+
   garurumon: {
     id: "garurumon",
     name: "Garurumon",
@@ -206,6 +261,17 @@ export const DIGIMONS = {
     baseStats: { hp: 58, sp: 30, atk: 15, def: 12, int: 16, spd: 11 },
     evolutions: ["holyangemon"],
     sprite: "./assets/sprites/angemon.png"
+  },
+
+  devimon: {
+    id: "devimon",
+    name: "Devimon",
+    type: "Virus",
+    element: "Dark",
+    family: "Fallen Angel",
+    baseStats: { hp: 56, sp: 30, atk: 16, def: 11, int: 17, spd: 11 },
+    evolutions: ["myotismon"],
+    sprite: "./assets/sprites/devimon.png"
   },
 
   togemon: {
@@ -263,6 +329,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/exveemon.png"
   },
 
+  chrysalimon: {
+    id: "chrysalimon",
+    name: "Chrysalimon",
+    type: "Virus",
+    element: "Dark",
+    family: "Unidentified",
+    baseStats: { hp: 66, sp: 27, atk: 18, def: 13, int: 14, spd: 10 },
+    evolutions: ["infermon"],
+    sprite: "./assets/sprites/chrysalimon.png"
+  },
+
   metalgreymon: {
     id: "metalgreymon",
     name: "MetalGreymon",
@@ -272,6 +349,17 @@ export const DIGIMONS = {
     baseStats: { hp: 94, sp: 36, atk: 28, def: 18, int: 16, spd: 13 },
     evolutions: ["wargreymon"],
     sprite: "./assets/sprites/metalgreymon.png"
+  },
+
+  metalgreymon_blue: {
+    id: "metalgreymon_blue",
+    name: "MetalGreymon (Blue)",
+    type: "Virus",
+    element: "Fire",
+    family: "Cyborg",
+    baseStats: { hp: 95, sp: 35, atk: 29, def: 18, int: 16, spd: 13 },
+    evolutions: ["blackwargreymon"],
+    sprite: "./assets/sprites/metalgreymon_blue.png"
   },
 
   weregarurumon: {
@@ -294,6 +382,17 @@ export const DIGIMONS = {
     baseStats: { hp: 84, sp: 40, atk: 22, def: 17, int: 20, spd: 14 },
     evolutions: ["seraphimon"],
     sprite: "./assets/sprites/holyangemon.png"
+  },
+
+  myotismon: {
+    id: "myotismon",
+    name: "Myotismon",
+    type: "Virus",
+    element: "Dark",
+    family: "Dark Animal",
+    baseStats: { hp: 82, sp: 39, atk: 21, def: 16, int: 23, spd: 14 },
+    evolutions: ["venommyotismon"],
+    sprite: "./assets/sprites/myotismon.png"
   },
 
   lillymon: {
@@ -351,6 +450,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/aeroveedramon.png"
   },
 
+  infermon: {
+    id: "infermon",
+    name: "Infermon",
+    type: "Virus",
+    element: "Dark",
+    family: "Unidentified",
+    baseStats: { hp: 92, sp: 35, atk: 25, def: 17, int: 19, spd: 15 },
+    evolutions: ["diaboromon"],
+    sprite: "./assets/sprites/infermon.png"
+  },
+
   wargreymon: {
     id: "wargreymon",
     name: "WarGreymon",
@@ -360,6 +470,17 @@ export const DIGIMONS = {
     baseStats: { hp: 122, sp: 46, atk: 36, def: 25, int: 24, spd: 18 },
     evolutions: ["omnimon"],
     sprite: "./assets/sprites/wargreymon.png"
+  },
+
+  blackwargreymon: {
+    id: "blackwargreymon",
+    name: "BlackWarGreymon",
+    type: "Virus",
+    element: "Fire",
+    family: "Dragon Man",
+    baseStats: { hp: 124, sp: 44, atk: 38, def: 25, int: 23, spd: 18 },
+    evolutions: [],
+    sprite: "./assets/sprites/blackwargreymon.png"
   },
 
   metalgarurumon: {
@@ -384,6 +505,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/omnimon.png"
   },
 
+  diaboromon: {
+    id: "diaboromon",
+    name: "Diaboromon",
+    type: "Virus",
+    element: "Dark",
+    family: "Unidentified",
+    baseStats: { hp: 120, sp: 50, atk: 30, def: 23, int: 36, spd: 21 },
+    evolutions: [],
+    sprite: "./assets/sprites/diaboromon.png"
+  },
+
   seraphimon: {
     id: "seraphimon",
     name: "Seraphimon",
@@ -393,6 +525,17 @@ export const DIGIMONS = {
     baseStats: { hp: 116, sp: 52, atk: 30, def: 24, int: 34, spd: 18 },
     evolutions: [],
     sprite: "./assets/sprites/seraphimon.png"
+  },
+
+  venommyotismon: {
+    id: "venommyotismon",
+    name: "VenomMyotismon",
+    type: "Virus",
+    element: "Dark",
+    family: "Dark Animal",
+    baseStats: { hp: 132, sp: 44, atk: 37, def: 27, int: 26, spd: 16 },
+    evolutions: [],
+    sprite: "./assets/sprites/venommyotismon.png"
   },
 
   rosemon: {

@@ -5,6 +5,11 @@ export const EVOLUTION_RULES = {
   tsunomon: {
     gabumon: { minLevel: 3, minBond: 1 }
   },
+  tsumemon: {
+    agumon_black: { minLevel: 3, minBond: 1 },
+    keramon: { minLevel: 3, minBond: 1 },
+    demidevimon: { minLevel: 3, minBond: 1 }
+  },
   tokomon: {
     patamon: { minLevel: 3, minBond: 1 }
   },
@@ -27,11 +32,20 @@ export const EVOLUTION_RULES = {
   agumon: {
     greymon: { minLevel: 10, minBond: 5 }
   },
+  agumon_black: {
+    greymon_blue: { minLevel: 10, minBond: 5 }
+  },
   gabumon: {
     garurumon: { minLevel: 10, minBond: 5 }
   },
+  keramon: {
+    chrysalimon: { minLevel: 10, minBond: 5 }
+  },
   patamon: {
     angemon: { minLevel: 10, minBond: 8 }
+  },
+  demidevimon: {
+    devimon: { minLevel: 10, minBond: 6 }
   },
   palmon: {
     togemon: { minLevel: 10, minBond: 5 }
@@ -52,11 +66,20 @@ export const EVOLUTION_RULES = {
   greymon: {
     metalgreymon: { minLevel: 22, minBond: 20 }
   },
+  greymon_blue: {
+    metalgreymon_blue: { minLevel: 22, minBond: 20 }
+  },
   garurumon: {
     weregarurumon: { minLevel: 22, minBond: 20 }
   },
+  devimon: {
+    myotismon: { minLevel: 24, minBond: 22 }
+  },
   angemon: {
     holyangemon: { minLevel: 24, minBond: 25 }
+  },
+  chrysalimon: {
+    infermon: { minLevel: 22, minBond: 18 }
   },
   togemon: {
     lillymon: { minLevel: 22, minBond: 18 }
@@ -77,11 +100,20 @@ export const EVOLUTION_RULES = {
   metalgreymon: {
     wargreymon: { minLevel: 34, minBond: 35 }
   },
+  metalgreymon_blue: {
+    blackwargreymon: { minLevel: 34, minBond: 35 }
+  },
   weregarurumon: {
     metalgarurumon: { minLevel: 34, minBond: 35 }
   },
+  myotismon: {
+    venommyotismon: { minLevel: 36, minBond: 38 }
+  },
   holyangemon: {
     seraphimon: { minLevel: 36, minBond: 40 }
+  },
+  infermon: {
+    diaboromon: { minLevel: 36, minBond: 34 }
   },
   lillymon: {
     rosemon: { minLevel: 34, minBond: 32 }

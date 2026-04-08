@@ -38,6 +38,7 @@ export const state = {
     huntId: null,
     playerDigimonUid: null,
     enemy: null,
+    encounterRewards: null,
     log: [],
     result: null, // null | "victory" | "defeat" | "fled"
     rewards: null,

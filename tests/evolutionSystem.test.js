@@ -30,6 +30,23 @@ describe("evolutionSystem", () => {
     expect(evolutions[0].isAvailable).toBe(false);
   });
 
+  it("lista as tres linhas evolutivas do Tsumemon", () => {
+    const tsumemon = createPlayerDigimon("tsumemon", {
+      level: 3,
+      bond: 1
+    });
+
+    const evolutions = getAvailableEvolutions(tsumemon);
+
+    expect(evolutions).toHaveLength(3);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "agumon_black",
+      "keramon",
+      "demidevimon"
+    ]);
+    expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
+  });
+
   it("evolui e registra a especie no digidex", () => {
     const save = createEmptySave();
     const agumon = createPlayerDigimon("agumon", {
