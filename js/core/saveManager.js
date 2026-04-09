@@ -131,32 +131,89 @@ function normalizeDigidexEntries(entries) {
   return normalized;
 }
 
-function normalizeAutoItemRule(rule, fallbackRule) {
+function isValidAutoItemForResource(itemId, resource) {
+  const item = getItemById(itemId);
+
+  if (!item?.usableInBattle) {
+    return false;
+  }
+
+  if (resource === "sp") {
+    return Number(item.effect?.spRestore ?? 0) > 0;
+  }
+
+  return Number(item.effect?.hpRestore ?? 0) > 0;
+}
+
+function normalizeAutoItemSlot(slot, fallbackSlot, resource) {
   const thresholdPercent = Math.max(
     1,
-    Math.min(100, Math.floor(toSafeNumber(rule?.thresholdPercent, fallbackRule.thresholdPercent)))
+    Math.min(100, Math.floor(toSafeNumber(slot?.thresholdPercent, fallbackSlot.thresholdPercent)))
   );
 
   return {
-    enabled: Boolean(rule?.enabled),
-    resource: rule?.resource === "sp" ? "sp" : "hp",
+    itemId: isValidAutoItemForResource(slot?.itemId, resource)
+      ? slot.itemId
+      : fallbackSlot.itemId,
     thresholdPercent
   };
 }
 
-function normalizeCombatSettings(combat, baseCombat) {
-  const normalizedRules = {};
-
-  for (const [itemId, fallbackRule] of Object.entries(baseCombat.autoItemRules)) {
-    normalizedRules[itemId] = normalizeAutoItemRule(combat?.autoItemRules?.[itemId], fallbackRule);
+function getLegacyAutoItemSlot(autoItemRules, resource, fallbackSlot) {
+  if (!autoItemRules || typeof autoItemRules !== "object") {
+    return fallbackSlot;
   }
+
+  const matchingRules = Object.entries(autoItemRules).filter(([itemId, rule]) => {
+    if (!rule?.enabled) {
+      return false;
+    }
+
+    const normalizedResource = rule.resource === "sp" ? "sp" : "hp";
+    return normalizedResource === resource && isValidAutoItemForResource(itemId, resource);
+  });
+
+  if (!matchingRules.length) {
+    return fallbackSlot;
+  }
+
+  const [itemId, rule] = matchingRules[0];
+
+  return {
+    itemId,
+    thresholdPercent: rule.thresholdPercent
+  };
+}
+
+function normalizeCombatSettings(combat, baseCombat) {
+  const legacyHpSlot = getLegacyAutoItemSlot(
+    combat?.autoItemRules,
+    "hp",
+    baseCombat.autoItemSlots.hp
+  );
+  const legacySpSlot = getLegacyAutoItemSlot(
+    combat?.autoItemRules,
+    "sp",
+    baseCombat.autoItemSlots.sp
+  );
 
   return {
     autoBattleEnabled:
       typeof combat?.autoBattleEnabled === "boolean"
         ? combat.autoBattleEnabled
         : baseCombat.autoBattleEnabled,
-    autoItemRules: normalizedRules
+    autoItemSlots: {
+      hp: normalizeAutoItemSlot(
+        combat?.autoItemSlots?.hp || legacyHpSlot,
+        baseCombat.autoItemSlots.hp,
+        "hp"
+      ),
+      sp: normalizeAutoItemSlot(
+        combat?.autoItemSlots?.sp || legacySpSlot,
+        baseCombat.autoItemSlots.sp,
+        "sp"
+      )
+    }
   };
 }
 

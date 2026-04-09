@@ -22,7 +22,7 @@ const ENEMY_RESPONSE_DELAY_MS = 900;
 const NEXT_STAGE_DELAY_MS = 1800;
 const RESOLVE_DELAY_MS = 1300;
 const DNA_TRANSITION_DELAY_MS = 5600;
-const AUTO_ITEM_ORDER = ["small_recovery", "bandage", "small_sp_disk"];
+const AUTO_ITEM_RESOURCES = ["hp", "sp"];
 
 let bossTimer = null;
 
@@ -160,23 +160,22 @@ function endBossSession(reason, options = {}) {
   rerender();
 }
 
-function getCombatRule(itemId) {
-  return state.save.combat?.autoItemRules?.[itemId] || null;
+function getCombatSlot(resource) {
+  return state.save.combat?.autoItemSlots?.[resource] || null;
 }
 
-function shouldTriggerAutoItem(playerDigimon, rule) {
-  if (!playerDigimon || !rule?.enabled) {
+function shouldTriggerAutoItem(playerDigimon, resource, slot) {
+  if (!playerDigimon || !slot?.itemId) {
     return false;
   }
 
-  const resource = rule.resource === "sp" ? "sp" : "hp";
   const currentValue =
     resource === "sp" ? playerDigimon.currentSP ?? 0 : playerDigimon.currentHP ?? 0;
   const maxValue =
     resource === "sp" ? playerDigimon.finalStats.sp || 1 : playerDigimon.finalStats.hp || 1;
   const currentPercent = (currentValue / maxValue) * 100;
 
-  return currentPercent <= Number(rule.thresholdPercent ?? 0);
+  return currentPercent <= Number(slot.thresholdPercent ?? 0);
 }
 
 function setPlayerTurnReady() {
@@ -287,11 +286,17 @@ function tryUseConfiguredAutoItem() {
     return null;
   }
 
-  for (const itemId of AUTO_ITEM_ORDER) {
-    const inventoryEntry = getInventoryEntry(state.save, itemId);
-    const rule = getCombatRule(itemId);
+  for (const resource of AUTO_ITEM_RESOURCES) {
+    const slot = getCombatSlot(resource);
+    const itemId = slot?.itemId;
 
-    if (!inventoryEntry || inventoryEntry.quantity <= 0 || !shouldTriggerAutoItem(player, rule)) {
+    if (!itemId) {
+      continue;
+    }
+
+    const inventoryEntry = getInventoryEntry(state.save, itemId);
+
+    if (!inventoryEntry || inventoryEntry.quantity <= 0 || !shouldTriggerAutoItem(player, resource, slot)) {
       continue;
     }
 
@@ -517,17 +522,24 @@ export function toggleBossAutoBattleMode() {
   rerender();
 }
 
-export function updateBossAutoItemRule(itemId, patch = {}) {
-  const existingRule = getCombatRule(itemId);
+export function updateBossAutoItemSlot(resource, patch = {}) {
+  const normalizedResource = resource === "sp" ? "sp" : "hp";
+  const existingSlot = getCombatSlot(normalizedResource);
 
-  if (!existingRule) {
+  if (!existingSlot) {
     return;
   }
 
-  state.save.combat.autoItemRules[itemId] = {
-    ...existingRule,
-    ...patch,
-    resource: patch.resource === "sp" ? "sp" : patch.resource === "hp" ? "hp" : existingRule.resource,
+  const nextItemId =
+    patch.itemId === "" || patch.itemId === null
+      ? null
+      : typeof patch.itemId === "string"
+        ? patch.itemId
+        : existingSlot.itemId;
+
+  state.save.combat.autoItemSlots[normalizedResource] = {
+    ...existingSlot,
+    itemId: nextItemId,
     thresholdPercent: Math.max(
       1,
       Math.min(
@@ -535,7 +547,7 @@ export function updateBossAutoItemRule(itemId, patch = {}) {
         Math.floor(
           Number.isFinite(Number(patch.thresholdPercent))
             ? Number(patch.thresholdPercent)
-            : existingRule.thresholdPercent
+            : existingSlot.thresholdPercent
         )
       )
     )

@@ -66,10 +66,48 @@ describe("saveManager", () => {
     expect(migrated.digidex.seen).toEqual(expect.arrayContaining(["agumon", "gabumon"]));
     expect(migrated.digidex.owned).toEqual(expect.arrayContaining(["agumon", "gabumon"]));
     expect(migrated.combat.autoBattleEnabled).toBe(true);
-    expect(migrated.combat.autoItemRules.bandage).toEqual({
-      enabled: false,
-      resource: "hp",
-      thresholdPercent: 35
+    expect(migrated.combat.autoItemSlots.hp).toEqual({
+      itemId: "small_recovery",
+      thresholdPercent: 55
+    });
+    expect(migrated.combat.autoItemSlots.sp).toEqual({
+      itemId: "small_sp_disk",
+      thresholdPercent: 25
+    });
+  });
+
+  it("migra configuracoes antigas de auto-itens para os novos slots de HP e SP", () => {
+    const migrated = migrateSaveIfNeeded({
+      combat: {
+        autoBattleEnabled: false,
+        autoItemRules: {
+          bandage: {
+            enabled: false,
+            resource: "hp",
+            thresholdPercent: 35
+          },
+          medium_recovery: {
+            enabled: true,
+            resource: "hp",
+            thresholdPercent: 42
+          },
+          high_sp_disk: {
+            enabled: true,
+            resource: "sp",
+            thresholdPercent: 18
+          }
+        }
+      }
+    });
+
+    expect(migrated.combat.autoBattleEnabled).toBe(false);
+    expect(migrated.combat.autoItemSlots.hp).toEqual({
+      itemId: "medium_recovery",
+      thresholdPercent: 42
+    });
+    expect(migrated.combat.autoItemSlots.sp).toEqual({
+      itemId: "high_sp_disk",
+      thresholdPercent: 18
     });
   });
 

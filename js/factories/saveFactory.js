@@ -41,20 +41,13 @@ export function createEmptySave() {
 
     combat: {
       autoBattleEnabled: true,
-      autoItemRules: {
-        bandage: {
-          enabled: false,
-          resource: "hp",
-          thresholdPercent: 35
-        },
-        small_recovery: {
-          enabled: false,
-          resource: "hp",
+      autoItemSlots: {
+        hp: {
+          itemId: "small_recovery",
           thresholdPercent: 55
         },
-        small_sp_disk: {
-          enabled: false,
-          resource: "sp",
+        sp: {
+          itemId: "small_sp_disk",
           thresholdPercent: 25
         }
       }

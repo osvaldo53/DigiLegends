@@ -11,7 +11,7 @@ import {
   cancelBattleItemTargetSelection,
   getBattleItemEligibleTargets,
   toggleAutoBattleMode,
-  updateAutoItemRule,
+  updateAutoItemSlot,
   performManualBattleAction,
   useBattleItemTurn,
   switchBattleDigimonTurn
@@ -103,7 +103,7 @@ function renderActiveSessionPanel() {
     ],
     stopButtonText: "Parar hunt",
     getEligibleItemTargets: getBattleItemEligibleTargets,
-    onUpdateAutoItemRule: updateAutoItemRule,
+    onUpdateAutoItemSlot: updateAutoItemSlot,
     dropsTitle: "Itens dropados",
     drops: state.huntSession.drops,
     emptyDropsText: "Nenhum item dropado ate agora.",
@@ -178,7 +178,7 @@ export function bindHuntsScreen() {
       onUseItemTurn: useBattleItemTurn,
       onBeginItemTargetSelection: beginBattleItemTargetSelection,
       onCancelItemTargetSelection: cancelBattleItemTargetSelection,
-      onUpdateAutoItemRule: updateAutoItemRule
+      onUpdateAutoItemSlot: updateAutoItemSlot
     });
   }
 

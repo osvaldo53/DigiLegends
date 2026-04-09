@@ -30,7 +30,16 @@ export const state = {
     },
     combat: {
       autoBattleEnabled: true,
-      autoItemRules: {}
+      autoItemSlots: {
+        hp: {
+          itemId: "small_recovery",
+          thresholdPercent: 55
+        },
+        sp: {
+          itemId: "small_sp_disk",
+          thresholdPercent: 25
+        }
+      }
     },
     inventory: [],
     scanData: {}

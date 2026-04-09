@@ -13,7 +13,7 @@ import {
   stopBossSession,
   switchBossDigimonTurn,
   toggleBossAutoBattleMode,
-  updateBossAutoItemRule,
+  updateBossAutoItemSlot,
   useBossItemTurn
 } from "../../systems/bossSessionSystem.js";
 import { renderBattleSessionView, bindBattleSessionView } from "../components/battleSessionView.js";
@@ -117,7 +117,7 @@ function renderActiveBossSessionPanel() {
     ],
     stopButtonText: "Parar desafio",
     getEligibleItemTargets: getBossItemEligibleTargets,
-    onUpdateAutoItemRule: updateBossAutoItemRule,
+    onUpdateAutoItemSlot: updateBossAutoItemSlot,
     dropsTitle: "Recompensas obtidas",
     drops: state.bossSession.drops,
     emptyDropsText: "Nenhum item obtido ainda.",
@@ -192,7 +192,7 @@ export function bindBossesScreen() {
       onUseItemTurn: useBossItemTurn,
       onBeginItemTargetSelection: beginBossItemTargetSelection,
       onCancelItemTargetSelection: cancelBossItemTargetSelection,
-      onUpdateAutoItemRule: updateBossAutoItemRule
+      onUpdateAutoItemSlot: updateBossAutoItemSlot
     });
   }
 

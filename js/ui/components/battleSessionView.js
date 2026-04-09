@@ -10,6 +10,10 @@ import { getTypeMultiplier } from "../../systems/typeChart.js";
 
 const ACTION_ANIMATION_WINDOW_MS = 420;
 const BATTLE_ITEM_IDS = Object.keys(ITEMS).filter((itemId) => ITEMS[itemId].usableInBattle);
+const AUTO_ITEM_OPTIONS = {
+  hp: BATTLE_ITEM_IDS.filter((itemId) => Number(ITEMS[itemId]?.effect?.hpRestore ?? 0) > 0),
+  sp: BATTLE_ITEM_IDS.filter((itemId) => Number(ITEMS[itemId]?.effect?.spRestore ?? 0) > 0)
+};
 
 function getActiveBattlePlayerDigimon() {
   const activeUid = state.battle.playerDigimonUid;
@@ -234,6 +238,18 @@ function renderBattleSupportItems(canUseItem) {
   return html || '<p class="hunt-session__muted">Nenhum item utilizavel disponivel.</p>';
 }
 
+function formatAutoItemOptionLabel(itemId, resource) {
+  const item = getItemById(itemId);
+  const entry = getInventoryEntry(state.save, itemId);
+  const effectValue =
+    resource === "sp"
+      ? Number(item?.effect?.spRestore ?? 0)
+      : Number(item?.effect?.hpRestore ?? 0);
+  const effectLabel = resource === "sp" ? `+${effectValue} SP` : `+${effectValue} HP`;
+
+  return `${item?.name || itemId} (${effectLabel})${entry ? ` x${entry.quantity}` : " x0"}`;
+}
+
 function renderPendingBattleItemSelection(pendingBattleItem, getEligibleItemTargets) {
   if (!pendingBattleItem?.itemId) {
     return "";
@@ -284,57 +300,54 @@ function renderPendingBattleItemSelection(pendingBattleItem, getEligibleItemTarg
   `;
 }
 
-function renderAutoItemSettings(onAutoItemRule) {
-  if (!onAutoItemRule) {
+function renderAutoItemSettings(onAutoItemSlot) {
+  if (!onAutoItemSlot) {
     return "";
   }
 
-  const config = state.save.combat?.autoItemRules || {};
+  const slots = state.save.combat?.autoItemSlots || {};
 
-  return BATTLE_ITEM_IDS.map((itemId) => {
-    const item = getItemById(itemId);
-    const entry = getInventoryEntry(state.save, itemId);
-    const rule = config[itemId];
+  return ["hp", "sp"]
+    .map((resource) => {
+      const slot = slots[resource];
+      const label = resource === "hp" ? "HP" : "SP";
 
-    if (!item || !rule) {
-      return "";
-    }
+      return `
+        <div class="hunt-auto-item-row" style="margin-top:10px;">
+          <div class="button-row" style="align-items:center;">
+            <span class="status-pill">${label}</span>
 
-    return `
-      <div class="hunt-auto-item-row" style="margin-top:10px;">
-        <div class="button-row" style="align-items:center;">
-          <label style="display:flex; align-items:center; gap:6px;">
-            <input
-              type="checkbox"
-              class="js-auto-item-enabled"
-              data-item-id="${escapeHtml(itemId)}"
-              ${rule.enabled ? "checked" : ""}
-            />
-            <span>${escapeHtml(item.name)}${entry ? ` x${entry.quantity}` : " x0"}</span>
-          </label>
+            <select class="js-auto-item-slot" data-resource="${resource}">
+              <option value="">Nenhum item</option>
+              ${AUTO_ITEM_OPTIONS[resource]
+                .map((itemId) => {
+                  return `
+                    <option value="${escapeHtml(itemId)}" ${slot?.itemId === itemId ? "selected" : ""}>
+                      ${escapeHtml(formatAutoItemOptionLabel(itemId, resource))}
+                    </option>
+                  `;
+                })
+                .join("")}
+            </select>
 
-          <select class="js-auto-item-resource" data-item-id="${escapeHtml(itemId)}">
-            <option value="hp" ${rule.resource === "hp" ? "selected" : ""}>HP</option>
-            <option value="sp" ${rule.resource === "sp" ? "selected" : ""}>SP</option>
-          </select>
-
-          <label style="display:flex; align-items:center; gap:6px;">
-            <span>abaixo de</span>
-            <input
-              type="number"
-              min="1"
-              max="100"
-              value="${rule.thresholdPercent}"
-              class="js-auto-item-threshold"
-              data-item-id="${escapeHtml(itemId)}"
-              style="width:72px;"
-            />
-            <span>%</span>
-          </label>
+            <label style="display:flex; align-items:center; gap:6px;">
+              <span>abaixo de</span>
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value="${slot?.thresholdPercent ?? 1}"
+                class="js-auto-item-threshold"
+                data-resource="${resource}"
+                style="width:72px;"
+              />
+              <span>%</span>
+            </label>
+          </div>
         </div>
-      </div>
-    `;
-  }).join("");
+      `;
+    })
+    .join("");
 }
 
 function renderBattleSwitchOptions(canAct) {
@@ -505,7 +518,7 @@ export function renderBattleSessionView({
   topSummaryItems,
   stopButtonText,
   getEligibleItemTargets,
-  onUpdateAutoItemRule,
+  onUpdateAutoItemSlot,
   dropsTitle,
   drops,
   emptyDropsText,
@@ -644,7 +657,7 @@ export function renderBattleSessionView({
             <p class="hunt-session__muted">
               Escolha quais itens podem ser usados automaticamente e em qual percentual de HP ou SP.
             </p>
-            ${renderAutoItemSettings(onUpdateAutoItemRule)}
+            ${renderAutoItemSettings(onUpdateAutoItemSlot)}
           </div>
 
           <div class="hunt-session-box">
@@ -691,7 +704,7 @@ export function bindBattleSessionView({
   onUseItemTurn,
   onBeginItemTargetSelection,
   onCancelItemTargetSelection,
-  onUpdateAutoItemRule
+  onUpdateAutoItemSlot
 }) {
   document.getElementById("btn-stop-session")?.addEventListener("click", () => {
     onStopSession();
@@ -807,19 +820,11 @@ export function bindBattleSessionView({
     }
   });
 
-  if (onUpdateAutoItemRule) {
-    document.querySelectorAll(".js-auto-item-enabled").forEach((input) => {
-      input.addEventListener("change", () => {
-        onUpdateAutoItemRule(input.dataset.itemId, {
-          enabled: input.checked
-        });
-      });
-    });
-
-    document.querySelectorAll(".js-auto-item-resource").forEach((select) => {
+  if (onUpdateAutoItemSlot) {
+    document.querySelectorAll(".js-auto-item-slot").forEach((select) => {
       select.addEventListener("change", () => {
-        onUpdateAutoItemRule(select.dataset.itemId, {
-          resource: select.value
+        onUpdateAutoItemSlot(select.dataset.resource, {
+          itemId: select.value || null
         });
       });
     });
@@ -828,7 +833,7 @@ export function bindBattleSessionView({
       const commit = () => {
         const nextValue = Math.max(1, Math.min(100, Number(input.value) || 1));
         input.value = String(nextValue);
-        onUpdateAutoItemRule(input.dataset.itemId, {
+        onUpdateAutoItemSlot(input.dataset.resource, {
           thresholdPercent: nextValue
         });
       };
