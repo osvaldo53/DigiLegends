@@ -9,4 +9,12 @@ describe("skills", () => {
     expect(getSkillById("grey_sword")?.kind).toBe("attack");
     expect(getSkillById("supreme_cannon")?.kind).toBe("attack");
   });
+
+  it("atribui skills ofensivas ao Alphamon Ouryuken", () => {
+    const skillIds = getSkillsForSpecies("alphamon_ouryuken");
+
+    expect(skillIds).toEqual(["ouryu_seiken", "alpha_inforce"]);
+    expect(getSkillById("ouryu_seiken")?.kind).toBe("attack");
+    expect(getSkillById("alpha_inforce")?.kind).toBe("attack");
+  });
 });

@@ -1,5 +1,14 @@
 export const HUNTS = [
   {
+    id: "starter-meadow",
+    name: "Prado Inicial",
+    description: "Area basica para testar o inicio da jornada contra Digimons muito jovens.",
+    minLevel: 1,
+    rewards: { bits: 10, exp: 14 },
+    rewardLabel: "10 Bits / 14 EXP",
+    enemyPool: ["wanyamon", "koromon", "tsunomon", "tokomon"]
+  },
+  {
     id: "training-grounds",
     name: "Campo de Treino",
     description: "Area inicial para testes de combate com Baby e In-Training.",

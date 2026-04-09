@@ -8,6 +8,7 @@ export const SCAN_RULES = {
   bukamon: { stage: "In-Training", scanPercentOnDefeat: 5 },
   yokomon: { stage: "In-Training", scanPercentOnDefeat: 5 },
   demiveemon: { stage: "In-Training", scanPercentOnDefeat: 5 },
+  wanyamon: { stage: "In-Training", scanPercentOnDefeat: 5 },
 
   agumon: { stage: "Rookie", scanPercentOnDefeat: 4 },
   agumon_black: { stage: "Rookie", scanPercentOnDefeat: 4 },
@@ -21,6 +22,8 @@ export const SCAN_RULES = {
   biyomon: { stage: "Rookie", scanPercentOnDefeat: 4 },
   veemon: { stage: "Rookie", scanPercentOnDefeat: 4 },
   wormmon: { stage: "Rookie", scanPercentOnDefeat: 4 },
+  dorumon: { stage: "Rookie", scanPercentOnDefeat: 4 },
+  dracomon: { stage: "Rookie", scanPercentOnDefeat: 4 },
 
   greymon: { stage: "Champion", scanPercentOnDefeat: 2 },
   greymon_blue: { stage: "Champion", scanPercentOnDefeat: 2 },
@@ -34,6 +37,8 @@ export const SCAN_RULES = {
   birdramon: { stage: "Champion", scanPercentOnDefeat: 2 },
   exveemon: { stage: "Champion", scanPercentOnDefeat: 2 },
   stingmon: { stage: "Champion", scanPercentOnDefeat: 2 },
+  raptordramon: { stage: "Champion", scanPercentOnDefeat: 2 },
+  ginryumon: { stage: "Champion", scanPercentOnDefeat: 2 },
   flamedramon: { stage: "Armor", scanPercentOnDefeat: 2 },
   lighdramon: { stage: "Armor", scanPercentOnDefeat: 2 },
   pegasusmon: { stage: "Armor", scanPercentOnDefeat: 2 },
@@ -50,6 +55,8 @@ export const SCAN_RULES = {
   garudamon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   paildramon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
   aeroveedramon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
+  grademon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
+  hisyaryumon: { stage: "Ultimate", scanPercentOnDefeat: 1 },
 
   wargreymon: { stage: "Mega", scanPercentOnDefeat: 1 },
   blackwargreymon: { stage: "Mega", scanPercentOnDefeat: 1 },
@@ -63,7 +70,10 @@ export const SCAN_RULES = {
   phoenixmon: { stage: "Mega", scanPercentOnDefeat: 1 },
   ulforceveedramon: { stage: "Mega", scanPercentOnDefeat: 1 },
   imperialdramon_dm: { stage: "Mega", scanPercentOnDefeat: 1 },
-  imperialdramon_fm: { stage: "Ultra", scanPercentOnDefeat: 1 }
+  alphamon: { stage: "Mega", scanPercentOnDefeat: 1 },
+  ouryumon: { stage: "Mega", scanPercentOnDefeat: 1 },
+  imperialdramon_fm: { stage: "Ultra", scanPercentOnDefeat: 1 },
+  alphamon_ouryuken: { stage: "Ultra", scanPercentOnDefeat: 1 }
 };
 
 export function getScanRule(speciesId) {

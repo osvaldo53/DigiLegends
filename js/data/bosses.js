@@ -92,6 +92,96 @@ export const BOSSES = [
       { itemId: "revive_max", quantity: 1, chance: 0.35 },
       { itemId: "omni_sword", quantity: 1, chance: 0.1 }
     ]
+  },
+  {
+    id: "alphamon-ouryuken",
+    name: "Desafio de Alphamon Ouryuken",
+    description:
+      "Enfrente Ouryumon e Alphamon em sequencia antes da fusao final que desperta Alphamon Ouryuken.",
+    recommendedLevel: 100,
+    rewardLabel: "High Recovery, Revive Max e muito cash",
+    stages: [
+      {
+        id: "alphamon-ouryuken-ouryumon",
+        name: "Ouryumon",
+        speciesId: "ouryumon",
+        level: 100,
+        bonusStats: {
+          hp: 920,
+          atk: 18,
+          def: 16,
+          int: 14,
+          spd: 10
+        },
+        rewards: {
+          bits: 420,
+          exp: 320
+        }
+      },
+      {
+        id: "alphamon-ouryuken-alphamon",
+        name: "Alphamon",
+        speciesId: "alphamon",
+        level: 100,
+        bonusStats: {
+          hp: 900,
+          atk: 16,
+          def: 16,
+          int: 18,
+          spd: 12
+        },
+        rewards: {
+          bits: 460,
+          exp: 340
+        },
+        transitionAnimation: {
+          heading: "DNA Digivolution",
+          subheading: "Ouryumon e Alphamon liberaram Alphamon Ouryuken.",
+          from: {
+            name: "Alphamon",
+            sprite: "./assets/sprites/alphamon.png"
+          },
+          to: {
+            name: "Alphamon Ouryuken",
+            sprite: "./assets/sprites/alphamon_ouryuken.png"
+          },
+          sources: [
+            {
+              label: "Base 1",
+              name: "Ouryumon",
+              sprite: "./assets/sprites/ouryumon.png"
+            },
+            {
+              label: "Base 2",
+              name: "Alphamon",
+              sprite: "./assets/sprites/alphamon.png"
+            }
+          ]
+        }
+      },
+      {
+        id: "alphamon-ouryuken-final",
+        name: "Alphamon Ouryuken",
+        speciesId: "alphamon_ouryuken",
+        level: 100,
+        bonusStats: {
+          hp: 1480,
+          atk: 24,
+          def: 22,
+          int: 22,
+          spd: 14
+        },
+        rewards: {
+          bits: 680,
+          exp: 520
+        }
+      }
+    ],
+    rewardDrops: [
+      { itemId: "high_recovery", quantity: 4, chance: 1 },
+      { itemId: "revive_max", quantity: 2, chance: 0.85 },
+      { itemId: "revive", quantity: 2, chance: 0.65 }
+    ]
   }
 ];
 

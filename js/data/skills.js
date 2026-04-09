@@ -62,6 +62,10 @@ export const SKILLS = {
   meteor_wing: { id: "meteor_wing", name: "Meteor Wing", kind: "attack", power: 32, cost: 9, element: "Fire", scaling: "int" },
   phoenix_blaze: { id: "phoenix_blaze", name: "Phoenix Blaze", kind: "attack", power: 40, cost: 12, element: "Fire", scaling: "int" },
   crimson_flare: { id: "crimson_flare", name: "Crimson Flare", kind: "attack", power: 39, cost: 11, element: "Fire", scaling: "int" },
+  metal_cannon: { id: "metal_cannon", name: "Metal Cannon", kind: "attack", power: 24, cost: 6, element: "Dark", scaling: "int" },
+  dash_bite: { id: "dash_bite", name: "Dash Bite", kind: "attack", power: 22, cost: 5, element: "Neutral", scaling: "atk" },
+  baby_breath: { id: "baby_breath", name: "Baby Breath", kind: "attack", power: 24, cost: 6, element: "Neutral", scaling: "int" },
+  tail_smash: { id: "tail_smash", name: "Tail Smash", kind: "attack", power: 22, cost: 5, element: "Neutral", scaling: "atk" },
 
   vee_headbutt: { id: "vee_headbutt", name: "Vee Headbutt", kind: "attack", power: 21, cost: 4, element: "Neutral", scaling: "atk" },
   vee_laser: { id: "vee_laser", name: "Vee Laser", kind: "attack", power: 28, cost: 7, element: "Light", scaling: "int" },
@@ -74,6 +78,14 @@ export const SKILLS = {
   mega_crusher: { id: "mega_crusher", name: "Mega Crusher", kind: "attack", power: 39, cost: 11, element: "Neutral", scaling: "atk" },
   posi_tron_laser: { id: "posi_tron_laser", name: "Positron Laser", kind: "attack", power: 45, cost: 14, element: "Light", scaling: "int" },
   omega_blade: { id: "omega_blade", name: "Omega Blade", kind: "attack", power: 41, cost: 12, element: "Light", scaling: "atk" },
+  swerve_driver: { id: "swerve_driver", name: "Swerve Driver", kind: "attack", power: 32, cost: 9, element: "Dark", scaling: "atk" },
+  ambush_crush: { id: "ambush_crush", name: "Ambush Crush", kind: "attack", power: 30, cost: 8, element: "Neutral", scaling: "atk" },
+  dragon_roar: { id: "dragon_roar", name: "Dragon Roar", kind: "attack", power: 31, cost: 8, element: "Neutral", scaling: "int" },
+  iron_blade: { id: "iron_blade", name: "Iron Blade", kind: "attack", power: 30, cost: 8, element: "Neutral", scaling: "atk" },
+  soul_chopper: { id: "soul_chopper", name: "Soul Chopper", kind: "attack", power: 39, cost: 11, element: "Light", scaling: "atk" },
+  cross_blade: { id: "cross_blade", name: "Cross Blade", kind: "attack", power: 37, cost: 10, element: "Neutral", scaling: "atk" },
+  seiryu_blast: { id: "seiryu_blast", name: "Seiryu Blast", kind: "attack", power: 40, cost: 12, element: "Light", scaling: "int" },
+  dragon_cleaver: { id: "dragon_cleaver", name: "Dragon Cleaver", kind: "attack", power: 36, cost: 10, element: "Neutral", scaling: "atk" },
   giga_crusher: { id: "giga_crusher", name: "Giga Crusher", kind: "attack", power: 48, cost: 15, element: "Light", scaling: "atk" },
   omni_slash: { id: "omni_slash", name: "Omni Slash", kind: "attack", power: 50, cost: 16, element: "Light", scaling: "atk" },
 
@@ -90,7 +102,13 @@ export const SKILLS = {
   seven_heavens: { id: "seven_heavens", name: "Seven Heavens", kind: "attack", power: 42, cost: 13, element: "Light", scaling: "int" },
   holy_judgment: { id: "holy_judgment", name: "Holy Judgment", kind: "attack", power: 38, cost: 11, element: "Light", scaling: "atk" },
   night_raid: { id: "night_raid", name: "Night Raid", kind: "attack", power: 43, cost: 13, element: "Dark", scaling: "int" },
-  poison_stream: { id: "poison_stream", name: "Poison Stream", kind: "attack", power: 38, cost: 11, element: "Dark", scaling: "atk" }
+  poison_stream: { id: "poison_stream", name: "Poison Stream", kind: "attack", power: 38, cost: 11, element: "Dark", scaling: "atk" },
+  digitalize_of_soul: { id: "digitalize_of_soul", name: "Digitalize of Soul", kind: "attack", power: 44, cost: 14, element: "Dark", scaling: "int" },
+  seiken_gradalpha: { id: "seiken_gradalpha", name: "Seiken Gradalpha", kind: "attack", power: 42, cost: 13, element: "Dark", scaling: "atk" },
+  ouryu_cannon: { id: "ouryu_cannon", name: "Ouryu Cannon", kind: "attack", power: 44, cost: 14, element: "Light", scaling: "int" },
+  royal_saber: { id: "royal_saber", name: "Royal Saber", kind: "attack", power: 41, cost: 12, element: "Neutral", scaling: "atk" },
+  ouryu_seiken: { id: "ouryu_seiken", name: "Ouryu Seiken", kind: "attack", power: 52, cost: 17, element: "Light", scaling: "atk" },
+  alpha_inforce: { id: "alpha_inforce", name: "Alpha InForce", kind: "attack", power: 50, cost: 16, element: "Light", scaling: "int" }
 };
 
 export function getSkillById(skillId) {
@@ -107,6 +125,7 @@ export const SPECIES_SKILLS = {
   bukamon: ["bubble_pop"],
   yokomon: ["baby_flame"],
   demiveemon: ["vee_tackle"],
+  wanyamon: ["petit_bite"],
 
   agumon: ["claw_attack", "pepper_breath"],
   agumon_black: ["claw_attack", "black_pepper_breath"],
@@ -120,6 +139,8 @@ export const SPECIES_SKILLS = {
   biyomon: ["spiral_twister", "body_slam"],
   veemon: ["vee_headbutt", "vee_laser"],
   wormmon: ["web_wrecker", "poison_ivy"],
+  dorumon: ["dash_bite", "metal_cannon"],
+  dracomon: ["tail_smash", "baby_breath"],
 
   greymon: ["great_horn_attack", "mega_flame"],
   greymon_blue: ["great_horn_attack", "blue_mega_flame"],
@@ -136,6 +157,8 @@ export const SPECIES_SKILLS = {
   lighdramon: ["lightning_blade", "static_buzz"],
   pegasusmon: ["star_shower", "air_shot"],
   chrysalimon: ["data_crusher", "web_wrecker"],
+  raptordramon: ["swerve_driver", "ambush_crush"],
+  ginryumon: ["dragon_roar", "iron_blade"],
 
   metalgreymon: ["giga_destroyer", "trident_arm"],
   metalgreymon_blue: ["giga_destroyer", "virus_breath"],
@@ -149,6 +172,8 @@ export const SPECIES_SKILLS = {
   aeroveedramon: ["v_wing_blade", "vee_laser"],
   myotismon: ["night_raid", "poison_stream"],
   infermon: ["catastro_disaster", "spider_shooter"],
+  grademon: ["soul_chopper", "cross_blade"],
+  hisyaryumon: ["seiryu_blast", "dragon_cleaver"],
 
   wargreymon: ["terra_force", "brave_tornado"],
   blackwargreymon: ["gaia_destroyer", "dark_tornado"],
@@ -164,7 +189,10 @@ export const SPECIES_SKILLS = {
   ulforceveedramon: ["ray_of_victory", "ulforce_saber"],
   imperialdramon_dm: ["giga_death", "mega_crusher"],
   imperialdramon_fm: ["posi_tron_laser", "omega_blade"],
-  imperialdramon_pm: ["posi_tron_laser", "giga_crusher", "omni_slash"]
+  imperialdramon_pm: ["posi_tron_laser", "giga_crusher", "omni_slash"],
+  alphamon: ["digitalize_of_soul", "seiken_gradalpha"],
+  ouryumon: ["ouryu_cannon", "royal_saber"],
+  alphamon_ouryuken: ["ouryu_seiken", "alpha_inforce"]
 };
 
 export function getSkillsForSpecies(speciesId) {

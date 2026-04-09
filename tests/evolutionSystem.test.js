@@ -63,6 +63,22 @@ describe("evolutionSystem", () => {
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
 
+  it("lista as duas linhas evolutivas do Koromon", () => {
+    const koromon = createPlayerDigimon("koromon", {
+      level: 3,
+      bond: 1
+    });
+
+    const evolutions = getAvailableEvolutions(koromon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "agumon",
+      "dracomon"
+    ]);
+    expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
+  });
+
   it("permite a nova linha Kapurimon ate Hagurumon", () => {
     const kapurimon = createPlayerDigimon("kapurimon", {
       level: 3,
@@ -70,6 +86,15 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(kapurimon, "hagurumon")).toBe(true);
+  });
+
+  it("permite a nova linha Wanyamon ate Dorumon", () => {
+    const wanyamon = createPlayerDigimon("wanyamon", {
+      level: 3,
+      bond: 1
+    });
+
+    expect(canEvolveTo(wanyamon, "dorumon")).toBe(true);
   });
 
   it("evolui e registra a especie no digidex", () => {
@@ -113,6 +138,24 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(hagurumon, "guardromon")).toBe(true);
+  });
+
+  it("permite evoluir Dorumon para Raptordramon", () => {
+    const dorumon = createPlayerDigimon("dorumon", {
+      level: 10,
+      bond: 5
+    });
+
+    expect(canEvolveTo(dorumon, "raptordramon")).toBe(true);
+  });
+
+  it("permite evoluir Dracomon para Ginryumon", () => {
+    const dracomon = createPlayerDigimon("dracomon", {
+      level: 10,
+      bond: 5
+    });
+
+    expect(canEvolveTo(dracomon, "ginryumon")).toBe(true);
   });
 
   it("exige Digi-Ovo da Coragem para evoluir Veemon em Flamedramon", () => {
@@ -236,6 +279,58 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(andromon, "craniamon")).toBe(true);
   });
 
+  it("permite evoluir Grademon para Alphamon", () => {
+    const grademon = createPlayerDigimon("grademon", {
+      level: 36,
+      bond: 34
+    });
+
+    expect(canEvolveTo(grademon, "alphamon")).toBe(true);
+  });
+
+  it("permite evoluir Hisyaryumon para Ouryumon", () => {
+    const hisyaryumon = createPlayerDigimon("hisyaryumon", {
+      level: 36,
+      bond: 34
+    });
+
+    expect(canEvolveTo(hisyaryumon, "ouryumon")).toBe(true);
+  });
+
+  it("permite DNA evolution de Alphamon para Alphamon Ouryuken quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const alphamon = createPlayerDigimon("alphamon", {
+      level: 45,
+      bond: 45
+    });
+    const ouryumon = createPlayerDigimon("ouryumon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [alphamon];
+    save.storage = [ouryumon];
+
+    expect(canEvolveTo(alphamon, "alphamon_ouryuken", save)).toBe(true);
+  });
+
+  it("permite DNA evolution de Ouryumon para Alphamon Ouryuken quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const ouryumon = createPlayerDigimon("ouryumon", {
+      level: 45,
+      bond: 45
+    });
+    const alphamon = createPlayerDigimon("alphamon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [ouryumon];
+    save.storage = [alphamon];
+
+    expect(canEvolveTo(ouryumon, "alphamon_ouryuken", save)).toBe(true);
+  });
+
   it("permite DNA evolution de WarGreymon para Omnimon quando o parceiro existe", () => {
     const save = createEmptySave();
     const wargreymon = createPlayerDigimon("wargreymon", {
@@ -344,6 +439,27 @@ describe("evolutionSystem", () => {
     expect(exveemon.speciesId).toBe("paildramon");
     expect(save.storage).toHaveLength(0);
     expect(save.digidex.owned).toContain("paildramon");
+  });
+
+  it("consome o parceiro ao realizar DNA evolution para Alphamon Ouryuken", () => {
+    const save = createEmptySave();
+    const alphamon = createPlayerDigimon("alphamon", {
+      level: 45,
+      bond: 45
+    });
+    const ouryumon = createPlayerDigimon("ouryumon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [alphamon];
+    save.storage = [ouryumon];
+
+    evolveDigimon(alphamon, "alphamon_ouryuken", save);
+
+    expect(alphamon.speciesId).toBe("alphamon_ouryuken");
+    expect(save.storage).toHaveLength(0);
+    expect(save.digidex.owned).toContain("alphamon_ouryuken");
   });
 
   it("permite escolher qual parceiro sera consumido na DNA evolution", () => {

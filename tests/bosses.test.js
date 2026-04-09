@@ -60,4 +60,25 @@ describe("bosses", () => {
       })
     );
   });
+
+  it("cadastra o desafio de Alphamon Ouryuken com tres etapas fixas", () => {
+    const boss = getBossById("alphamon-ouryuken");
+
+    expect(boss).toBeTruthy();
+    expect(boss.recommendedLevel).toBe(100);
+    expect(boss.stages).toHaveLength(3);
+    expect(boss.stages.map((stage) => stage.speciesId)).toEqual([
+      "ouryumon",
+      "alphamon",
+      "alphamon_ouryuken"
+    ]);
+    expect(boss.stages[0].bonusStats.hp).toBeGreaterThan(800);
+    expect(boss.stages[2].bonusStats.hp).toBeGreaterThan(boss.stages[1].bonusStats.hp);
+    expect(boss.stages[1].transitionAnimation).toEqual(
+      expect.objectContaining({
+        heading: "DNA Digivolution",
+        to: expect.objectContaining({ name: "Alphamon Ouryuken" })
+      })
+    );
+  });
 });

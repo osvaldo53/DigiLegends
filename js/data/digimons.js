@@ -6,7 +6,7 @@ export const DIGIMONS = {
     element: "Neutral",
     family: "Lesser",
     baseStats: { hp: 24, sp: 10, atk: 5, def: 4, int: 4, spd: 5 },
-    evolutions: ["agumon"],
+    evolutions: ["agumon", "dracomon"],
     sprite: "./assets/sprites/koromon.png"
   },
 
@@ -208,6 +208,28 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/wormmon.png"
   },
 
+  dorumon: {
+    id: "dorumon",
+    name: "Dorumon",
+    type: "Data",
+    element: "Dark",
+    family: "Dragonkin",
+    baseStats: { hp: 41, sp: 18, atk: 11, def: 8, int: 8, spd: 10 },
+    evolutions: ["raptordramon"],
+    sprite: "./assets/sprites/dorumon.png"
+  },
+
+  dracomon: {
+    id: "dracomon",
+    name: "Dracomon",
+    type: "Data",
+    element: "Neutral",
+    family: "Dragon",
+    baseStats: { hp: 43, sp: 16, atk: 12, def: 8, int: 7, spd: 9 },
+    evolutions: ["ginryumon"],
+    sprite: "./assets/sprites/dracomon.png"
+  },
+
   biyomon: {
     id: "biyomon",
     name: "Biyomon",
@@ -228,6 +250,17 @@ export const DIGIMONS = {
     baseStats: { hp: 24, sp: 10, atk: 5, def: 4, int: 4, spd: 6 },
     evolutions: ["veemon"],
     sprite: "./assets/sprites/demiveemon.png"
+  },
+
+  wanyamon: {
+    id: "wanyamon",
+    name: "Wanyamon",
+    type: "Free",
+    element: "Dark",
+    family: "Lesser",
+    baseStats: { hp: 23, sp: 12, atk: 4, def: 4, int: 5, spd: 6 },
+    evolutions: ["dorumon"],
+    sprite: "./assets/sprites/wanyamon.png"
   },
 
   veemon: {
@@ -382,6 +415,28 @@ export const DIGIMONS = {
     baseStats: { hp: 68, sp: 24, atk: 16, def: 17, int: 14, spd: 8 },
     evolutions: ["andromon"],
     sprite: "./assets/sprites/guardromon.png"
+  },
+
+  raptordramon: {
+    id: "raptordramon",
+    name: "Raptordramon",
+    type: "Data",
+    element: "Dark",
+    family: "Dragonkin",
+    baseStats: { hp: 66, sp: 26, atk: 18, def: 12, int: 13, spd: 12 },
+    evolutions: ["grademon"],
+    sprite: "./assets/sprites/raptordramon.png"
+  },
+
+  ginryumon: {
+    id: "ginryumon",
+    name: "Ginryumon",
+    type: "Data",
+    element: "Neutral",
+    family: "Dragonkin",
+    baseStats: { hp: 68, sp: 24, atk: 19, def: 13, int: 11, spd: 11 },
+    evolutions: ["hisyaryumon"],
+    sprite: "./assets/sprites/ginryumon.png"
   },
 
   flamedramon: {
@@ -558,6 +613,28 @@ export const DIGIMONS = {
     baseStats: { hp: 92, sp: 35, atk: 25, def: 17, int: 19, spd: 15 },
     evolutions: ["diaboromon"],
     sprite: "./assets/sprites/infermon.png"
+  },
+
+  grademon: {
+    id: "grademon",
+    name: "Grademon",
+    type: "Data",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 90, sp: 34, atk: 27, def: 18, int: 18, spd: 15 },
+    evolutions: ["alphamon"],
+    sprite: "./assets/sprites/grademon.png"
+  },
+
+  hisyaryumon: {
+    id: "hisyaryumon",
+    name: "Hisyaryumon",
+    type: "Data",
+    element: "Neutral",
+    family: "Holy Dragon",
+    baseStats: { hp: 92, sp: 32, atk: 28, def: 18, int: 16, spd: 14 },
+    evolutions: ["ouryumon"],
+    sprite: "./assets/sprites/hisyaryumon.png"
   },
 
   andromon: {
@@ -745,6 +822,39 @@ export const DIGIMONS = {
     baseStats: { hp: 136, sp: 48, atk: 34, def: 32, int: 28, spd: 18 },
     evolutions: [],
     sprite: "./assets/sprites/craniamon.png"
+  },
+
+  alphamon: {
+    id: "alphamon",
+    name: "Alphamon",
+    type: "Vaccine",
+    element: "Dark",
+    family: "Holy Warrior",
+    baseStats: { hp: 130, sp: 50, atk: 38, def: 29, int: 31, spd: 20 },
+    evolutions: ["alphamon_ouryuken"],
+    sprite: "./assets/sprites/alphamon.png"
+  },
+
+  ouryumon: {
+    id: "ouryumon",
+    name: "Ouryumon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Dragon",
+    baseStats: { hp: 132, sp: 46, atk: 40, def: 28, int: 27, spd: 18 },
+    evolutions: ["alphamon_ouryuken"],
+    sprite: "./assets/sprites/ouryumon.png"
+  },
+
+  alphamon_ouryuken: {
+    id: "alphamon_ouryuken",
+    name: "Alphamon Ouryuken",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 148, sp: 58, atk: 48, def: 34, int: 36, spd: 22 },
+    evolutions: [],
+    sprite: "./assets/sprites/alphamon_ouryuken.png"
   }
 };
 

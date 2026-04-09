@@ -3,6 +3,14 @@ import { HUNTS, getHuntById } from "../js/data/encounters.js";
 import { createEncounterFromHunt } from "../js/systems/encounterSystem.js";
 
 describe("encounters", () => {
+  it("inclui uma nova hunt inicial com Wanyamon e Koromon", () => {
+    const hunt = getHuntById("starter-meadow");
+
+    expect(hunt).toBeTruthy();
+    expect(hunt.enemyPool).toEqual(["wanyamon", "koromon", "tsunomon", "tokomon"]);
+    expect(hunt.rewards).toEqual({ bits: 10, exp: 14 });
+  });
+
   it("inclui Kapurimon, Hagurumon e Guardromon nas hunts corretas", () => {
     const trainingHunt = getHuntById("training-grounds");
     const rookieHunt = getHuntById("rookie-forest");

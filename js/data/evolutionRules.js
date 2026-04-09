@@ -1,6 +1,7 @@
 export const EVOLUTION_RULES = {
   koromon: {
-    agumon: { minLevel: 3, minBond: 1 }
+    agumon: { minLevel: 3, minBond: 1 },
+    dracomon: { minLevel: 3, minBond: 1 }
   },
   tsunomon: {
     gabumon: { minLevel: 3, minBond: 1 }
@@ -31,6 +32,9 @@ export const EVOLUTION_RULES = {
   },
   demiveemon: {
     veemon: { minLevel: 3, minBond: 1 }
+  },
+  wanyamon: {
+    dorumon: { minLevel: 3, minBond: 1 }
   },
 
   agumon: {
@@ -90,6 +94,12 @@ export const EVOLUTION_RULES = {
   wormmon: {
     stingmon: { minLevel: 10, minBond: 5 }
   },
+  dorumon: {
+    raptordramon: { minLevel: 10, minBond: 5 }
+  },
+  dracomon: {
+    ginryumon: { minLevel: 10, minBond: 5 }
+  },
 
   greymon: {
     metalgreymon: { minLevel: 22, minBond: 20 }
@@ -145,6 +155,12 @@ export const EVOLUTION_RULES = {
       partnerMinBond: 24
     }
   },
+  raptordramon: {
+    grademon: { minLevel: 22, minBond: 18 }
+  },
+  ginryumon: {
+    hisyaryumon: { minLevel: 22, minBond: 18 }
+  },
 
   metalgreymon: {
     wargreymon: { minLevel: 34, minBond: 35 }
@@ -185,6 +201,12 @@ export const EVOLUTION_RULES = {
   aeroveedramon: {
     ulforceveedramon: { minLevel: 36, minBond: 34 }
   },
+  grademon: {
+    alphamon: { minLevel: 36, minBond: 34 }
+  },
+  hisyaryumon: {
+    ouryumon: { minLevel: 36, minBond: 34 }
+  },
   imperialdramon_dm: {
     imperialdramon_fm: { minLevel: 40, minBond: 40 }
   },
@@ -207,6 +229,16 @@ export const EVOLUTION_RULES = {
       partnerMinBond: 60
     }
   },
+  alphamon: {
+    alphamon_ouryuken: {
+      type: "dna",
+      minLevel: 45,
+      minBond: 45,
+      partnerSpeciesId: "ouryumon",
+      partnerMinLevel: 45,
+      partnerMinBond: 45
+    }
+  },
   metalgarurumon: {
     omnimon: {
       type: "dna",
@@ -215,6 +247,16 @@ export const EVOLUTION_RULES = {
       partnerSpeciesId: "wargreymon",
       partnerMinLevel: 40,
       partnerMinBond: 60
+    }
+  },
+  ouryumon: {
+    alphamon_ouryuken: {
+      type: "dna",
+      minLevel: 45,
+      minBond: 45,
+      partnerSpeciesId: "alphamon",
+      partnerMinLevel: 45,
+      partnerMinBond: 45
     }
   }
 };
