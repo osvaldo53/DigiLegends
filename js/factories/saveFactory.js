@@ -35,7 +35,8 @@ export function createEmptySave() {
      * Progresso geral do jogo
      */
     progress: {
-      huntsCompleted: 0
+      huntsCompleted: 0,
+      bossesCompleted: 0
     },
 
     combat: {

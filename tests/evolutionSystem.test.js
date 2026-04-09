@@ -188,6 +188,45 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(imperialdramonDm, "imperialdramon_fm")).toBe(true);
   });
 
+  it("exige Omni Sword para evoluir Imperialdramon FM em Imperialdramon PM", () => {
+    const save = createEmptySave();
+    const imperialdramonFm = createPlayerDigimon("imperialdramon_fm", {
+      level: 45,
+      bond: 55
+    });
+
+    save.party = [imperialdramonFm];
+
+    expect(canEvolveTo(imperialdramonFm, "imperialdramon_pm", save)).toBe(false);
+
+    save.inventory.push({
+      itemId: "omni_sword",
+      quantity: 1
+    });
+
+    expect(canEvolveTo(imperialdramonFm, "imperialdramon_pm", save)).toBe(true);
+  });
+
+  it("consome o Omni Sword ao evoluir Imperialdramon FM em Imperialdramon PM", () => {
+    const save = createEmptySave();
+    const imperialdramonFm = createPlayerDigimon("imperialdramon_fm", {
+      level: 45,
+      bond: 55
+    });
+
+    save.party = [imperialdramonFm];
+    save.inventory.push({
+      itemId: "omni_sword",
+      quantity: 1
+    });
+
+    evolveDigimon(imperialdramonFm, "imperialdramon_pm", save);
+
+    expect(imperialdramonFm.speciesId).toBe("imperialdramon_pm");
+    expect(save.inventory.find((entry) => entry.itemId === "omni_sword")).toBeUndefined();
+    expect(save.digidex.owned).toContain("imperialdramon_pm");
+  });
+
   it("permite evoluir Andromon para Craniamon", () => {
     const andromon = createPlayerDigimon("andromon", {
       level: 36,

@@ -7,20 +7,6 @@ export const ITEMS = {
   bandage: {
     id: "bandage",
     name: "Bandage",
-    description: "Recupera 12 de HP.",
-    category: "healing",
-    target: "single_ally",
-    effect: {
-      hpRestore: 12,
-      spRestore: 0
-    },
-    usableInMenu: true,
-    usableInBattle: true
-  },
-
-  small_recovery: {
-    id: "small_recovery",
-    name: "Small Recovery",
     description: "Recupera 30 de HP.",
     category: "healing",
     target: "single_ally",
@@ -32,18 +18,126 @@ export const ITEMS = {
     usableInBattle: true
   },
 
+  small_recovery: {
+    id: "small_recovery",
+    name: "Small Recovery",
+    description: "Recupera 60 de HP.",
+    category: "healing",
+    target: "single_ally",
+    effect: {
+      hpRestore: 60,
+      spRestore: 0
+    },
+    usableInMenu: true,
+    usableInBattle: true
+  },
+
+  medium_recovery: {
+    id: "medium_recovery",
+    name: "Medium Recovery",
+    description: "Recupera 120 de HP.",
+    category: "healing",
+    target: "single_ally",
+    effect: {
+      hpRestore: 120,
+      spRestore: 0
+    },
+    usableInMenu: true,
+    usableInBattle: true
+  },
+
+  high_recovery: {
+    id: "high_recovery",
+    name: "High Recovery",
+    description: "Recupera 350 de HP.",
+    category: "healing",
+    target: "single_ally",
+    effect: {
+      hpRestore: 350,
+      spRestore: 0
+    },
+    usableInMenu: true,
+    usableInBattle: true
+  },
+
   small_sp_disk: {
     id: "small_sp_disk",
     name: "Small SP Disk",
-    description: "Recupera 15 de SP.",
+    description: "Recupera 30 de SP.",
     category: "recovery",
     target: "single_ally",
     effect: {
       hpRestore: 0,
-      spRestore: 15
+      spRestore: 30
     },
     usableInMenu: true,
     usableInBattle: true
+  },
+
+  medium_sp_disk: {
+    id: "medium_sp_disk",
+    name: "Medium SP Disk",
+    description: "Recupera 60 de SP.",
+    category: "recovery",
+    target: "single_ally",
+    effect: {
+      hpRestore: 0,
+      spRestore: 60
+    },
+    usableInMenu: true,
+    usableInBattle: true
+  },
+
+  high_sp_disk: {
+    id: "high_sp_disk",
+    name: "High SP Disk",
+    description: "Recupera 120 de SP.",
+    category: "recovery",
+    target: "single_ally",
+    effect: {
+      hpRestore: 0,
+      spRestore: 120
+    },
+    usableInMenu: true,
+    usableInBattle: true
+  },
+
+  revive: {
+    id: "revive",
+    name: "Revive",
+    description: "Ressuscita um Digimon derrotado com 50% de HP.",
+    category: "recovery",
+    target: "single_ally",
+    effect: {
+      revivePercent: 0.5
+    },
+    usableInMenu: false,
+    usableInBattle: true
+  },
+
+  revive_max: {
+    id: "revive_max",
+    name: "Revive Max",
+    description: "Ressuscita um Digimon derrotado com 100% de HP.",
+    category: "recovery",
+    target: "single_ally",
+    effect: {
+      revivePercent: 1
+    },
+    usableInMenu: false,
+    usableInBattle: true
+  },
+
+  omni_sword: {
+    id: "omni_sword",
+    name: "Omni Sword",
+    description: "Espada rara obtida ao superar o desafio de Omnimon.",
+    sprite: "./assets/items/omni_sword.png",
+    category: "boss",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
   },
 
   digi_egg_courage: {

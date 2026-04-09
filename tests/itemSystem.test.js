@@ -1,29 +1,95 @@
 import { describe, expect, it } from "vitest";
 import { createEmptySave } from "../js/factories/saveFactory.js";
 import { createPlayerDigimon } from "../js/factories/digimonFactory.js";
-import { getInventoryEntry, useItemOnDigimon } from "../js/systems/itemSystem.js";
+import { getItemById } from "../js/data/items.js";
+import { getShopEntryByItemId } from "../js/data/shopCatalog.js";
+import { useItemOnDigimon } from "../js/systems/itemSystem.js";
 
 describe("itemSystem", () => {
-  it("nao permite curar Digimon derrotado com item comum", () => {
+  it("aplica a nova cura do Bandage", () => {
     const save = createEmptySave();
-    const agumon = createPlayerDigimon("agumon", {
-      level: 10,
-      bond: 5
+    const agumon = createPlayerDigimon("agumon");
+
+    agumon.currentHP = 5;
+    save.party = [agumon];
+
+    useItemOnDigimon({
+      save,
+      itemId: "bandage",
+      targetDigimon: agumon,
+      context: "menu"
     });
 
+    expect(agumon.currentHP).toBe(35);
+  });
+
+  it("aplica a nova recuperacao de SP", () => {
+    const save = createEmptySave();
+    const patamon = createPlayerDigimon("patamon", {
+      level: 10
+    });
+
+    patamon.currentSP = 5;
+    save.party = [patamon];
+
+    useItemOnDigimon({
+      save,
+      itemId: "small_sp_disk",
+      targetDigimon: patamon,
+      context: "menu"
+    });
+
+    expect(patamon.currentSP).toBe(35);
+  });
+
+  it("mantem os novos valores de item e preco na loja", () => {
+    expect(getItemById("small_recovery").effect.hpRestore).toBe(60);
+    expect(getShopEntryByItemId("small_recovery").price).toBe(65);
+    expect(getItemById("medium_recovery").effect.hpRestore).toBe(120);
+    expect(getItemById("high_recovery").effect.hpRestore).toBe(350);
+    expect(getItemById("medium_sp_disk").effect.spRestore).toBe(60);
+    expect(getItemById("high_sp_disk").effect.spRestore).toBe(120);
+    expect(getShopEntryByItemId("medium_recovery").price).toBe(140);
+    expect(getShopEntryByItemId("high_recovery").price).toBe(260);
+    expect(getShopEntryByItemId("medium_sp_disk").price).toBe(120);
+    expect(getShopEntryByItemId("high_sp_disk").price).toBe(220);
+    expect(getShopEntryByItemId("revive").price).toBe(180);
+    expect(getShopEntryByItemId("revive_max").price).toBe(420);
+  });
+
+  it("revive um Digimon derrotado com metade da vida", () => {
+    const save = createEmptySave();
+    const agumon = createPlayerDigimon("agumon");
+
+    save.inventory.push({ itemId: "revive", quantity: 1 });
     agumon.currentHP = 0;
     save.party = [agumon];
 
-    expect(() =>
-      useItemOnDigimon({
-        save,
-        itemId: "small_recovery",
-        targetDigimon: agumon,
-        context: "battle"
-      })
-    ).toThrow("Digimon derrotado");
+    useItemOnDigimon({
+      save,
+      itemId: "revive",
+      targetDigimon: agumon,
+      context: "battle"
+    });
 
-    expect(agumon.currentHP).toBe(0);
-    expect(getInventoryEntry(save, "small_recovery")?.quantity).toBe(1);
+    expect(agumon.currentHP).toBe(Math.floor(agumon.finalStats.hp * 0.5));
+  });
+
+  it("revive max restaura toda a vida", () => {
+    const save = createEmptySave();
+    const gabumon = createPlayerDigimon("gabumon");
+
+    save.inventory.push({ itemId: "revive_max", quantity: 1 });
+    gabumon.currentHP = 0;
+    save.party = [gabumon];
+
+    useItemOnDigimon({
+      save,
+      itemId: "revive_max",
+      targetDigimon: gabumon,
+      context: "battle"
+    });
+
+    expect(gabumon.currentHP).toBe(gabumon.finalStats.hp);
   });
 });

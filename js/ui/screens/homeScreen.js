@@ -13,7 +13,7 @@ export function renderHomeScreen() {
       </div>
 
       <div class="panel">
-        <p>Base atual com hunt AFK, DigiDex, time, itens, loja, evolução e conversão por scan.</p>
+        <p>Base atual com hunt AFK, bosses, DigiDex, time, itens, loja, evolucao e conversao por scan.</p>
 
         <div class="menu-grid">
           <div class="menu-tile">
@@ -24,19 +24,25 @@ export function renderHomeScreen() {
 
           <div class="menu-tile">
             <h3>DigiDex</h3>
-            <p>Ver espécies vistas e capturadas.</p>
+            <p>Ver especies vistas e capturadas.</p>
             <button class="btn btn-primary" id="btn-go-dex">Abrir DigiDex</button>
           </div>
 
           <div class="menu-tile">
             <h3>Hunts</h3>
-            <p>Escolher área e iniciar combate automático.</p>
+            <p>Escolher area e iniciar combate automatico.</p>
             <button class="btn btn-primary" id="btn-go-hunts">Abrir hunts</button>
           </div>
 
           <div class="menu-tile">
+            <h3>Bosses</h3>
+            <p>Enfrentar desafios especiais com inimigos definidos e muito fortes.</p>
+            <button class="btn btn-primary" id="btn-go-bosses">Abrir bosses</button>
+          </div>
+
+          <div class="menu-tile">
             <h3>Itens</h3>
-            <p>Usar itens de recuperação no líder do time.</p>
+            <p>Usar itens de recuperacao no lider do time.</p>
             <button class="btn btn-primary" id="btn-go-items">Abrir itens</button>
           </div>
 
@@ -47,9 +53,9 @@ export function renderHomeScreen() {
           </div>
 
           <div class="menu-tile">
-            <h3>Conversão</h3>
+            <h3>Conversao</h3>
             <p>Converter dados de scan em novos Digimons.</p>
-            <button class="btn btn-primary" id="btn-go-conversion">Abrir conversão</button>
+            <button class="btn btn-primary" id="btn-go-conversion">Abrir conversao</button>
           </div>
 
           <div class="menu-tile">
@@ -74,6 +80,10 @@ export function bindHomeScreen() {
 
   document.getElementById("btn-go-hunts")?.addEventListener("click", () => {
     goToScreen("hunts");
+  });
+
+  document.getElementById("btn-go-bosses")?.addEventListener("click", () => {
+    goToScreen("bosses");
   });
 
   document.getElementById("btn-go-items")?.addEventListener("click", () => {

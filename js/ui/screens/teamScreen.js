@@ -6,51 +6,16 @@ import { getEvolutionRule } from "../../data/evolutionRules.js";
 import { getItemById } from "../../data/items.js";
 import { evolveDigimon } from "../../systems/evolutionSystem.js";
 import {
+  clearEvolutionAnimation,
+  showEvolutionAnimation
+} from "../../systems/evolutionAnimationSystem.js";
+import {
   moveDigimonToParty,
   moveDigimonToStorage,
   PARTY_LIMIT,
   setPartyLeader
 } from "../../systems/storageSystem.js";
 import { renderTeamCard } from "../components/teamCard.js";
-
-let evolutionAnimationTimer = null;
-
-function clearEvolutionAnimation() {
-  if (evolutionAnimationTimer) {
-    window.clearTimeout(evolutionAnimationTimer);
-    evolutionAnimationTimer = null;
-  }
-
-  if (!state.app.evolutionAnimation) {
-    return;
-  }
-
-  state.app.evolutionAnimation = null;
-  window.dispatchEvent(new Event("digilegends:rerender"));
-}
-
-function showEvolutionAnimation(animationData) {
-  if (!animationData?.from || !animationData?.to) {
-    return;
-  }
-
-  if (evolutionAnimationTimer) {
-    window.clearTimeout(evolutionAnimationTimer);
-  }
-
-  state.app.evolutionAnimation = animationData;
-
-  evolutionAnimationTimer = window.setTimeout(() => {
-    evolutionAnimationTimer = null;
-
-    if (!state.app.evolutionAnimation) {
-      return;
-    }
-
-    state.app.evolutionAnimation = null;
-    window.dispatchEvent(new Event("digilegends:rerender"));
-  }, 5500);
-}
 
 function buildEvolutionAnimationData({
   previousSpecies,

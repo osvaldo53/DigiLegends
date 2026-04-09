@@ -721,8 +721,19 @@ export const DIGIMONS = {
     element: "Light",
     family: "Ancient Dragon",
     baseStats: { hp: 132, sp: 52, atk: 40, def: 27, int: 30, spd: 22 },
-    evolutions: [],
+    evolutions: ["imperialdramon_pm"],
     sprite: "./assets/sprites/imperialdramon_fm.png"
+  },
+
+  imperialdramon_pm: {
+    id: "imperialdramon_pm",
+    name: "Imperialdramon PM",
+    type: "Free",
+    element: "Light",
+    family: "Holy Knight",
+    baseStats: { hp: 142, sp: 58, atk: 46, def: 30, int: 34, spd: 24 },
+    evolutions: [],
+    sprite: "./assets/sprites/imperialdramon_pm.png"
   },
 
   craniamon: {

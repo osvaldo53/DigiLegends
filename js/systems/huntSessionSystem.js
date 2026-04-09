@@ -1,6 +1,7 @@
 import { state } from "../core/state.js";
 import { saveGame } from "../core/saveManager.js";
 import { getDigimonSpecies } from "../data/digimons.js";
+import { getItemById } from "../data/items.js";
 import { addItemToInventory, getInventoryEntry, useItemOnDigimon } from "./itemSystem.js";
 import {
   startBattleFromHunt,
@@ -107,6 +108,11 @@ function resetActiveHuntSession() {
   state.huntSession.phaseLabel = "";
   state.huntSession.phaseDurationMs = 0;
   state.huntSession.phaseStartedAt = 0;
+  state.huntSession.pendingBattleItem = null;
+}
+
+function clearPendingBattleItemSelection() {
+  state.huntSession.pendingBattleItem = null;
 }
 
 function buildDropSummary() {
@@ -186,6 +192,7 @@ function shouldTriggerAutoItem(playerDigimon, rule) {
 
 function setPlayerTurnReady() {
   state.huntSession.turnOwner = "player";
+  clearPendingBattleItemSelection();
 
   if (!state.battle.active || state.battle.result) {
     return;
@@ -206,6 +213,7 @@ function setPlayerTurnReady() {
 
 function scheduleEnemyTurn() {
   state.huntSession.turnOwner = "enemy";
+  clearPendingBattleItemSelection();
   setPhase("Resposta inimiga", ENEMY_RESPONSE_DELAY_MS);
   saveGame(state.save);
   rerender();
@@ -221,11 +229,50 @@ function handlePostPlayerAction() {
   scheduleEnemyTurn();
 }
 
-function useBattleItemCore(itemId) {
-  const targetDigimon = getActiveBattlePlayerDigimon();
+function getTargetDigimonForBattleItem(item, targetDigimonUid = null) {
+  const isReviveItem = Boolean(item?.effect?.revivePercent);
+
+  if (isReviveItem) {
+    if (targetDigimonUid) {
+      const selectedDigimon = state.save.party.find((digimon) => digimon.uid === targetDigimonUid) || null;
+
+      if (!selectedDigimon) {
+        throw new Error("Digimon selecionado nao foi encontrado.");
+      }
+
+      if ((selectedDigimon.currentHP ?? 0) > 0) {
+        throw new Error("Selecione um Digimon derrotado para usar o revive.");
+      }
+
+      return selectedDigimon;
+    }
+
+    return state.save.party.find((digimon) => (digimon.currentHP ?? 0) <= 0) || null;
+  }
+
+  if (targetDigimonUid) {
+    const selectedDigimon = state.save.party.find((digimon) => digimon.uid === targetDigimonUid) || null;
+
+    if (!selectedDigimon) {
+      throw new Error("Digimon selecionado nao foi encontrado.");
+    }
+
+    return selectedDigimon;
+  }
+
+  return getActiveBattlePlayerDigimon();
+}
+
+function useBattleItemCore(itemId, targetDigimonUid = null) {
+  const item = getItemById(itemId);
+  const targetDigimon = getTargetDigimonForBattleItem(item, targetDigimonUid);
 
   if (!targetDigimon) {
-    throw new Error("Nao ha Digimon valido para usar o item.");
+    throw new Error(
+      item?.effect?.revivePercent
+        ? "Nao ha Digimon derrotado para reviver."
+        : "Nao ha Digimon valido para usar o item."
+    );
   }
 
   const previousStats = {
@@ -363,6 +410,58 @@ export function clearHuntSummary() {
   rerender();
 }
 
+export function getBattleItemEligibleTargets(itemId) {
+  const item = getItemById(itemId);
+
+  if (!item?.usableInBattle) {
+    return [];
+  }
+
+  if (item.effect?.revivePercent) {
+    return state.save.party.filter((digimon) => (digimon.currentHP ?? 0) <= 0);
+  }
+
+  const activeDigimon = getActiveBattlePlayerDigimon();
+  return activeDigimon ? [activeDigimon] : [];
+}
+
+export function beginBattleItemTargetSelection(itemId) {
+  const item = getItemById(itemId);
+
+  if (!item?.usableInBattle) {
+    throw new Error("Item nao pode ser usado em batalha.");
+  }
+
+  const targets = getBattleItemEligibleTargets(itemId);
+
+  if (!targets.length) {
+    throw new Error(
+      item.effect?.revivePercent
+        ? "Nao ha Digimon derrotado para reviver."
+        : "Nao ha Digimon valido para usar o item."
+    );
+  }
+
+  state.huntSession.pendingBattleItem = {
+    itemId
+  };
+  rerender();
+
+  return {
+    item,
+    targets
+  };
+}
+
+export function cancelBattleItemTargetSelection() {
+  if (!state.huntSession.pendingBattleItem) {
+    return;
+  }
+
+  clearPendingBattleItemSelection();
+  rerender();
+}
+
 export function startHuntSession(huntId) {
   const player = state.save.party.find((digimon) => (digimon.currentHP ?? 0) > 0);
 
@@ -388,6 +487,7 @@ export function startHuntSession(huntId) {
   state.huntSession.phaseLabel = "";
   state.huntSession.phaseDurationMs = 0;
   state.huntSession.phaseStartedAt = 0;
+  state.huntSession.pendingBattleItem = null;
 
   setPhase("Procurando inimigo", FIRST_ENCOUNTER_DELAY_MS);
   rerender();
@@ -462,7 +562,7 @@ export function performManualBattleAction(skillId = null) {
   handlePostPlayerAction();
 }
 
-export function useBattleItemTurn(itemId) {
+export function useBattleItemTurn(itemId, targetDigimonUid = null) {
   if (!state.huntSession.active || !state.battle.active || state.battle.result) {
     throw new Error("Nao ha batalha ativa.");
   }
@@ -472,7 +572,8 @@ export function useBattleItemTurn(itemId) {
   }
 
   clearHuntTimer();
-  const result = useBattleItemCore(itemId);
+  const result = useBattleItemCore(itemId, targetDigimonUid);
+  clearPendingBattleItemSelection();
   rerender();
   handlePostPlayerAction();
   return result;

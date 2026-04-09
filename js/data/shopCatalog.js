@@ -13,15 +13,39 @@ import { getItemById } from "./items.js";
 export const SHOP_CATALOG = [
   {
     itemId: "bandage",
-    price: 20
+    price: 28
   },
   {
     itemId: "small_recovery",
-    price: 45
+    price: 65
+  },
+  {
+    itemId: "medium_recovery",
+    price: 140
+  },
+  {
+    itemId: "high_recovery",
+    price: 260
   },
   {
     itemId: "small_sp_disk",
-    price: 35
+    price: 55
+  },
+  {
+    itemId: "medium_sp_disk",
+    price: 120
+  },
+  {
+    itemId: "high_sp_disk",
+    price: 220
+  },
+  {
+    itemId: "revive",
+    price: 180
+  },
+  {
+    itemId: "revive_max",
+    price: 420
   },
   {
     itemId: "digi_egg_courage",

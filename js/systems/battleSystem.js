@@ -1,7 +1,6 @@
 import { state } from "../core/state.js";
 import { saveGame } from "../core/saveManager.js";
 import { getDigimonSpecies } from "../data/digimons.js";
-import { getHuntById } from "../data/encounters.js";
 import { createEncounterFromHunt } from "./encounterSystem.js";
 import { uniquePush, clamp } from "../core/utils.js";
 import { applyBattleRewards } from "./progressionSystem.js";
@@ -44,6 +43,10 @@ function getNextAvailablePlayerDigimon(excludedUid = null) {
 function switchActivePlayerDigimon(nextDigimon) {
   state.battle.playerDigimonUid = nextDigimon.uid;
   state.huntSession.playerDigimonUid = nextDigimon.uid;
+
+  if (state.bossSession?.active) {
+    state.bossSession.playerDigimonUid = nextDigimon.uid;
+  }
 }
 
 function setLastAction(actor, target, skill, isBasicAttack = false) {
@@ -255,20 +258,20 @@ function buildMultiplierText(typeMultiplier, elementMultiplier) {
 
 function finalizeVictory() {
   const player = getActivePlayerDigimon();
-  const hunt = getHuntById(state.battle.huntId);
   const enemy = state.battle.enemy;
-  const battleRewards = state.battle.encounterRewards || hunt?.rewards;
+  const battleRewards = state.battle.encounterRewards;
 
-  if (!player || !hunt || !enemy || !battleRewards) return;
+  if (!player || !enemy || !battleRewards) return;
 
-  state.save.progress.huntsCompleted += 1;
+  if (state.battle.context === "hunt") {
+    state.save.progress.huntsCompleted += 1;
+  }
 
   const progression = applyBattleRewards(player, battleRewards, state.save);
   const scanResult = addScanOnDefeat(state.save, enemy.speciesId);
 
   state.battle.result = "victory";
   state.battle.rewards = {
-    ...hunt.rewards,
     ...battleRewards,
     gainedLevels: progression.gainedLevels,
     scanGained: scanResult.gained,
@@ -317,12 +320,39 @@ export function startBattleFromHunt(huntId) {
   }
 
   const { hunt, enemy, rewards } = createEncounterFromHunt(huntId, player.level);
+  startBattleFromScenario({
+    battleId: hunt.id,
+    battleName: hunt.name,
+    enemy,
+    rewards,
+    context: "hunt"
+  });
+}
+
+export function startBattleFromScenario({
+  battleId,
+  battleName,
+  enemy,
+  rewards,
+  context = "skirmish"
+}) {
+  const player = getFirstAvailablePartyDigimon();
+
+  if (!player) {
+    throw new Error("Nao ha Digimon com HP suficiente no time.");
+  }
+
+  if (!enemy || !rewards) {
+    throw new Error("Nao foi possivel iniciar a batalha configurada.");
+  }
 
   uniquePush(state.save.digidex.seen, enemy.speciesId);
 
   state.battle = {
     active: true,
-    huntId: hunt.id,
+    huntId: battleId,
+    context,
+    sourceName: battleName || battleId,
     playerDigimonUid: player.uid,
     enemy,
     encounterRewards: rewards,
@@ -334,7 +364,11 @@ export function startBattleFromHunt(huntId) {
 
   state.huntSession.playerDigimonUid = player.uid;
 
-  pushLog(`Encontro iniciado em ${hunt.name}.`);
+  if (state.bossSession?.active) {
+    state.bossSession.playerDigimonUid = player.uid;
+  }
+
+  pushLog(`Encontro iniciado em ${battleName || "Batalha especial"}.`);
   pushLog(`Inimigo: ${getDigimonSpecies(enemy.speciesId)?.name || enemy.speciesId} Lv. ${enemy.level}.`);
   pushLog(`${getDigimonSpecies(player.speciesId)?.name || "Seu Digimon"} entrou em combate.`);
 
@@ -607,6 +641,8 @@ export function closeBattle() {
   state.battle = {
     active: false,
     huntId: null,
+    context: "skirmish",
+    sourceName: "",
     playerDigimonUid: null,
     enemy: null,
     encounterRewards: null,
@@ -617,4 +653,8 @@ export function closeBattle() {
   };
 
   state.huntSession.playerDigimonUid = null;
+
+  if (state.bossSession) {
+    state.bossSession.playerDigimonUid = null;
+  }
 }

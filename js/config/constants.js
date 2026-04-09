@@ -10,6 +10,7 @@ export const SUPPORTED_SCREENS = [
   "team",
   "digidex",
   "hunts",
+  "bosses",
   "items",
   "shop",
   "conversion"

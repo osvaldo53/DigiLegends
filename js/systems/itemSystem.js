@@ -62,6 +62,13 @@ export function consumeItem(save, itemId, quantity = 1) {
 function applyItemEffect(item, digimon) {
   const effect = item.effect;
 
+  if (effect.revivePercent && (digimon.currentHP ?? 0) <= 0) {
+    digimon.currentHP = Math.max(
+      1,
+      Math.floor(digimon.finalStats.hp * effect.revivePercent)
+    );
+  }
+
   if (effect.hpRestore) {
     digimon.currentHP = Math.min(
       digimon.currentHP + effect.hpRestore,
@@ -78,7 +85,7 @@ function applyItemEffect(item, digimon) {
 }
 
 function canItemAffectDefeatedDigimon(item) {
-  return Boolean(item.effect?.revive);
+  return Boolean(item.effect?.revive || item.effect?.revivePercent);
 }
 
 /**

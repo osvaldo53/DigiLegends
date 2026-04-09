@@ -151,7 +151,7 @@ export function createPlayerDigimon(speciesId, options = {}) {
  * @param {number} level
  * @returns {object}
  */
-export function createEnemyDigimon(speciesId, level = 1) {
+export function createEnemyDigimon(speciesId, level = 1, bonusStats = {}) {
   const species = getDigimonSpecies(speciesId);
 
   if (!species) {
@@ -164,7 +164,8 @@ export function createEnemyDigimon(speciesId, level = 1) {
     atk: 0,
     def: 0,
     int: 0,
-    spd: 0
+    spd: 0,
+    ...bonusStats
   });
 
   return {

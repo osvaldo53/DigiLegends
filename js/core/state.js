@@ -25,7 +25,8 @@ export const state = {
       owned: []
     },
     progress: {
-      huntsCompleted: 0
+      huntsCompleted: 0,
+      bossesCompleted: 0
     },
     combat: {
       autoBattleEnabled: true,
@@ -41,6 +42,8 @@ export const state = {
   battle: {
     active: false,
     huntId: null,
+    context: "skirmish",
+    sourceName: "",
     playerDigimonUid: null,
     enemy: null,
     encounterRewards: null,
@@ -90,6 +93,27 @@ export const state = {
     phaseLabel: "",
     phaseDurationMs: 0,
     phaseStartedAt: 0,
-    summary: null
+    summary: null,
+    pendingBattleItem: null
+  },
+
+  bossSession: {
+    active: false,
+    bossId: null,
+    playerDigimonUid: null,
+    stageIndex: 0,
+    totalBattles: 0,
+    totalWins: 0,
+    totalDefeats: 0,
+    totalBitsEarned: 0,
+    totalExpEarned: 0,
+    turnOwner: null,
+    status: "idle",
+    drops: [],
+    phaseLabel: "",
+    phaseDurationMs: 0,
+    phaseStartedAt: 0,
+    summary: null,
+    pendingBattleItem: null
   }
 };

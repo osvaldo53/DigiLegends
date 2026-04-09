@@ -188,6 +188,14 @@ export const EVOLUTION_RULES = {
   imperialdramon_dm: {
     imperialdramon_fm: { minLevel: 40, minBond: 40 }
   },
+  imperialdramon_fm: {
+    imperialdramon_pm: {
+      type: "armor",
+      minLevel: 45,
+      minBond: 55,
+      requiredItemId: "omni_sword"
+    }
+  },
 
   wargreymon: {
     omnimon: {

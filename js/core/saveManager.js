@@ -288,6 +288,10 @@ export function migrateSaveIfNeeded(saveData) {
       huntsCompleted: Math.max(
         0,
         Math.floor(toSafeNumber(saveData.progress?.huntsCompleted, base.progress.huntsCompleted))
+      ),
+      bossesCompleted: Math.max(
+        0,
+        Math.floor(toSafeNumber(saveData.progress?.bossesCompleted, base.progress.bossesCompleted))
       )
     },
 

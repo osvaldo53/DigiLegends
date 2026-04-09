@@ -74,6 +74,8 @@ export const SKILLS = {
   mega_crusher: { id: "mega_crusher", name: "Mega Crusher", kind: "attack", power: 39, cost: 11, element: "Neutral", scaling: "atk" },
   posi_tron_laser: { id: "posi_tron_laser", name: "Positron Laser", kind: "attack", power: 45, cost: 14, element: "Light", scaling: "int" },
   omega_blade: { id: "omega_blade", name: "Omega Blade", kind: "attack", power: 41, cost: 12, element: "Light", scaling: "atk" },
+  giga_crusher: { id: "giga_crusher", name: "Giga Crusher", kind: "attack", power: 48, cost: 15, element: "Light", scaling: "atk" },
+  omni_slash: { id: "omni_slash", name: "Omni Slash", kind: "attack", power: 50, cost: 16, element: "Light", scaling: "atk" },
 
   terra_force: { id: "terra_force", name: "Terra Force", kind: "attack", power: 42, cost: 13, element: "Fire", scaling: "int" },
   brave_tornado: { id: "brave_tornado", name: "Brave Tornado", kind: "attack", power: 37, cost: 10, element: "Neutral", scaling: "atk" },
@@ -161,7 +163,8 @@ export const SPECIES_SKILLS = {
   phoenixmon: ["crimson_flare", "phoenix_blaze"],
   ulforceveedramon: ["ray_of_victory", "ulforce_saber"],
   imperialdramon_dm: ["giga_death", "mega_crusher"],
-  imperialdramon_fm: ["posi_tron_laser", "omega_blade"]
+  imperialdramon_fm: ["posi_tron_laser", "omega_blade"],
+  imperialdramon_pm: ["posi_tron_laser", "giga_crusher", "omni_slash"]
 };
 
 export function getSkillsForSpecies(speciesId) {

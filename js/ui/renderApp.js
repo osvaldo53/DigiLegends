@@ -6,6 +6,7 @@ import { bindOptionsScreen, renderOptionsScreen } from "./screens/optionsScreen.
 import { bindTeamScreen, renderTeamScreen } from "./screens/teamScreen.js";
 import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.js";
 import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
+import { bindBossesScreen, renderBossesScreen } from "./screens/bossesScreen.js";
 import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
 import { bindShopScreen, renderShopScreen } from "./screens/shopScreen.js";
 import { bindConversionScreen, renderConversionScreen } from "./screens/conversionScreen.js";
@@ -45,6 +46,10 @@ export function renderApp() {
 
     case "hunts":
       screenMarkup = renderHuntsScreen();
+      break;
+
+    case "bosses":
+      screenMarkup = renderBossesScreen();
       break;
 
     case "items":
@@ -100,6 +105,10 @@ export function renderApp() {
 
     case "hunts":
       bindHuntsScreen();
+      break;
+
+    case "bosses":
+      bindBossesScreen();
       break;
 
     case "items":
