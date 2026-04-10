@@ -1,7 +1,9 @@
 import { state } from "../core/state.js";
 import { saveGame } from "../core/saveManager.js";
+import { getHuntById, rollHuntGenericDrop } from "../data/encounters.js";
 import { getDigimonSpecies } from "../data/digimons.js";
 import { getItemById } from "../data/items.js";
+import { rollSpeciesDrops } from "../data/speciesDrops.js";
 import { addItemToInventory, getInventoryEntry, useItemOnDigimon } from "./itemSystem.js";
 import {
   startBattleFromHunt,
@@ -60,22 +62,15 @@ function scheduleNextStep(callback, delay) {
   }, delay);
 }
 
-function rollDrops() {
-  const roll = Math.random();
+function rollBattleDrops(enemySpeciesId) {
+  const drops = [];
+  const genericDrop = rollHuntGenericDrop(state.huntSession.huntId);
 
-  if (roll < 0.4) {
-    return { id: "small_recovery", name: "Small Recovery", quantity: 1 };
+  if (genericDrop) {
+    drops.push(genericDrop);
   }
 
-  if (roll < 0.65) {
-    return { id: "bandage", name: "Bandage", quantity: 1 };
-  }
-
-  if (roll < 0.78) {
-    return { id: "small_sp_disk", name: "Small SP Disk", quantity: 1 };
-  }
-
-  return null;
+  return [...drops, ...rollSpeciesDrops(enemySpeciesId)];
 }
 
 function registerDrop(drop) {
@@ -141,9 +136,11 @@ function restorePartyAfterHuntEnd() {
 
 function finalizeHuntSummary(reason, options = {}) {
   const activeHuntId = state.huntSession.huntId;
+  const activeHunt = activeHuntId ? getHuntById(activeHuntId) : null;
 
   state.huntSession.summary = {
     huntId: activeHuntId,
+    huntName: activeHunt?.name || "",
     reason,
     totalBattles: state.huntSession.totalBattles,
     totalWins: state.huntSession.totalWins,
@@ -374,8 +371,8 @@ function finishBattleCycle() {
     state.huntSession.totalBitsEarned += state.battle.rewards?.bits || 0;
     state.huntSession.totalExpEarned += state.battle.rewards?.exp || 0;
 
-    const drop = rollDrops();
-    registerDrop(drop);
+    const drops = rollBattleDrops(state.battle.enemy?.speciesId);
+    drops.forEach((drop) => registerDrop(drop));
   }
 
   if (state.battle.result === "defeat") {

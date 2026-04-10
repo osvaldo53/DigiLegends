@@ -25,9 +25,12 @@ describe("evolutionSystem", () => {
 
     const evolutions = getAvailableEvolutions(agumon);
 
-    expect(evolutions).toHaveLength(1);
-    expect(evolutions[0].targetSpeciesId).toBe("greymon");
-    expect(evolutions[0].isAvailable).toBe(false);
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "greymon",
+      "geogreymon"
+    ]);
+    expect(evolutions.every((evolution) => evolution.isAvailable === false)).toBe(true);
   });
 
   it("lista as tres linhas evolutivas do Tsumemon", () => {
@@ -47,7 +50,7 @@ describe("evolutionSystem", () => {
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
 
-  it("lista as duas linhas evolutivas da Yokomon", () => {
+  it("lista as tres linhas evolutivas da Yokomon", () => {
     const yokomon = createPlayerDigimon("yokomon", {
       level: 3,
       bond: 1
@@ -55,15 +58,16 @@ describe("evolutionSystem", () => {
 
     const evolutions = getAvailableEvolutions(yokomon);
 
-    expect(evolutions).toHaveLength(2);
+    expect(evolutions).toHaveLength(3);
     expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
       "biyomon",
-      "wormmon"
+      "wormmon",
+      "elecmon"
     ]);
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
 
-  it("lista as duas linhas evolutivas do Koromon", () => {
+  it("lista as tres linhas evolutivas do Koromon", () => {
     const koromon = createPlayerDigimon("koromon", {
       level: 3,
       bond: 1
@@ -71,10 +75,11 @@ describe("evolutionSystem", () => {
 
     const evolutions = getAvailableEvolutions(koromon);
 
-    expect(evolutions).toHaveLength(2);
+    expect(evolutions).toHaveLength(3);
     expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
       "agumon",
-      "dracomon"
+      "dracomon",
+      "guilmon"
     ]);
     expect(evolutions.every((evolution) => evolution.isAvailable)).toBe(true);
   });
@@ -95,6 +100,45 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(wanyamon, "dorumon")).toBe(true);
+  });
+
+  it("lista as duas linhas evolutivas do Wanyamon", () => {
+    const wanyamon = createPlayerDigimon("wanyamon", {
+      level: 3,
+      bond: 1
+    });
+
+    const evolutions = getAvailableEvolutions(wanyamon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "dorumon",
+      "gaomon"
+    ]);
+  });
+
+  it("lista as duas linhas evolutivas do Nyaromon", () => {
+    const nyaromon = createPlayerDigimon("nyaromon", {
+      level: 3,
+      bond: 1
+    });
+
+    const evolutions = getAvailableEvolutions(nyaromon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "terriermon",
+      "salamon"
+    ]);
+  });
+
+  it("permite a nova linha Pagumon ate Impmon", () => {
+    const pagumon = createPlayerDigimon("pagumon", {
+      level: 3,
+      bond: 1
+    });
+
+    expect(canEvolveTo(pagumon, "impmon")).toBe(true);
   });
 
   it("evolui e registra a especie no digidex", () => {
@@ -156,6 +200,52 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(dracomon, "ginryumon")).toBe(true);
+  });
+
+  it("lista as tres linhas evolutivas do Dracomon", () => {
+    const dracomon = createPlayerDigimon("dracomon", {
+      level: 10,
+      bond: 5
+    });
+
+    const evolutions = getAvailableEvolutions(dracomon);
+
+    expect(evolutions).toHaveLength(3);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "ginryumon",
+      "coredramon_blue",
+      "coredramon_green"
+    ]);
+  });
+
+  it("lista as duas linhas evolutivas do Guilmon", () => {
+    const guilmon = createPlayerDigimon("guilmon", {
+      level: 10,
+      bond: 5
+    });
+
+    const evolutions = getAvailableEvolutions(guilmon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "growlmon",
+      "tyrannomon"
+    ]);
+  });
+
+  it("lista as duas linhas evolutivas do Impmon", () => {
+    const impmon = createPlayerDigimon("impmon", {
+      level: 10,
+      bond: 6
+    });
+
+    const evolutions = getAvailableEvolutions(impmon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "icedevimon",
+      "blackgatomon"
+    ]);
   });
 
   it("exige Digi-Ovo da Coragem para evoluir Veemon em Flamedramon", () => {
@@ -295,6 +385,108 @@ describe("evolutionSystem", () => {
     });
 
     expect(canEvolveTo(hisyaryumon, "ouryumon")).toBe(true);
+  });
+
+  it("permite evoluir WarGrowlmon para Gallantmon", () => {
+    const wargrowlmon = createPlayerDigimon("wargrowlmon", {
+      level: 36,
+      bond: 36
+    });
+
+    expect(canEvolveTo(wargrowlmon, "gallantmon")).toBe(true);
+  });
+
+  it("lista as duas linhas mega da Angewomon", () => {
+    const angewomon = createPlayerDigimon("angewomon", {
+      level: 36,
+      bond: 40
+    });
+
+    const evolutions = getAvailableEvolutions(angewomon);
+
+    expect(evolutions).toHaveLength(2);
+    expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
+      "ophanimon",
+      "magnadramon"
+    ]);
+  });
+
+  it("exige Toy Gun para evoluir Beelzemon para Beelzemon BM", () => {
+    const save = createEmptySave();
+    const beelzemon = createPlayerDigimon("beelzemon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [beelzemon];
+
+    expect(canEvolveTo(beelzemon, "beelzemon_bm", save)).toBe(false);
+
+    save.inventory.push({
+      itemId: "toy_gun",
+      quantity: 1
+    });
+
+    expect(canEvolveTo(beelzemon, "beelzemon_bm", save)).toBe(true);
+  });
+
+  it("exige Chaos Digicore para evoluir Machinedramon para Chaosdramon", () => {
+    const save = createEmptySave();
+    const machinedramon = createPlayerDigimon("machinedramon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [machinedramon];
+
+    expect(canEvolveTo(machinedramon, "chaosdramon", save)).toBe(false);
+
+    save.inventory.push({
+      itemId: "chaos_digicore",
+      quantity: 1
+    });
+
+    expect(canEvolveTo(machinedramon, "chaosdramon", save)).toBe(true);
+  });
+
+  it("consome o Toy Gun ao evoluir Beelzemon para Beelzemon BM", () => {
+    const save = createEmptySave();
+    const beelzemon = createPlayerDigimon("beelzemon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [beelzemon];
+    save.inventory.push({
+      itemId: "toy_gun",
+      quantity: 1
+    });
+
+    evolveDigimon(beelzemon, "beelzemon_bm", save);
+
+    expect(beelzemon.speciesId).toBe("beelzemon_bm");
+    expect(save.inventory.find((entry) => entry.itemId === "toy_gun")).toBeUndefined();
+    expect(save.digidex.owned).toContain("beelzemon_bm");
+  });
+
+  it("consome o Chaos Digicore ao evoluir Machinedramon para Chaosdramon", () => {
+    const save = createEmptySave();
+    const machinedramon = createPlayerDigimon("machinedramon", {
+      level: 45,
+      bond: 45
+    });
+
+    save.party = [machinedramon];
+    save.inventory.push({
+      itemId: "chaos_digicore",
+      quantity: 1
+    });
+
+    evolveDigimon(machinedramon, "chaosdramon", save);
+
+    expect(machinedramon.speciesId).toBe("chaosdramon");
+    expect(save.inventory.find((entry) => entry.itemId === "chaos_digicore")).toBeUndefined();
+    expect(save.digidex.owned).toContain("chaosdramon");
   });
 
   it("permite DNA evolution de Alphamon para Alphamon Ouryuken quando o parceiro existe", () => {

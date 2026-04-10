@@ -55,6 +55,24 @@ describe("itemSystem", () => {
     expect(getShopEntryByItemId("high_sp_disk").price).toBe(220);
     expect(getShopEntryByItemId("revive").price).toBe(180);
     expect(getShopEntryByItemId("revive_max").price).toBe(420);
+    expect(getItemById("toy_gun")).toEqual(
+      expect.objectContaining({
+        id: "toy_gun",
+        category: "evolution",
+        sprite: "./assets/items/toy_gun.png",
+        usableInMenu: false,
+        usableInBattle: false
+      })
+    );
+    expect(getItemById("chaos_digicore")).toEqual(
+      expect.objectContaining({
+        id: "chaos_digicore",
+        category: "evolution",
+        sprite: "./assets/items/chaos_digicore.png",
+        usableInMenu: false,
+        usableInBattle: false
+      })
+    );
   });
 
   it("revive um Digimon derrotado com metade da vida", () => {

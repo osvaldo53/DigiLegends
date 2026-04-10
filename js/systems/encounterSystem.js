@@ -7,14 +7,6 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (safeMax - safeMin + 1)) + safeMin;
 }
 
-const HUNT_LEVEL_RANGES = {
-  "training-grounds": { min: 1, max: 3 },
-  "rookie-forest": { min: 4, max: 8 },
-  "champion-ridge": { min: 10, max: 16 },
-  "ultimate-domain": { min: 18, max: 28 },
-  "mega-sanctuary": { min: 32, max: 45 }
-};
-
 function normalizeEnemyEntry(entry) {
   if (typeof entry === "string") {
     return {
@@ -38,10 +30,8 @@ function getHuntLevelRange(hunt, enemyEntry = null) {
     return enemyEntry.levelRange;
   }
 
-  const predefinedRange = HUNT_LEVEL_RANGES[hunt.id];
-
-  if (predefinedRange) {
-    return predefinedRange;
+  if (hunt.levelRange) {
+    return hunt.levelRange;
   }
 
   const fallbackLevel = Math.max(1, Number(hunt.minLevel ?? 1));
@@ -50,6 +40,13 @@ function getHuntLevelRange(hunt, enemyEntry = null) {
     min: fallbackLevel,
     max: fallbackLevel + 2
   };
+}
+
+function calculateHuntExp(hunt, enemyLevel) {
+  const multiplier = Number(hunt.expFormula?.multiplier ?? 2);
+  const base = Number(hunt.expFormula?.base ?? 0);
+
+  return Math.max(1, Math.round(enemyLevel * multiplier + base));
 }
 
 function rollEnemyEntry(hunt) {
@@ -84,10 +81,14 @@ export function createEncounterFromHunt(huntId) {
   const levelRange = getHuntLevelRange(hunt, enemyEntry);
   const enemyLevel = randomInt(levelRange.min, levelRange.max);
   const enemy = createEnemyDigimon(enemyEntry.speciesId, enemyLevel);
+  const defaultRewards = {
+    bits: hunt.rewards?.bits || 0,
+    exp: calculateHuntExp(hunt, enemyLevel)
+  };
 
   return {
     hunt,
     enemy,
-    rewards: enemyEntry.rewards || hunt.rewards
+    rewards: enemyEntry.rewards || defaultRewards
   };
 }

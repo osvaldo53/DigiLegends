@@ -6,7 +6,7 @@ export const DIGIMONS = {
     element: "Neutral",
     family: "Lesser",
     baseStats: { hp: 24, sp: 10, atk: 5, def: 4, int: 4, spd: 5 },
-    evolutions: ["agumon", "dracomon"],
+    evolutions: ["agumon", "dracomon", "guilmon"],
     sprite: "./assets/sprites/koromon.png"
   },
 
@@ -17,7 +17,7 @@ export const DIGIMONS = {
     element: "Fire",
     family: "Reptile",
     baseStats: { hp: 42, sp: 16, atk: 12, def: 8, int: 7, spd: 9 },
-    evolutions: ["greymon"],
+    evolutions: ["greymon", "geogreymon"],
     sprite: "./assets/sprites/agumon.png"
   },
 
@@ -193,7 +193,7 @@ export const DIGIMONS = {
     element: "Fire",
     family: "Lesser",
     baseStats: { hp: 23, sp: 11, atk: 4, def: 4, int: 5, spd: 6 },
-    evolutions: ["biyomon", "wormmon"],
+    evolutions: ["biyomon", "wormmon", "elecmon"],
     sprite: "./assets/sprites/yokomon.png"
   },
 
@@ -226,7 +226,7 @@ export const DIGIMONS = {
     element: "Neutral",
     family: "Dragon",
     baseStats: { hp: 43, sp: 16, atk: 12, def: 8, int: 7, spd: 9 },
-    evolutions: ["ginryumon"],
+    evolutions: ["ginryumon", "coredramon_blue", "coredramon_green"],
     sprite: "./assets/sprites/dracomon.png"
   },
 
@@ -259,7 +259,7 @@ export const DIGIMONS = {
     element: "Dark",
     family: "Lesser",
     baseStats: { hp: 23, sp: 12, atk: 4, def: 4, int: 5, spd: 6 },
-    evolutions: ["dorumon"],
+    evolutions: ["dorumon", "gaomon"],
     sprite: "./assets/sprites/wanyamon.png"
   },
 
@@ -855,6 +855,523 @@ export const DIGIMONS = {
     baseStats: { hp: 148, sp: 58, atk: 48, def: 34, int: 36, spd: 22 },
     evolutions: [],
     sprite: "./assets/sprites/alphamon_ouryuken.png"
+  },
+
+  nyaromon: {
+    id: "nyaromon",
+    name: "Nyaromon",
+    type: "Free",
+    element: "Light",
+    family: "Lesser",
+    baseStats: { hp: 23, sp: 12, atk: 4, def: 4, int: 5, spd: 6 },
+    evolutions: ["terriermon", "salamon"],
+    sprite: "./assets/sprites/nyaromon.png"
+  },
+
+  pagumon: {
+    id: "pagumon",
+    name: "Pagumon",
+    type: "Free",
+    element: "Dark",
+    family: "Lesser",
+    baseStats: { hp: 24, sp: 11, atk: 4, def: 4, int: 5, spd: 5 },
+    evolutions: ["impmon"],
+    sprite: "./assets/sprites/pagumon.png"
+  },
+
+  guilmon: {
+    id: "guilmon",
+    name: "Guilmon",
+    type: "Virus",
+    element: "Fire",
+    family: "Dragon",
+    baseStats: { hp: 43, sp: 16, atk: 12, def: 8, int: 7, spd: 9 },
+    evolutions: ["growlmon", "tyrannomon"],
+    sprite: "./assets/sprites/guilmon.png"
+  },
+
+  gaomon: {
+    id: "gaomon",
+    name: "Gaomon",
+    type: "Data",
+    element: "Wind",
+    family: "Beast",
+    baseStats: { hp: 40, sp: 18, atk: 10, def: 8, int: 8, spd: 10 },
+    evolutions: ["gaogamon"],
+    sprite: "./assets/sprites/gaomon.png"
+  },
+
+  terriermon: {
+    id: "terriermon",
+    name: "Terriermon",
+    type: "Vaccine",
+    element: "Wind",
+    family: "Mammal",
+    baseStats: { hp: 39, sp: 19, atk: 8, def: 8, int: 10, spd: 9 },
+    evolutions: ["gargomon"],
+    sprite: "./assets/sprites/terriermon.png"
+  },
+
+  salamon: {
+    id: "salamon",
+    name: "Salamon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 38, sp: 20, atk: 8, def: 8, int: 10, spd: 9 },
+    evolutions: ["gatomon"],
+    sprite: "./assets/sprites/salamon.png"
+  },
+
+  elecmon: {
+    id: "elecmon",
+    name: "Elecmon",
+    type: "Data",
+    element: "Electric",
+    family: "Mammal",
+    baseStats: { hp: 40, sp: 18, atk: 9, def: 8, int: 9, spd: 9 },
+    evolutions: ["leomon"],
+    sprite: "./assets/sprites/elecmon.png"
+  },
+
+  impmon: {
+    id: "impmon",
+    name: "Impmon",
+    type: "Virus",
+    element: "Dark",
+    family: "Nightmare Soldier",
+    baseStats: { hp: 38, sp: 21, atk: 8, def: 7, int: 11, spd: 10 },
+    evolutions: ["icedevimon", "blackgatomon"],
+    sprite: "./assets/sprites/impmon.png"
+  },
+
+  growlmon: {
+    id: "growlmon",
+    name: "Growlmon",
+    type: "Virus",
+    element: "Fire",
+    family: "Dragon",
+    baseStats: { hp: 69, sp: 24, atk: 20, def: 13, int: 10, spd: 10 },
+    evolutions: ["wargrowlmon", "gigadramon"],
+    sprite: "./assets/sprites/growlmon.png"
+  },
+
+  tyrannomon: {
+    id: "tyrannomon",
+    name: "Tyrannomon",
+    type: "Data",
+    element: "Fire",
+    family: "Dinosaur",
+    baseStats: { hp: 70, sp: 23, atk: 19, def: 13, int: 10, spd: 9 },
+    evolutions: ["metaltyrannomon"],
+    sprite: "./assets/sprites/tyrannomon.png"
+  },
+
+  geogreymon: {
+    id: "geogreymon",
+    name: "GeoGreymon",
+    type: "Vaccine",
+    element: "Fire",
+    family: "Dinosaur",
+    baseStats: { hp: 70, sp: 23, atk: 20, def: 13, int: 10, spd: 10 },
+    evolutions: ["rizegreymon"],
+    sprite: "./assets/sprites/geogreymon.png"
+  },
+
+  gaogamon: {
+    id: "gaogamon",
+    name: "GaoGamon",
+    type: "Data",
+    element: "Wind",
+    family: "Beast",
+    baseStats: { hp: 63, sp: 27, atk: 16, def: 12, int: 14, spd: 12 },
+    evolutions: ["machgaogamon"],
+    sprite: "./assets/sprites/gaogamon.png"
+  },
+
+  coredramon_blue: {
+    id: "coredramon_blue",
+    name: "Coredramon (Blue)",
+    type: "Vaccine",
+    element: "Water",
+    family: "Dragon",
+    baseStats: { hp: 66, sp: 25, atk: 18, def: 12, int: 12, spd: 11 },
+    evolutions: ["wingdramon"],
+    sprite: "./assets/sprites/coredramon_blue.png"
+  },
+
+  coredramon_green: {
+    id: "coredramon_green",
+    name: "Coredramon (Green)",
+    type: "Virus",
+    element: "Plant",
+    family: "Dragon",
+    baseStats: { hp: 68, sp: 24, atk: 19, def: 13, int: 10, spd: 10 },
+    evolutions: ["groundramon"],
+    sprite: "./assets/sprites/coredramon_green.png"
+  },
+
+  gargomon: {
+    id: "gargomon",
+    name: "Gargomon",
+    type: "Vaccine",
+    element: "Wind",
+    family: "Mammal",
+    baseStats: { hp: 62, sp: 27, atk: 15, def: 12, int: 14, spd: 11 },
+    evolutions: ["rapidmon"],
+    sprite: "./assets/sprites/gargomon.png"
+  },
+
+  gatomon: {
+    id: "gatomon",
+    name: "Gatomon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 58, sp: 29, atk: 14, def: 11, int: 16, spd: 13 },
+    evolutions: ["angewomon"],
+    sprite: "./assets/sprites/gatomon.png"
+  },
+
+  leomon: {
+    id: "leomon",
+    name: "Leomon",
+    type: "Vaccine",
+    element: "Neutral",
+    family: "Beast Man",
+    baseStats: { hp: 64, sp: 25, atk: 17, def: 12, int: 12, spd: 11 },
+    evolutions: ["grapleomon"],
+    sprite: "./assets/sprites/leomon.png"
+  },
+
+  icedevimon: {
+    id: "icedevimon",
+    name: "IceDevimon",
+    type: "Virus",
+    element: "Water",
+    family: "Fallen Angel",
+    baseStats: { hp: 57, sp: 30, atk: 15, def: 11, int: 16, spd: 11 },
+    evolutions: ["skullsatamon"],
+    sprite: "./assets/sprites/icedevimon.png"
+  },
+
+  blackgatomon: {
+    id: "blackgatomon",
+    name: "BlackGatomon",
+    type: "Virus",
+    element: "Dark",
+    family: "Dark Animal",
+    baseStats: { hp: 58, sp: 29, atk: 14, def: 11, int: 16, spd: 13 },
+    evolutions: ["ladydevimon"],
+    sprite: "./assets/sprites/blackgatomon.png"
+  },
+
+  wargrowlmon: {
+    id: "wargrowlmon",
+    name: "WarGrowlmon",
+    type: "Virus",
+    element: "Fire",
+    family: "Cyborg",
+    baseStats: { hp: 95, sp: 34, atk: 29, def: 18, int: 15, spd: 13 },
+    evolutions: ["gallantmon"],
+    sprite: "./assets/sprites/wargrowlmon.png"
+  },
+
+  metaltyrannomon: {
+    id: "metaltyrannomon",
+    name: "MetalTyrannomon",
+    type: "Virus",
+    element: "Electric",
+    family: "Cyborg",
+    baseStats: { hp: 96, sp: 32, atk: 28, def: 19, int: 15, spd: 12 },
+    evolutions: ["rusttyrannomon"],
+    sprite: "./assets/sprites/metaltyrannomon.png"
+  },
+
+  rizegreymon: {
+    id: "rizegreymon",
+    name: "RizeGreymon",
+    type: "Vaccine",
+    element: "Fire",
+    family: "Cyborg",
+    baseStats: { hp: 92, sp: 35, atk: 28, def: 18, int: 17, spd: 14 },
+    evolutions: ["shinegreymon"],
+    sprite: "./assets/sprites/rizegreymon.png"
+  },
+
+  machgaogamon: {
+    id: "machgaogamon",
+    name: "MachGaogamon",
+    type: "Data",
+    element: "Wind",
+    family: "Beast Man",
+    baseStats: { hp: 86, sp: 38, atk: 23, def: 17, int: 20, spd: 16 },
+    evolutions: ["miragegaogamon"],
+    sprite: "./assets/sprites/machgaogamon.png"
+  },
+
+  wingdramon: {
+    id: "wingdramon",
+    name: "Wingdramon",
+    type: "Vaccine",
+    element: "Wind",
+    family: "Dragon",
+    baseStats: { hp: 88, sp: 34, atk: 24, def: 17, int: 18, spd: 16 },
+    evolutions: ["slayerdramon"],
+    sprite: "./assets/sprites/wingdramon.png"
+  },
+
+  groundramon: {
+    id: "groundramon",
+    name: "Groundramon",
+    type: "Virus",
+    element: "Plant",
+    family: "Dragon",
+    baseStats: { hp: 94, sp: 30, atk: 27, def: 19, int: 15, spd: 13 },
+    evolutions: ["brakedramon"],
+    sprite: "./assets/sprites/groundramon.png"
+  },
+
+  rapidmon: {
+    id: "rapidmon",
+    name: "Rapidmon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 84, sp: 38, atk: 21, def: 17, int: 22, spd: 16 },
+    evolutions: ["megagargomon"],
+    sprite: "./assets/sprites/rapidmon.png"
+  },
+
+  angewomon: {
+    id: "angewomon",
+    name: "Angewomon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Angel",
+    baseStats: { hp: 82, sp: 40, atk: 20, def: 16, int: 24, spd: 15 },
+    evolutions: ["ophanimon", "magnadramon"],
+    sprite: "./assets/sprites/angewomon.png"
+  },
+
+  grapleomon: {
+    id: "grapleomon",
+    name: "GrapLeomon",
+    type: "Vaccine",
+    element: "Electric",
+    family: "Beast Man",
+    baseStats: { hp: 89, sp: 34, atk: 26, def: 18, int: 17, spd: 14 },
+    evolutions: ["saberleomon", "bancholeomon"],
+    sprite: "./assets/sprites/grapleomon.png"
+  },
+
+  gigadramon: {
+    id: "gigadramon",
+    name: "Gigadramon",
+    type: "Virus",
+    element: "Fire",
+    family: "Machine",
+    baseStats: { hp: 94, sp: 35, atk: 27, def: 18, int: 17, spd: 13 },
+    evolutions: ["machinedramon"],
+    sprite: "./assets/sprites/gigadramon.png"
+  },
+
+  skullsatamon: {
+    id: "skullsatamon",
+    name: "SkullSatamon",
+    type: "Virus",
+    element: "Dark",
+    family: "Dark Animal",
+    baseStats: { hp: 84, sp: 40, atk: 20, def: 16, int: 24, spd: 15 },
+    evolutions: ["beelzemon"],
+    sprite: "./assets/sprites/skullsatamon.png"
+  },
+
+  ladydevimon: {
+    id: "ladydevimon",
+    name: "LadyDevimon",
+    type: "Virus",
+    element: "Dark",
+    family: "Fallen Angel",
+    baseStats: { hp: 82, sp: 41, atk: 19, def: 16, int: 25, spd: 15 },
+    evolutions: ["lilithmon"],
+    sprite: "./assets/sprites/ladydevimon.png"
+  },
+
+  gallantmon: {
+    id: "gallantmon",
+    name: "Gallantmon",
+    type: "Virus",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 124, sp: 48, atk: 38, def: 27, int: 28, spd: 20 },
+    evolutions: [],
+    sprite: "./assets/sprites/gallantmon.png"
+  },
+
+  rusttyrannomon: {
+    id: "rusttyrannomon",
+    name: "RustTyrannomon",
+    type: "Virus",
+    element: "Electric",
+    family: "Machine",
+    baseStats: { hp: 128, sp: 42, atk: 39, def: 28, int: 22, spd: 17 },
+    evolutions: [],
+    sprite: "./assets/sprites/rusttyrannomon.png"
+  },
+
+  shinegreymon: {
+    id: "shinegreymon",
+    name: "ShineGreymon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 120, sp: 50, atk: 34, def: 25, int: 33, spd: 20 },
+    evolutions: [],
+    sprite: "./assets/sprites/shinegreymon.png"
+  },
+
+  miragegaogamon: {
+    id: "miragegaogamon",
+    name: "MirageGaogamon",
+    type: "Data",
+    element: "Wind",
+    family: "Beast Knight",
+    baseStats: { hp: 116, sp: 48, atk: 31, def: 24, int: 32, spd: 22 },
+    evolutions: [],
+    sprite: "./assets/sprites/miragegaogamon.png"
+  },
+
+  slayerdramon: {
+    id: "slayerdramon",
+    name: "Slayerdramon",
+    type: "Vaccine",
+    element: "Wind",
+    family: "Holy Dragon",
+    baseStats: { hp: 118, sp: 46, atk: 35, def: 24, int: 29, spd: 21 },
+    evolutions: [],
+    sprite: "./assets/sprites/slayerdramon.png"
+  },
+
+  brakedramon: {
+    id: "brakedramon",
+    name: "Brakedramon",
+    type: "Virus",
+    element: "Plant",
+    family: "Machine Dragon",
+    baseStats: { hp: 130, sp: 40, atk: 39, def: 28, int: 21, spd: 16 },
+    evolutions: [],
+    sprite: "./assets/sprites/brakedramon.png"
+  },
+
+  megagargomon: {
+    id: "megagargomon",
+    name: "MegaGargomon",
+    type: "Vaccine",
+    element: "Wind",
+    family: "Machine",
+    baseStats: { hp: 122, sp: 48, atk: 31, def: 26, int: 32, spd: 19 },
+    evolutions: [],
+    sprite: "./assets/sprites/megagargomon.png"
+  },
+
+  ophanimon: {
+    id: "ophanimon",
+    name: "Ophanimon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Angel",
+    baseStats: { hp: 114, sp: 54, atk: 28, def: 24, int: 36, spd: 19 },
+    evolutions: [],
+    sprite: "./assets/sprites/ophanimon.png"
+  },
+
+  magnadramon: {
+    id: "magnadramon",
+    name: "Magnadramon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Dragon",
+    baseStats: { hp: 120, sp: 50, atk: 27, def: 24, int: 35, spd: 18 },
+    evolutions: [],
+    sprite: "./assets/sprites/magnadramon.png"
+  },
+
+  saberleomon: {
+    id: "saberleomon",
+    name: "SaberLeomon",
+    type: "Vaccine",
+    element: "Neutral",
+    family: "Beast King",
+    baseStats: { hp: 122, sp: 42, atk: 37, def: 26, int: 23, spd: 19 },
+    evolutions: [],
+    sprite: "./assets/sprites/saberleomon.png"
+  },
+
+  bancholeomon: {
+    id: "bancholeomon",
+    name: "BanchoLeomon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Beast Man",
+    baseStats: { hp: 118, sp: 44, atk: 38, def: 25, int: 24, spd: 20 },
+    evolutions: [],
+    sprite: "./assets/sprites/bancholeomon.png"
+  },
+
+  machinedramon: {
+    id: "machinedramon",
+    name: "Machinedramon",
+    type: "Virus",
+    element: "Electric",
+    family: "Machine",
+    baseStats: { hp: 132, sp: 42, atk: 40, def: 29, int: 22, spd: 16 },
+    evolutions: ["chaosdramon"],
+    sprite: "./assets/sprites/machinedramon.png"
+  },
+
+  beelzemon: {
+    id: "beelzemon",
+    name: "Beelzemon",
+    type: "Virus",
+    element: "Dark",
+    family: "Demon Lord",
+    baseStats: { hp: 118, sp: 48, atk: 34, def: 23, int: 32, spd: 21 },
+    evolutions: ["beelzemon_bm"],
+    sprite: "./assets/sprites/beelzemon.png"
+  },
+
+  lilithmon: {
+    id: "lilithmon",
+    name: "Lilithmon",
+    type: "Virus",
+    element: "Dark",
+    family: "Demon Lord",
+    baseStats: { hp: 112, sp: 54, atk: 26, def: 22, int: 38, spd: 19 },
+    evolutions: [],
+    sprite: "./assets/sprites/lilithmon.png"
+  },
+
+  chaosdramon: {
+    id: "chaosdramon",
+    name: "Chaosdramon",
+    type: "Virus",
+    element: "Dark",
+    family: "Machine",
+    baseStats: { hp: 148, sp: 48, atk: 46, def: 33, int: 24, spd: 18 },
+    evolutions: [],
+    sprite: "./assets/sprites/chaosdramon.png"
+  },
+
+  beelzemon_bm: {
+    id: "beelzemon_bm",
+    name: "Beelzemon BM",
+    type: "Virus",
+    element: "Dark",
+    family: "Demon Lord",
+    baseStats: { hp: 138, sp: 56, atk: 42, def: 26, int: 36, spd: 23 },
+    evolutions: [],
+    sprite: "./assets/sprites/beelzemon_bm.png"
   }
 };
 

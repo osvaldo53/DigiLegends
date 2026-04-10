@@ -1,7 +1,8 @@
 export const EVOLUTION_RULES = {
   koromon: {
     agumon: { minLevel: 3, minBond: 1 },
-    dracomon: { minLevel: 3, minBond: 1 }
+    dracomon: { minLevel: 3, minBond: 1 },
+    guilmon: { minLevel: 3, minBond: 1 }
   },
   tsunomon: {
     gabumon: { minLevel: 3, minBond: 1 }
@@ -28,17 +29,27 @@ export const EVOLUTION_RULES = {
   },
   yokomon: {
     biyomon: { minLevel: 3, minBond: 1 },
-    wormmon: { minLevel: 3, minBond: 1 }
+    wormmon: { minLevel: 3, minBond: 1 },
+    elecmon: { minLevel: 3, minBond: 1 }
   },
   demiveemon: {
     veemon: { minLevel: 3, minBond: 1 }
   },
   wanyamon: {
-    dorumon: { minLevel: 3, minBond: 1 }
+    dorumon: { minLevel: 3, minBond: 1 },
+    gaomon: { minLevel: 3, minBond: 1 }
+  },
+  nyaromon: {
+    terriermon: { minLevel: 3, minBond: 1 },
+    salamon: { minLevel: 3, minBond: 1 }
+  },
+  pagumon: {
+    impmon: { minLevel: 3, minBond: 1 }
   },
 
   agumon: {
-    greymon: { minLevel: 10, minBond: 5 }
+    greymon: { minLevel: 10, minBond: 5 },
+    geogreymon: { minLevel: 10, minBond: 5 }
   },
   agumon_black: {
     greymon_blue: { minLevel: 10, minBond: 5 }
@@ -94,11 +105,33 @@ export const EVOLUTION_RULES = {
   wormmon: {
     stingmon: { minLevel: 10, minBond: 5 }
   },
+  guilmon: {
+    growlmon: { minLevel: 10, minBond: 5 },
+    tyrannomon: { minLevel: 10, minBond: 5 }
+  },
   dorumon: {
     raptordramon: { minLevel: 10, minBond: 5 }
   },
   dracomon: {
-    ginryumon: { minLevel: 10, minBond: 5 }
+    ginryumon: { minLevel: 10, minBond: 5 },
+    coredramon_blue: { minLevel: 10, minBond: 5 },
+    coredramon_green: { minLevel: 10, minBond: 5 }
+  },
+  gaomon: {
+    gaogamon: { minLevel: 10, minBond: 5 }
+  },
+  terriermon: {
+    gargomon: { minLevel: 10, minBond: 5 }
+  },
+  salamon: {
+    gatomon: { minLevel: 10, minBond: 8 }
+  },
+  elecmon: {
+    leomon: { minLevel: 10, minBond: 5 }
+  },
+  impmon: {
+    icedevimon: { minLevel: 10, minBond: 6 },
+    blackgatomon: { minLevel: 10, minBond: 6 }
   },
 
   greymon: {
@@ -161,6 +194,40 @@ export const EVOLUTION_RULES = {
   ginryumon: {
     hisyaryumon: { minLevel: 22, minBond: 18 }
   },
+  growlmon: {
+    wargrowlmon: { minLevel: 22, minBond: 20 },
+    gigadramon: { minLevel: 22, minBond: 20 }
+  },
+  tyrannomon: {
+    metaltyrannomon: { minLevel: 22, minBond: 18 }
+  },
+  geogreymon: {
+    rizegreymon: { minLevel: 22, minBond: 20 }
+  },
+  gaogamon: {
+    machgaogamon: { minLevel: 22, minBond: 18 }
+  },
+  coredramon_blue: {
+    wingdramon: { minLevel: 22, minBond: 18 }
+  },
+  coredramon_green: {
+    groundramon: { minLevel: 22, minBond: 18 }
+  },
+  gargomon: {
+    rapidmon: { minLevel: 22, minBond: 18 }
+  },
+  gatomon: {
+    angewomon: { minLevel: 24, minBond: 24 }
+  },
+  leomon: {
+    grapleomon: { minLevel: 22, minBond: 18 }
+  },
+  icedevimon: {
+    skullsatamon: { minLevel: 24, minBond: 22 }
+  },
+  blackgatomon: {
+    ladydevimon: { minLevel: 24, minBond: 22 }
+  },
 
   metalgreymon: {
     wargreymon: { minLevel: 34, minBond: 35 }
@@ -207,6 +274,44 @@ export const EVOLUTION_RULES = {
   hisyaryumon: {
     ouryumon: { minLevel: 36, minBond: 34 }
   },
+  wargrowlmon: {
+    gallantmon: { minLevel: 36, minBond: 36 }
+  },
+  metaltyrannomon: {
+    rusttyrannomon: { minLevel: 34, minBond: 32 }
+  },
+  rizegreymon: {
+    shinegreymon: { minLevel: 36, minBond: 36 }
+  },
+  machgaogamon: {
+    miragegaogamon: { minLevel: 34, minBond: 32 }
+  },
+  wingdramon: {
+    slayerdramon: { minLevel: 36, minBond: 34 }
+  },
+  groundramon: {
+    brakedramon: { minLevel: 34, minBond: 32 }
+  },
+  rapidmon: {
+    megagargomon: { minLevel: 34, minBond: 32 }
+  },
+  angewomon: {
+    ophanimon: { minLevel: 36, minBond: 40 },
+    magnadramon: { minLevel: 36, minBond: 38 }
+  },
+  grapleomon: {
+    saberleomon: { minLevel: 34, minBond: 32 },
+    bancholeomon: { minLevel: 36, minBond: 36 }
+  },
+  gigadramon: {
+    machinedramon: { minLevel: 36, minBond: 34 }
+  },
+  skullsatamon: {
+    beelzemon: { minLevel: 36, minBond: 38 }
+  },
+  ladydevimon: {
+    lilithmon: { minLevel: 36, minBond: 38 }
+  },
   imperialdramon_dm: {
     imperialdramon_fm: { minLevel: 40, minBond: 40 }
   },
@@ -216,6 +321,22 @@ export const EVOLUTION_RULES = {
       minLevel: 45,
       minBond: 55,
       requiredItemId: "omni_sword"
+    }
+  },
+  machinedramon: {
+    chaosdramon: {
+      type: "armor",
+      minLevel: 45,
+      minBond: 45,
+      requiredItemId: "chaos_digicore"
+    }
+  },
+  beelzemon: {
+    beelzemon_bm: {
+      type: "armor",
+      minLevel: 45,
+      minBond: 45,
+      requiredItemId: "toy_gun"
     }
   },
 

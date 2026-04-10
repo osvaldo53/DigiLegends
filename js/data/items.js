@@ -140,6 +140,30 @@ export const ITEMS = {
     usableInBattle: false
   },
 
+  toy_gun: {
+    id: "toy_gun",
+    name: "Toy Gun",
+    description: "Pistola simbolica usada para despertar o poder maximo de Beelzemon.",
+    sprite: "./assets/items/toy_gun.png",
+    category: "evolution",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  chaos_digicore: {
+    id: "chaos_digicore",
+    name: "Chaos Digicore",
+    description: "Nucleo caotico necessario para forcar a evolucao de Machinedramon.",
+    sprite: "./assets/items/chaos_digicore.png",
+    category: "evolution",
+    target: "none",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
   digi_egg_courage: {
     id: "digi_egg_courage",
     name: "Digi-Egg of Courage",

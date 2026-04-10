@@ -180,6 +180,26 @@
   color: #d9e4ff;
 }
 
+.hunt-card__enemy-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.hunt-card__enemy-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(53, 208, 255, 0.10);
+  border: 1px solid rgba(53, 208, 255, 0.18);
+  color: #dff8ff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
