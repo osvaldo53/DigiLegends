@@ -112,6 +112,7 @@ export const SCAN_RULES = {
   megagargomon: { stage: "Mega", scanPercentOnDefeat: 1 },
   ophanimon: { stage: "Mega", scanPercentOnDefeat: 1 },
   magnadramon: { stage: "Mega", scanPercentOnDefeat: 1 },
+  mastemon: { stage: "Mega", scanPercentOnDefeat: 1 },
   saberleomon: { stage: "Mega", scanPercentOnDefeat: 1 },
   bancholeomon: { stage: "Mega", scanPercentOnDefeat: 1 },
   machinedramon: { stage: "Mega", scanPercentOnDefeat: 1 },

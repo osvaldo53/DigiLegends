@@ -17,4 +17,17 @@ describe("skills", () => {
     expect(getSkillById("ouryu_seiken")?.kind).toBe("attack");
     expect(getSkillById("alpha_inforce")?.kind).toBe("attack");
   });
+
+  it("atribui a Mastemon pelo menos um ataque Light e um ataque Dark", () => {
+    const skillIds = getSkillsForSpecies("mastemon");
+    const skillElements = skillIds.map((skillId) => getSkillById(skillId)?.element);
+
+    expect(skillIds).toEqual([
+      "chaos_degradation",
+      "dark_prominence",
+      "greater_heal"
+    ]);
+    expect(skillElements).toContain("Light");
+    expect(skillElements).toContain("Dark");
+  });
 });

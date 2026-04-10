@@ -398,17 +398,73 @@ describe("evolutionSystem", () => {
 
   it("lista as duas linhas mega da Angewomon", () => {
     const angewomon = createPlayerDigimon("angewomon", {
-      level: 36,
+      level: 40,
       bond: 40
     });
 
     const evolutions = getAvailableEvolutions(angewomon);
 
-    expect(evolutions).toHaveLength(2);
+    expect(evolutions).toHaveLength(3);
     expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
       "ophanimon",
-      "magnadramon"
+      "magnadramon",
+      "mastemon"
     ]);
+  });
+
+  it("permite DNA evolution de Angewomon para Mastemon quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const angewomon = createPlayerDigimon("angewomon", {
+      level: 40,
+      bond: 40
+    });
+    const ladydevimon = createPlayerDigimon("ladydevimon", {
+      level: 40,
+      bond: 40
+    });
+
+    save.party = [angewomon];
+    save.storage = [ladydevimon];
+
+    expect(canEvolveTo(angewomon, "mastemon", save)).toBe(true);
+  });
+
+  it("permite DNA evolution de LadyDevimon para Mastemon quando o parceiro existe", () => {
+    const save = createEmptySave();
+    const ladydevimon = createPlayerDigimon("ladydevimon", {
+      level: 40,
+      bond: 40
+    });
+    const angewomon = createPlayerDigimon("angewomon", {
+      level: 40,
+      bond: 40
+    });
+
+    save.party = [ladydevimon];
+    save.storage = [angewomon];
+
+    expect(canEvolveTo(ladydevimon, "mastemon", save)).toBe(true);
+  });
+
+  it("consome o parceiro ao realizar DNA evolution para Mastemon", () => {
+    const save = createEmptySave();
+    const angewomon = createPlayerDigimon("angewomon", {
+      level: 40,
+      bond: 40
+    });
+    const ladydevimon = createPlayerDigimon("ladydevimon", {
+      level: 40,
+      bond: 40
+    });
+
+    save.party = [angewomon];
+    save.storage = [ladydevimon];
+
+    evolveDigimon(angewomon, "mastemon", save);
+
+    expect(angewomon.speciesId).toBe("mastemon");
+    expect(save.storage).toHaveLength(0);
+    expect(save.digidex.owned).toContain("mastemon");
   });
 
   it("exige Toy Gun para evoluir Beelzemon para Beelzemon BM", () => {

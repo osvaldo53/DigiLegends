@@ -1150,7 +1150,7 @@ export const DIGIMONS = {
     element: "Light",
     family: "Angel",
     baseStats: { hp: 82, sp: 40, atk: 20, def: 16, int: 24, spd: 15 },
-    evolutions: ["ophanimon", "magnadramon"],
+    evolutions: ["ophanimon", "magnadramon", "mastemon"],
     sprite: "./assets/sprites/angewomon.png"
   },
 
@@ -1194,7 +1194,7 @@ export const DIGIMONS = {
     element: "Dark",
     family: "Fallen Angel",
     baseStats: { hp: 82, sp: 41, atk: 19, def: 16, int: 25, spd: 15 },
-    evolutions: ["lilithmon"],
+    evolutions: ["lilithmon", "mastemon"],
     sprite: "./assets/sprites/ladydevimon.png"
   },
 
@@ -1350,6 +1350,17 @@ export const DIGIMONS = {
     baseStats: { hp: 112, sp: 54, atk: 26, def: 22, int: 38, spd: 19 },
     evolutions: [],
     sprite: "./assets/sprites/lilithmon.png"
+  },
+
+  mastemon: {
+    id: "mastemon",
+    name: "Mastemon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Angel",
+    baseStats: { hp: 126, sp: 60, atk: 32, def: 25, int: 40, spd: 22 },
+    evolutions: [],
+    sprite: "./assets/sprites/mastemon.png"
   },
 
   chaosdramon: {

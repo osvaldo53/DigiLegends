@@ -109,6 +109,9 @@ export const SKILLS = {
   royal_saber: { id: "royal_saber", name: "Royal Saber", kind: "attack", power: 41, cost: 12, element: "Neutral", scaling: "atk" },
   ouryu_seiken: { id: "ouryu_seiken", name: "Ouryu Seiken", kind: "attack", power: 52, cost: 17, element: "Light", scaling: "atk" },
   alpha_inforce: { id: "alpha_inforce", name: "Alpha InForce", kind: "attack", power: 50, cost: 16, element: "Light", scaling: "int" }
+  ,
+  chaos_degradation: { id: "chaos_degradation", name: "Chaos Degradation", kind: "attack", power: 48, cost: 15, element: "Light", scaling: "int" },
+  dark_prominence: { id: "dark_prominence", name: "Dark Prominence", kind: "attack", power: 44, cost: 14, element: "Dark", scaling: "int" }
 };
 
 export function getSkillById(skillId) {
@@ -238,6 +241,7 @@ export const SPECIES_SKILLS = {
   machinedramon: ["giga_death", "giga_destroyer"],
   beelzemon: ["night_raid", "desperado_blaster"],
   lilithmon: ["night_raid", "forbidden_temptation"],
+  mastemon: ["chaos_degradation", "dark_prominence", "greater_heal"],
   chaosdramon: ["giga_crusher", "catastro_disaster"],
   beelzemon_bm: ["giga_crusher", "night_raid"]
 };

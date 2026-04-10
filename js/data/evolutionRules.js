@@ -297,7 +297,15 @@ export const EVOLUTION_RULES = {
   },
   angewomon: {
     ophanimon: { minLevel: 36, minBond: 40 },
-    magnadramon: { minLevel: 36, minBond: 38 }
+    magnadramon: { minLevel: 36, minBond: 38 },
+    mastemon: {
+      type: "dna",
+      minLevel: 40,
+      minBond: 40,
+      partnerSpeciesId: "ladydevimon",
+      partnerMinLevel: 40,
+      partnerMinBond: 40
+    }
   },
   grapleomon: {
     saberleomon: { minLevel: 34, minBond: 32 },
@@ -310,7 +318,15 @@ export const EVOLUTION_RULES = {
     beelzemon: { minLevel: 36, minBond: 38 }
   },
   ladydevimon: {
-    lilithmon: { minLevel: 36, minBond: 38 }
+    lilithmon: { minLevel: 36, minBond: 38 },
+    mastemon: {
+      type: "dna",
+      minLevel: 40,
+      minBond: 40,
+      partnerSpeciesId: "angewomon",
+      partnerMinLevel: 40,
+      partnerMinBond: 40
+    }
   },
   imperialdramon_dm: {
     imperialdramon_fm: { minLevel: 40, minBond: 40 }
