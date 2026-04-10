@@ -156,7 +156,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
       `;
 
   const evolutionSection =
-    context === "party" && evolutions.length
+    evolutions.length
       ? `
         <div class="team-evolution-section">
           <h4 class="team-evolution-section__title">Evoluções</h4>
@@ -179,14 +179,12 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
         </div>
       `
-      : context === "party"
-        ? `
+      : `
           <div class="team-evolution-section">
             <h4 class="team-evolution-section__title">Evoluções</h4>
             <p class="empty-state">Nenhuma evolução disponível para esta espécie no momento.</p>
           </div>
-        `
-        : "";
+        `;
 
   return `
     <details class="team-card team-card--collapsible">

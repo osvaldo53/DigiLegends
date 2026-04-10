@@ -163,9 +163,10 @@ export function bindTeamScreen() {
       const targetSpeciesId = button.dataset.targetSpeciesId;
       const partnerSelectId = button.dataset.partnerSelectId;
 
-      const playerDigimon = state.save.party.find(
-        (digimon) => digimon.uid === digimonUid
-      );
+      const playerDigimon =
+        state.save.party.find((digimon) => digimon.uid === digimonUid) ||
+        state.save.storage.find((digimon) => digimon.uid === digimonUid) ||
+        null;
 
       if (!playerDigimon) {
         window.alert("Não foi possível localizar o Digimon selecionado.");
