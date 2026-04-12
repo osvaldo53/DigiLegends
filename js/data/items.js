@@ -8,6 +8,7 @@ export const ITEMS = {
     id: "bandage",
     name: "Bandage",
     description: "Recupera 30 de HP.",
+    sprite: "./assets/items/hp_recovery.png",
     category: "healing",
     target: "single_ally",
     effect: {
@@ -22,6 +23,7 @@ export const ITEMS = {
     id: "small_recovery",
     name: "Small Recovery",
     description: "Recupera 60 de HP.",
+    sprite: "./assets/items/hp_recovery.png",
     category: "healing",
     target: "single_ally",
     effect: {
@@ -36,6 +38,7 @@ export const ITEMS = {
     id: "medium_recovery",
     name: "Medium Recovery",
     description: "Recupera 120 de HP.",
+    sprite: "./assets/items/hp_recovery.png",
     category: "healing",
     target: "single_ally",
     effect: {
@@ -50,6 +53,7 @@ export const ITEMS = {
     id: "high_recovery",
     name: "High Recovery",
     description: "Recupera 350 de HP.",
+    sprite: "./assets/items/hp_recovery.png",
     category: "healing",
     target: "single_ally",
     effect: {
@@ -64,6 +68,7 @@ export const ITEMS = {
     id: "small_sp_disk",
     name: "Small SP Disk",
     description: "Recupera 30 de SP.",
+    sprite: "./assets/items/sp_disk.png",
     category: "recovery",
     target: "single_ally",
     effect: {
@@ -78,6 +83,7 @@ export const ITEMS = {
     id: "medium_sp_disk",
     name: "Medium SP Disk",
     description: "Recupera 60 de SP.",
+    sprite: "./assets/items/sp_disk.png",
     category: "recovery",
     target: "single_ally",
     effect: {
@@ -92,6 +98,7 @@ export const ITEMS = {
     id: "high_sp_disk",
     name: "High SP Disk",
     description: "Recupera 120 de SP.",
+    sprite: "./assets/items/sp_disk.png",
     category: "recovery",
     target: "single_ally",
     effect: {
@@ -106,6 +113,7 @@ export const ITEMS = {
     id: "revive",
     name: "Revive",
     description: "Ressuscita um Digimon derrotado com 50% de HP.",
+    sprite: "./assets/items/revive.png",
     category: "recovery",
     target: "single_ally",
     effect: {
@@ -119,6 +127,7 @@ export const ITEMS = {
     id: "revive_max",
     name: "Revive Max",
     description: "Ressuscita um Digimon derrotado com 100% de HP.",
+    sprite: "./assets/items/revive_max.png",
     category: "recovery",
     target: "single_ally",
     effect: {
@@ -132,6 +141,7 @@ export const ITEMS = {
     id: "xp_chip_tiny",
     name: "XP Chip Tiny",
     description: "Concede 32 de EXP a um Digimon.",
+    sprite: "./assets/items/xp_chip.png",
     category: "xp",
     target: "single_ally",
     effect: {
@@ -145,6 +155,7 @@ export const ITEMS = {
     id: "xp_chip_small",
     name: "XP Chip Small",
     description: "Concede 72 de EXP a um Digimon.",
+    sprite: "./assets/items/xp_chip.png",
     category: "xp",
     target: "single_ally",
     effect: {
@@ -158,6 +169,7 @@ export const ITEMS = {
     id: "xp_chip_medium",
     name: "XP Chip Medium",
     description: "Concede 144 de EXP a um Digimon.",
+    sprite: "./assets/items/xp_chip.png",
     category: "xp",
     target: "single_ally",
     effect: {
@@ -171,6 +183,7 @@ export const ITEMS = {
     id: "xp_chip_large",
     name: "XP Chip Large",
     description: "Concede 240 de EXP a um Digimon.",
+    sprite: "./assets/items/xp_chip.png",
     category: "xp",
     target: "single_ally",
     effect: {
@@ -184,6 +197,7 @@ export const ITEMS = {
     id: "xp_chip_mega",
     name: "XP Chip Mega",
     description: "Concede 360 de EXP a um Digimon.",
+    sprite: "./assets/items/xp_chip.png",
     category: "xp",
     target: "single_ally",
     effect: {
