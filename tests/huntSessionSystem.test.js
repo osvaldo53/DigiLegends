@@ -75,6 +75,7 @@ describe("huntSessionSystem", () => {
     state.battle = {
       active: true,
       huntId: "training-woods",
+      context: "hunt",
       playerDigimonUid: digimonA.uid,
       enemy: {
         speciesId: "betamon",
@@ -102,6 +103,7 @@ describe("huntSessionSystem", () => {
 
     expect(state.battle.playerDigimonUid).toBe(digimonB.uid);
     expect(state.huntSession.playerDigimonUid).toBe(digimonB.uid);
+    expect(state.save.party[0].uid).toBe(digimonB.uid);
     expect(state.huntSession.turnOwner).toBe("enemy");
     expect(state.battle.log[0]).toContain("entrou em combate");
   });
@@ -116,6 +118,7 @@ describe("huntSessionSystem", () => {
     state.battle = {
       active: true,
       huntId: "training-woods",
+      context: "hunt",
       playerDigimonUid: digimonB.uid,
       enemy: {
         speciesId: "betamon",

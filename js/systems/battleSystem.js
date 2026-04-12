@@ -8,6 +8,7 @@ import { calculateFinalDamage } from "./damageSystem.js";
 import { getElementMultiplier } from "./elementChart.js";
 import { getSkillsForSpecies, getSkillById } from "../data/skills.js";
 import { addScanOnDefeat } from "./scanSystem.js";
+import { setPartyLeader } from "./storageSystem.js";
 
 const BASIC_ATTACK_SKILL = {
   id: "basic_attack",
@@ -502,6 +503,11 @@ export function performPlayerDigimonSwitch(nextDigimonUid) {
     nextDigimon.speciesId;
 
   switchActivePlayerDigimon(nextDigimon);
+
+  if (state.battle.context === "hunt") {
+    setPartyLeader(state.save, nextDigimon.uid);
+  }
+
   setLastSwitchAction(
     { uid: currentDigimon.uid, name: currentSpeciesName },
     { uid: nextDigimon.uid, name: nextSpeciesName }

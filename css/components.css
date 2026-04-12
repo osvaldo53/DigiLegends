@@ -1127,13 +1127,29 @@
 }
 
 .digidex-detail__evolution-node {
+  appearance: none;
   display: grid;
   gap: 2px;
+  min-height: 0;
   padding: 8px 12px;
   min-width: 108px;
   border-radius: 18px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.digidex-detail__evolution-node:hover {
+  transform: translateY(-1px);
+  border-color: rgba(83, 225, 255, 0.3);
+}
+
+.digidex-detail__evolution-node:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(83, 225, 255, 0.18);
 }
 
 .digidex-detail__evolution-node strong {

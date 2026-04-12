@@ -277,10 +277,14 @@ function renderFullEvolutionNode(speciesId, allEntries, currentSpeciesId) {
   const displayStage = isKnown ? entry.stage || "Desconhecido" : "Nao descoberto";
 
   return `
-    <div class="digidex-detail__evolution-node ${isCurrent ? "digidex-detail__evolution-node--current" : ""} ${isKnown ? "" : "digidex-detail__evolution-node--hidden"}">
+    <button
+      type="button"
+      class="digidex-detail__evolution-node js-open-dex-detail ${isCurrent ? "digidex-detail__evolution-node--current" : ""} ${isKnown ? "" : "digidex-detail__evolution-node--hidden"}"
+      data-species-id="${escapeHtml(speciesId)}"
+    >
       <strong>${escapeHtml(displayName)}</strong>
       <small>${escapeHtml(displayStage)}</small>
-    </div>
+    </button>
   `;
 }
 
