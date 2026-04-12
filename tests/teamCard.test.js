@@ -25,4 +25,25 @@ describe("teamCard", () => {
     expect(html).toContain('class="btn btn-primary js-evolve-digimon"');
     expect(html).toContain(`data-digimon-uid="${agumon.uid}"`);
   });
+
+  it("mostra botao de selecao em lote no storage quando o modo de exclusao esta ativo", () => {
+    const save = createEmptySave();
+    const agumon = createPlayerDigimon("agumon", {
+      level: 10,
+      bond: 5
+    });
+
+    save.storage = [agumon];
+
+    const html = renderTeamCard(agumon, {
+      context: "storage",
+      save,
+      storageSelectionMode: true,
+      isSelectedForTrade: true
+    });
+
+    expect(html).toContain("Selecionado para exclusao");
+    expect(html).toContain("team-card--selected");
+    expect(html).toContain("js-toggle-trade-selection-card");
+  });
 });

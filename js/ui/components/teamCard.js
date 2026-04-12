@@ -107,6 +107,8 @@ export function renderTeamCard(playerDigimon, options = {}) {
   const context = options.context || "party";
   const isLeader = Boolean(options.isLeader);
   const save = options.save;
+  const storageSelectionMode = Boolean(options.storageSelectionMode);
+  const isSelectedForTrade = Boolean(options.isSelectedForTrade);
 
   if (!species) {
     return `
@@ -150,6 +152,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
         <button
           class="btn btn-secondary js-send-to-party"
           data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
+          ${storageSelectionMode ? "disabled" : ""}
         >
           Adicionar ao Time
         </button>
@@ -187,8 +190,11 @@ export function renderTeamCard(playerDigimon, options = {}) {
         `;
 
   return `
-    <details class="team-card team-card--collapsible">
-      <summary class="team-card__summary">
+    <details class="team-card team-card--collapsible ${isSelectedForTrade ? "team-card--selected" : ""}">
+      <summary
+        class="team-card__summary ${storageSelectionMode ? "js-toggle-trade-selection-card" : ""}"
+        ${storageSelectionMode ? `data-digimon-uid="${escapeHtml(playerDigimon.uid)}"` : ""}
+      >
         <img
           src="${escapeHtml(species.sprite || "")}"
           alt="${escapeHtml(species.name)}"
@@ -198,6 +204,11 @@ export function renderTeamCard(playerDigimon, options = {}) {
         <div class="team-card__summary-text">
           <h3>${escapeHtml(displayName)}</h3>
           <small>Lv. ${playerDigimon.level}</small>
+          ${
+            storageSelectionMode
+              ? `<small>${isSelectedForTrade ? "Selecionado para exclusao" : "Toque para selecionar"}</small>`
+              : ""
+          }
         </div>
 
         <span class="team-card__chevron">⌄</span>

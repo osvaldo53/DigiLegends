@@ -17,7 +17,7 @@ describe("itemSystem", () => {
       save,
       itemId: "bandage",
       targetDigimon: agumon,
-      context: "menu"
+      context: "battle"
     });
 
     expect(agumon.currentHP).toBe(35);
@@ -36,7 +36,7 @@ describe("itemSystem", () => {
       save,
       itemId: "small_sp_disk",
       targetDigimon: patamon,
-      context: "menu"
+      context: "battle"
     });
 
     expect(patamon.currentSP).toBe(35);
@@ -49,6 +49,9 @@ describe("itemSystem", () => {
     expect(getItemById("high_recovery").effect.hpRestore).toBe(350);
     expect(getItemById("medium_sp_disk").effect.spRestore).toBe(60);
     expect(getItemById("high_sp_disk").effect.spRestore).toBe(120);
+    expect(getItemById("bandage").usableInMenu).toBe(false);
+    expect(getItemById("small_sp_disk").usableInMenu).toBe(false);
+    expect(getItemById("xp_chip_small").usableInMenu).toBe(true);
     expect(getShopEntryByItemId("medium_recovery").price).toBe(140);
     expect(getShopEntryByItemId("high_recovery").price).toBe(260);
     expect(getShopEntryByItemId("medium_sp_disk").price).toBe(120);
@@ -73,6 +76,11 @@ describe("itemSystem", () => {
         usableInBattle: false
       })
     );
+    expect(getItemById("xp_chip_tiny")?.effect.expGain).toBe(32);
+    expect(getItemById("xp_chip_small")?.effect.expGain).toBe(72);
+    expect(getItemById("xp_chip_medium")?.effect.expGain).toBe(144);
+    expect(getItemById("xp_chip_large")?.effect.expGain).toBe(240);
+    expect(getItemById("xp_chip_mega")?.effect.expGain).toBe(360);
   });
 
   it("revive um Digimon derrotado com metade da vida", () => {
@@ -109,5 +117,53 @@ describe("itemSystem", () => {
     });
 
     expect(gabumon.currentHP).toBe(gabumon.finalStats.hp);
+  });
+
+  it("usa XP Chip no menu e concede EXP ao Digimon", () => {
+    const save = createEmptySave();
+    const agumon = createPlayerDigimon("agumon", {
+      level: 1,
+      exp: 0
+    });
+
+    save.inventory.push({ itemId: "xp_chip_small", quantity: 1 });
+    save.party = [agumon];
+
+    const result = useItemOnDigimon({
+      save,
+      itemId: "xp_chip_small",
+      targetDigimon: agumon,
+      context: "menu"
+    });
+
+    expect(result.progression?.expGained).toBe(72);
+    expect(agumon.level).toBe(3);
+    expect(agumon.exp).toBe(17);
+  });
+
+  it("permite level up ao usar XP Chip", () => {
+    const save = createEmptySave();
+    const agumon = createPlayerDigimon("agumon", {
+      level: 1,
+      exp: 15
+    });
+
+    save.inventory.push({ itemId: "xp_chip_tiny", quantity: 1 });
+    save.party = [agumon];
+
+    const previousHp = agumon.finalStats.hp;
+
+    const result = useItemOnDigimon({
+      save,
+      itemId: "xp_chip_tiny",
+      targetDigimon: agumon,
+      context: "menu"
+    });
+
+    expect(result.progression?.gainedLevels).toBe(1);
+    expect(agumon.level).toBe(2);
+    expect(agumon.exp).toBe(27);
+    expect(agumon.finalStats.hp).toBeGreaterThan(previousHp);
+    expect(agumon.currentHP).toBe(agumon.finalStats.hp);
   });
 });

@@ -1,4 +1,6 @@
 import { MAX_PARTY_SIZE } from "../config/constants.js";
+import { getScanRule } from "../data/scanRules.js";
+import { addItemToInventory } from "./itemSystem.js";
 
 /**
  * Sistema de gerenciamento entre Party e Storage.
@@ -13,6 +15,21 @@ import { MAX_PARTY_SIZE } from "../config/constants.js";
  */
 
 export const PARTY_LIMIT = MAX_PARTY_SIZE;
+
+const XP_CHIP_REWARDS_BY_STAGE = {
+  "In-Training": "xp_chip_tiny",
+  Rookie: "xp_chip_small",
+  Champion: "xp_chip_medium",
+  Armor: "xp_chip_medium",
+  Ultimate: "xp_chip_large",
+  Mega: "xp_chip_mega",
+  Ultra: "xp_chip_mega"
+};
+
+export function getXpChipRewardForSpecies(speciesId) {
+  const stage = getScanRule(speciesId)?.stage || "Unknown";
+  return XP_CHIP_REWARDS_BY_STAGE[stage] || "xp_chip_tiny";
+}
 
 /**
  * Verifica se a party está cheia.
@@ -86,6 +103,58 @@ export function moveDigimonToParty(save, digimonUid) {
   save.party.push(digimon);
 
   return digimon;
+}
+
+export function tradeStorageDigimonForXpChip(save, digimonUid) {
+  const index = save.storage.findIndex((digimon) => digimon.uid === digimonUid);
+
+  if (index === -1) {
+    throw new Error("Digimon nÃ£o encontrado no storage.");
+  }
+
+  const [digimon] = save.storage.splice(index, 1);
+  const rewardItemId = getXpChipRewardForSpecies(digimon.speciesId);
+
+  addItemToInventory(save, rewardItemId, 1);
+
+  return {
+    digimon,
+    rewardItemId
+  };
+}
+
+export function tradeMultipleStorageDigimonsForXpChips(save, digimonUids = []) {
+  const normalizedUids = Array.from(
+    new Set(
+      (Array.isArray(digimonUids) ? digimonUids : []).filter(
+        (digimonUid) => typeof digimonUid === "string" && digimonUid.trim()
+      )
+    )
+  );
+
+  if (!normalizedUids.length) {
+    throw new Error("Nenhum Digimon foi selecionado para troca.");
+  }
+
+  const tradedDigimons = [];
+  const rewardSummary = new Map();
+
+  normalizedUids.forEach((digimonUid) => {
+    const result = tradeStorageDigimonForXpChip(save, digimonUid);
+    tradedDigimons.push(result.digimon);
+    rewardSummary.set(
+      result.rewardItemId,
+      (rewardSummary.get(result.rewardItemId) || 0) + 1
+    );
+  });
+
+  return {
+    tradedDigimons,
+    rewards: Array.from(rewardSummary.entries()).map(([itemId, quantity]) => ({
+      itemId,
+      quantity
+    }))
+  };
 }
 
 /**

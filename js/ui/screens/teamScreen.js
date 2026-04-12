@@ -10,12 +10,109 @@ import {
   showEvolutionAnimation
 } from "../../systems/evolutionAnimationSystem.js";
 import {
+  getXpChipRewardForSpecies,
   moveDigimonToParty,
   moveDigimonToStorage,
   PARTY_LIMIT,
-  setPartyLeader
+  setPartyLeader,
+  tradeMultipleStorageDigimonsForXpChips
 } from "../../systems/storageSystem.js";
 import { renderTeamCard } from "../components/teamCard.js";
+
+let storageTradeSelectionMode = false;
+let selectedStorageTradeDigimonUids = new Set();
+let storageTradeConfirmationOpen = false;
+const MAX_STORAGE_TRADE_SELECTION = 10;
+
+function resetStorageTradeUiState() {
+  storageTradeSelectionMode = false;
+  selectedStorageTradeDigimonUids = new Set();
+  storageTradeConfirmationOpen = false;
+}
+
+function getSelectedStorageDigimons() {
+  return state.save.storage.filter((digimon) =>
+    selectedStorageTradeDigimonUids.has(digimon.uid)
+  );
+}
+
+function buildStorageTradeRewardPreview(selectedDigimons) {
+  const rewardMap = new Map();
+
+  selectedDigimons.forEach((digimon) => {
+    const rewardItemId = getXpChipRewardForSpecies(digimon.speciesId);
+    rewardMap.set(rewardItemId, (rewardMap.get(rewardItemId) || 0) + 1);
+  });
+
+  return Array.from(rewardMap.entries()).map(([itemId, quantity]) => ({
+    itemId,
+    quantity,
+    item: getItemById(itemId)
+  }));
+}
+
+function renderStorageTradeConfirmationModal() {
+  if (!storageTradeConfirmationOpen) {
+    return "";
+  }
+
+  const selectedDigimons = getSelectedStorageDigimons();
+  const rewardPreview = buildStorageTradeRewardPreview(selectedDigimons);
+
+  if (!selectedDigimons.length) {
+    return "";
+  }
+
+  return `
+    <div class="storage-release-modal">
+      <div class="storage-release-modal__backdrop js-close-storage-trade-modal"></div>
+
+      <div class="storage-release-modal__content">
+        <h3>Confirmar exclusao</h3>
+        <p>Confira os Digimons selecionados antes de trocar por XP Chips.</p>
+
+        <div class="storage-release-modal__list">
+          ${selectedDigimons
+            .map((digimon) => {
+              const species = getDigimonSpecies(digimon.speciesId);
+              const displayName = digimon.nickname?.trim() || species?.name || digimon.speciesId;
+
+              return `
+                <div class="storage-release-modal__item">
+                  <strong>${displayName}</strong>
+                  <span>Lv. ${digimon.level}</span>
+                </div>
+              `;
+            })
+            .join("")}
+        </div>
+
+        <div class="storage-release-modal__rewards">
+          <h4>Recompensas</h4>
+          <div class="storage-release-modal__list">
+            ${rewardPreview
+              .map(
+                (reward) => `
+                  <div class="storage-release-modal__item">
+                    <strong>${reward.item?.name || reward.itemId}</strong>
+                    <span>${reward.quantity}x</span>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="button-row" style="margin-top:18px;">
+          <button class="btn btn-secondary js-close-storage-trade-modal">Cancelar</button>
+          <button class="btn btn-primary" id="btn-confirm-storage-trade">
+            Confirmar exclusao (${selectedDigimons.length})
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 function buildEvolutionAnimationData({
   previousSpecies,
@@ -82,6 +179,7 @@ function buildEvolutionAnimationData({
 }
 
 export function renderTeamScreen() {
+  const selectedCount = getSelectedStorageDigimons().length;
   const partyCards = state.save.party.length
     ? state.save.party
         .map((digimon, index) =>
@@ -100,7 +198,9 @@ export function renderTeamScreen() {
           renderTeamCard(digimon, {
             context: "storage",
             isLeader: false,
-            save: state.save
+            save: state.save,
+            storageSelectionMode: storageTradeSelectionMode,
+            isSelectedForTrade: selectedStorageTradeDigimonUids.has(digimon.uid)
           })
         )
         .join("")
@@ -132,7 +232,14 @@ export function renderTeamScreen() {
         </div>
 
         <div class="team-section" style="margin-top:20px;">
-          <h3 style="margin-bottom:10px;">Storage</h3>
+          <div class="team-storage-toolbar">
+            <h3>Storage</h3>
+            ${
+              storageTradeSelectionMode
+                ? `<span class="status-pill">Selecionados: ${selectedCount}/${MAX_STORAGE_TRADE_SELECTION}</span>`
+                : ""
+            }
+          </div>
           <div class="team-card-grid">
             ${storageCards}
           </div>
@@ -140,8 +247,28 @@ export function renderTeamScreen() {
 
         <div class="button-row" style="margin-top:18px;">
           <button class="btn btn-secondary" id="btn-back-home">Voltar</button>
+          ${
+            storageTradeSelectionMode
+              ? `
+                <button class="btn btn-secondary" id="btn-cancel-storage-trade-selection">Cancelar selecao</button>
+                <button
+                  class="btn btn-primary"
+                  id="btn-open-storage-trade-confirmation"
+                  ${selectedCount > 0 ? "" : "disabled"}
+                >
+                  Excluir Digimons
+                </button>
+              `
+              : `
+                <button class="btn btn-secondary" id="btn-start-storage-trade-selection">
+                  Excluir Digimons
+                </button>
+              `
+          }
         </div>
       </div>
+
+      ${renderStorageTradeConfirmationModal()}
     </section>
   `;
 }
@@ -154,8 +281,95 @@ export function bindTeamScreen() {
   });
 
   document.getElementById("btn-back-home")?.addEventListener("click", () => {
+    resetStorageTradeUiState();
     goToScreen("home");
   });
+
+  document
+    .getElementById("btn-start-storage-trade-selection")
+    ?.addEventListener("click", () => {
+      storageTradeSelectionMode = true;
+      storageTradeConfirmationOpen = false;
+      window.dispatchEvent(new Event("digilegends:rerender"));
+    });
+
+  document
+    .getElementById("btn-cancel-storage-trade-selection")
+    ?.addEventListener("click", () => {
+      resetStorageTradeUiState();
+      window.dispatchEvent(new Event("digilegends:rerender"));
+    });
+
+  document
+    .getElementById("btn-open-storage-trade-confirmation")
+    ?.addEventListener("click", () => {
+      if (!getSelectedStorageDigimons().length) {
+        return;
+      }
+
+      storageTradeConfirmationOpen = true;
+      window.dispatchEvent(new Event("digilegends:rerender"));
+    });
+
+  document.querySelectorAll(".js-close-storage-trade-modal").forEach((button) => {
+    button.addEventListener("click", () => {
+      storageTradeConfirmationOpen = false;
+      window.dispatchEvent(new Event("digilegends:rerender"));
+    });
+  });
+
+  document.querySelectorAll(".js-toggle-trade-selection-card").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      const digimonUid = button.dataset.digimonUid;
+
+      if (!digimonUid) {
+        return;
+      }
+
+      if (selectedStorageTradeDigimonUids.has(digimonUid)) {
+        selectedStorageTradeDigimonUids.delete(digimonUid);
+      } else {
+        if (selectedStorageTradeDigimonUids.size >= MAX_STORAGE_TRADE_SELECTION) {
+          window.alert(
+            `Voce pode selecionar no maximo ${MAX_STORAGE_TRADE_SELECTION} Digimons por vez.`
+          );
+          return;
+        }
+
+        selectedStorageTradeDigimonUids.add(digimonUid);
+      }
+
+      window.dispatchEvent(new Event("digilegends:rerender"));
+    });
+  });
+
+  document
+    .getElementById("btn-confirm-storage-trade")
+    ?.addEventListener("click", () => {
+      try {
+        const selectedDigimons = getSelectedStorageDigimons();
+        const result = tradeMultipleStorageDigimonsForXpChips(
+          state.save,
+          selectedDigimons.map((digimon) => digimon.uid)
+        );
+        const rewardText = result.rewards
+          .map((reward) => {
+            const rewardItem = getItemById(reward.itemId);
+            return `${reward.quantity}x ${rewardItem?.name || reward.itemId}`;
+          })
+          .join(", ");
+
+        saveGame(state.save);
+        resetStorageTradeUiState();
+        window.alert(
+          `${result.tradedDigimons.length} Digimon(s) foram excluidos com sucesso. Recompensas: ${rewardText}.`
+        );
+        window.dispatchEvent(new Event("digilegends:rerender"));
+      } catch (error) {
+        window.alert(error.message || "Nao foi possivel excluir os Digimons selecionados.");
+      }
+    });
 
   document.querySelectorAll(".js-evolve-digimon").forEach((button) => {
     button.addEventListener("click", () => {
@@ -268,4 +482,5 @@ export function bindTeamScreen() {
       }
     });
   });
+
 }

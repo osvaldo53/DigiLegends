@@ -1,4 +1,5 @@
 import { getItemById } from "../data/items.js";
+import { applyExpGain } from "./progressionSystem.js";
 
 /**
  * Retorna a entrada do inventário para um item específico.
@@ -61,6 +62,7 @@ export function consumeItem(save, itemId, quantity = 1) {
  */
 function applyItemEffect(item, digimon) {
   const effect = item.effect;
+  let progression = null;
 
   if (effect.revivePercent && (digimon.currentHP ?? 0) <= 0) {
     digimon.currentHP = Math.max(
@@ -82,6 +84,12 @@ function applyItemEffect(item, digimon) {
       digimon.finalStats.sp
     );
   }
+
+  if (effect.expGain) {
+    progression = applyExpGain(digimon, effect.expGain);
+  }
+
+  return progression;
 }
 
 function canItemAffectDefeatedDigimon(item) {
@@ -135,12 +143,16 @@ export function useItemOnDigimon({
 
   const beforeHP = targetDigimon.currentHP;
   const beforeSP = targetDigimon.currentSP;
+  const beforeLevel = targetDigimon.level;
+  const beforeExp = targetDigimon.exp;
 
-  applyItemEffect(item, targetDigimon);
+  const progression = applyItemEffect(item, targetDigimon);
 
   const changed =
     beforeHP !== targetDigimon.currentHP ||
-    beforeSP !== targetDigimon.currentSP;
+    beforeSP !== targetDigimon.currentSP ||
+    beforeLevel !== targetDigimon.level ||
+    beforeExp !== targetDigimon.exp;
 
   if (!changed) {
     throw new Error("O item não teve efeito.");
@@ -151,6 +163,7 @@ export function useItemOnDigimon({
   return {
     success: true,
     item,
-    target: targetDigimon
+    target: targetDigimon,
+    progression
   };
 }

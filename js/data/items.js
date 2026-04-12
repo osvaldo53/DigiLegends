@@ -14,7 +14,7 @@ export const ITEMS = {
       hpRestore: 30,
       spRestore: 0
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -28,7 +28,7 @@ export const ITEMS = {
       hpRestore: 60,
       spRestore: 0
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -42,7 +42,7 @@ export const ITEMS = {
       hpRestore: 120,
       spRestore: 0
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -56,7 +56,7 @@ export const ITEMS = {
       hpRestore: 350,
       spRestore: 0
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -70,7 +70,7 @@ export const ITEMS = {
       hpRestore: 0,
       spRestore: 30
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -84,7 +84,7 @@ export const ITEMS = {
       hpRestore: 0,
       spRestore: 60
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -98,7 +98,7 @@ export const ITEMS = {
       hpRestore: 0,
       spRestore: 120
     },
-    usableInMenu: true,
+    usableInMenu: false,
     usableInBattle: true
   },
 
@@ -126,6 +126,71 @@ export const ITEMS = {
     },
     usableInMenu: false,
     usableInBattle: true
+  },
+
+  xp_chip_tiny: {
+    id: "xp_chip_tiny",
+    name: "XP Chip Tiny",
+    description: "Concede 32 de EXP a um Digimon.",
+    category: "xp",
+    target: "single_ally",
+    effect: {
+      expGain: 32
+    },
+    usableInMenu: true,
+    usableInBattle: false
+  },
+
+  xp_chip_small: {
+    id: "xp_chip_small",
+    name: "XP Chip Small",
+    description: "Concede 72 de EXP a um Digimon.",
+    category: "xp",
+    target: "single_ally",
+    effect: {
+      expGain: 72
+    },
+    usableInMenu: true,
+    usableInBattle: false
+  },
+
+  xp_chip_medium: {
+    id: "xp_chip_medium",
+    name: "XP Chip Medium",
+    description: "Concede 144 de EXP a um Digimon.",
+    category: "xp",
+    target: "single_ally",
+    effect: {
+      expGain: 144
+    },
+    usableInMenu: true,
+    usableInBattle: false
+  },
+
+  xp_chip_large: {
+    id: "xp_chip_large",
+    name: "XP Chip Large",
+    description: "Concede 240 de EXP a um Digimon.",
+    category: "xp",
+    target: "single_ally",
+    effect: {
+      expGain: 240
+    },
+    usableInMenu: true,
+    usableInBattle: false
+  },
+
+  xp_chip_mega: {
+    id: "xp_chip_mega",
+    name: "XP Chip Mega",
+    description: "Concede 360 de EXP a um Digimon.",
+    category: "xp",
+    target: "single_ally",
+    effect: {
+      expGain: 360
+    },
+    usableInMenu: true,
+    usableInBattle: false
   },
 
   omni_sword: {
