@@ -12,6 +12,7 @@ export const SUPPORTED_SCREENS = [
   "hunts",
   "bosses",
   "items",
+  "training",
   "shop",
   "conversion"
 ];

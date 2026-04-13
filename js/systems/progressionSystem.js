@@ -1,5 +1,6 @@
 import { MAX_LEVEL } from "../config/constants.js";
 import { recalculatePlayerDigimon } from "../factories/digimonFactory.js";
+import { getLevelCapForDigimon } from "./digimonProgressionSystem.js";
 
 /**
  * Retorna a EXP necessária para o próximo nível.
@@ -66,10 +67,11 @@ export function applyBattleRewards(playerDigimon, rewards, save) {
   save.bits += rewards.bits || 0;
 
   let gainedLevels = 0;
+  const levelCap = Math.min(MAX_LEVEL, getLevelCapForDigimon(playerDigimon));
 
   playerDigimon.exp += rewards.exp || 0;
 
-  while (playerDigimon.level < MAX_LEVEL) {
+  while (playerDigimon.level < levelCap) {
     const needed = getExpToNextLevel(playerDigimon.level);
 
     if (playerDigimon.exp < needed) {
@@ -114,10 +116,11 @@ export function applyExpGain(playerDigimon, expAmount = 0) {
 
   const safeExpAmount = Math.max(0, Math.floor(Number(expAmount) || 0));
   let gainedLevels = 0;
+  const levelCap = Math.min(MAX_LEVEL, getLevelCapForDigimon(playerDigimon));
 
   playerDigimon.exp += safeExpAmount;
 
-  while (playerDigimon.level < MAX_LEVEL) {
+  while (playerDigimon.level < levelCap) {
     const needed = getExpToNextLevel(playerDigimon.level);
 
     if (playerDigimon.exp < needed) {

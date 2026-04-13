@@ -1,137 +1,141 @@
 export const EVOLUTION_RULES = {
   koromon: {
-    agumon: { minLevel: 3, minBond: 1 },
-    dracomon: { minLevel: 3, minBond: 1 },
-    guilmon: { minLevel: 3, minBond: 1 }
+    agumon: { minLevel: 3 },
+    dracomon: { minLevel: 3 },
+    guilmon: { minLevel: 3 }
   },
   tsunomon: {
-    gabumon: { minLevel: 3, minBond: 1 }
+    gabumon: { minLevel: 3 }
   },
   tsumemon: {
-    agumon_black: { minLevel: 3, minBond: 1 },
-    keramon: { minLevel: 3, minBond: 1 },
-    demidevimon: { minLevel: 3, minBond: 1 }
+    agumon_black: { minLevel: 3 },
+    keramon: { minLevel: 3 },
+    demidevimon: { minLevel: 3 }
   },
   tokomon: {
-    patamon: { minLevel: 3, minBond: 1 }
+    patamon: { minLevel: 3 }
   },
   tanemon: {
-    palmon: { minLevel: 3, minBond: 1 }
+    palmon: { minLevel: 3 }
   },
   motimon: {
-    tentomon: { minLevel: 3, minBond: 1 }
+    tentomon: { minLevel: 3 }
   },
   kapurimon: {
-    hagurumon: { minLevel: 3, minBond: 1 }
+    hagurumon: { minLevel: 3 }
   },
   bukamon: {
-    gomamon: { minLevel: 3, minBond: 1 }
+    gomamon: { minLevel: 3 }
   },
   yokomon: {
-    biyomon: { minLevel: 3, minBond: 1 },
-    wormmon: { minLevel: 3, minBond: 1 },
-    elecmon: { minLevel: 3, minBond: 1 }
+    biyomon: { minLevel: 3 },
+    wormmon: { minLevel: 3 },
+    elecmon: { minLevel: 3 }
   },
   demiveemon: {
-    veemon: { minLevel: 3, minBond: 1 }
+    veemon: { minLevel: 3 }
   },
   wanyamon: {
-    dorumon: { minLevel: 3, minBond: 1 },
-    gaomon: { minLevel: 3, minBond: 1 }
+    dorumon: { minLevel: 3 },
+    gaomon: { minLevel: 3 },
+    kudamon: { minLevel: 3 }
   },
   nyaromon: {
-    terriermon: { minLevel: 3, minBond: 1 },
-    salamon: { minLevel: 3, minBond: 1 }
+    terriermon: { minLevel: 3 },
+    salamon: { minLevel: 3 }
   },
   pagumon: {
-    impmon: { minLevel: 3, minBond: 1 }
+    impmon: { minLevel: 3 }
   },
 
   agumon: {
-    greymon: { minLevel: 10, minBond: 5 },
-    geogreymon: { minLevel: 10, minBond: 5 }
+    greymon: { minLevel: 10, minStats: { atk: 44 } },
+    geogreymon: { minLevel: 10, minStats: { spd: 45 } }
   },
   agumon_black: {
-    greymon_blue: { minLevel: 10, minBond: 5 }
+    greymon_blue: { minLevel: 10 }
   },
   gabumon: {
-    garurumon: { minLevel: 10, minBond: 5 }
+    garurumon: { minLevel: 10 }
   },
   keramon: {
-    chrysalimon: { minLevel: 10, minBond: 5 }
+    chrysalimon: { minLevel: 10 }
   },
   patamon: {
-    angemon: { minLevel: 10, minBond: 8 },
+    angemon: { minLevel: 10, minStats: { int: 44 } },
     pegasusmon: {
       type: "armor",
       minLevel: 10,
-      minBond: 8,
+      minStats: { spd: 45 },
       requiredItemId: "digi_egg_hope"
     }
   },
   demidevimon: {
-    devimon: { minLevel: 10, minBond: 6 }
+    devimon: { minLevel: 10 }
   },
   palmon: {
-    togemon: { minLevel: 10, minBond: 5 }
+    togemon: { minLevel: 10 }
   },
   tentomon: {
-    kabuterimon: { minLevel: 10, minBond: 5 }
+    kabuterimon: { minLevel: 10 }
   },
   gomamon: {
-    ikkakumon: { minLevel: 10, minBond: 5 }
+    ikkakumon: { minLevel: 10 }
   },
   biyomon: {
-    birdramon: { minLevel: 10, minBond: 5 }
+    birdramon: { minLevel: 10 }
   },
   veemon: {
-    exveemon: { minLevel: 10, minBond: 6 },
+    exveemon: { minLevel: 10, minStats: { atk: 44 } },
     flamedramon: {
       type: "armor",
       minLevel: 10,
-      minBond: 6,
+      minStats: { atk: 45 },
       requiredItemId: "digi_egg_courage"
     },
     lighdramon: {
       type: "armor",
       minLevel: 10,
-      minBond: 6,
+      minStats: { spd: 46 },
       requiredItemId: "digi_egg_friendship"
     }
   },
   hagurumon: {
-    guardromon: { minLevel: 10, minBond: 5 }
+    guardromon: { minLevel: 10 }
   },
   wormmon: {
-    stingmon: { minLevel: 10, minBond: 5 }
+    stingmon: { minLevel: 10 }
   },
   guilmon: {
-    growlmon: { minLevel: 10, minBond: 5 },
-    tyrannomon: { minLevel: 10, minBond: 5 }
+    growlmon: { minLevel: 10, minStats: { atk: 44 } },
+    tyrannomon: { minLevel: 10, minStats: { def: 43 } }
+  },
+  kudamon: {
+    reppamon: { minLevel: 10, minStats: { spd: 52, int: 51 } }
   },
   dorumon: {
-    raptordramon: { minLevel: 10, minBond: 5 }
+    raptordramon: { minLevel: 10 }
   },
   dracomon: {
-    ginryumon: { minLevel: 10, minBond: 5 },
-    coredramon_blue: { minLevel: 10, minBond: 5 },
-    coredramon_green: { minLevel: 10, minBond: 5 }
+    ginryumon: { minLevel: 10, minStats: { atk: 44 } },
+    coredramon_blue: { minLevel: 10, minStats: { int: 41 } },
+    coredramon_green: { minLevel: 10, minStats: { def: 43 } }
   },
   gaomon: {
-    gaogamon: { minLevel: 10, minBond: 5 }
+    gaogamon: { minLevel: 10 }
   },
   terriermon: {
-    gargomon: { minLevel: 10, minBond: 5 }
+    gargomon: { minLevel: 10 }
   },
   salamon: {
-    gatomon: { minLevel: 10, minBond: 8 }
+    gatomon: { minLevel: 10 }
   },
   elecmon: {
-    leomon: { minLevel: 10, minBond: 5 }
+    leomon: { minLevel: 10 }
   },
   impmon: {
-    icedevimon: { minLevel: 10, minBond: 6 },
-    blackgatomon: { minLevel: 10, minBond: 6 }
+    icedevimon: { minLevel: 10, minStats: { int: 45 } },
+    blackgatomon: { minLevel: 10, minStats: { spd: 45 } }
   },
 
   greymon: {
@@ -165,11 +169,12 @@ export const EVOLUTION_RULES = {
     garudamon: { minLevel: 22, minBond: 18 }
   },
   exveemon: {
-    aeroveedramon: { minLevel: 22, minBond: 18 },
+    aeroveedramon: { minLevel: 22, minBond: 18, minStats: { spd: 54 } },
     paildramon: {
       type: "dna",
       minLevel: 24,
       minBond: 24,
+      minStats: { atk: 60 },
       partnerSpeciesId: "stingmon",
       partnerMinLevel: 24,
       partnerMinBond: 24
@@ -195,8 +200,8 @@ export const EVOLUTION_RULES = {
     hisyaryumon: { minLevel: 22, minBond: 18 }
   },
   growlmon: {
-    wargrowlmon: { minLevel: 22, minBond: 20 },
-    gigadramon: { minLevel: 22, minBond: 20 }
+    wargrowlmon: { minLevel: 22, minBond: 20, minStats: { atk: 62 } },
+    gigadramon: { minLevel: 22, minBond: 20, minStats: { def: 56 } }
   },
   tyrannomon: {
     metaltyrannomon: { minLevel: 22, minBond: 18 }
@@ -206,6 +211,9 @@ export const EVOLUTION_RULES = {
   },
   gaogamon: {
     machgaogamon: { minLevel: 22, minBond: 18 }
+  },
+  reppamon: {
+    chirinmon: { minLevel: 24, minBond: 22, minStats: { spd: 88, int: 88 } }
   },
   coredramon_blue: {
     wingdramon: { minLevel: 22, minBond: 18 }
@@ -296,20 +304,21 @@ export const EVOLUTION_RULES = {
     megagargomon: { minLevel: 34, minBond: 32 }
   },
   angewomon: {
-    ophanimon: { minLevel: 36, minBond: 40 },
-    magnadramon: { minLevel: 36, minBond: 38 },
+    ophanimon: { minLevel: 36, minBond: 40, minStats: { int: 94 } },
+    magnadramon: { minLevel: 36, minBond: 38, minStats: { def: 87 } },
     mastemon: {
       type: "dna",
       minLevel: 40,
       minBond: 40,
+      minStats: { int: 94 },
       partnerSpeciesId: "ladydevimon",
       partnerMinLevel: 40,
       partnerMinBond: 40
     }
   },
   grapleomon: {
-    saberleomon: { minLevel: 34, minBond: 32 },
-    bancholeomon: { minLevel: 36, minBond: 36 }
+    saberleomon: { minLevel: 34, minBond: 32, minStats: { atk: 92 } },
+    bancholeomon: { minLevel: 36, minBond: 36, minStats: { spd: 84 } }
   },
   gigadramon: {
     machinedramon: { minLevel: 36, minBond: 34 }
@@ -354,6 +363,9 @@ export const EVOLUTION_RULES = {
       minBond: 45,
       requiredItemId: "toy_gun"
     }
+  },
+  chirinmon: {
+    sleipmon: { minLevel: 36, minBond: 38, minStats: { int: 126, spd: 125 } }
   },
 
   wargreymon: {

@@ -29,6 +29,8 @@ function renderItemStatus(item) {
   return `<span class="status-pill">${
     item.category === "evolution"
       ? "Usado em evolucoes"
+      : item.category === "training"
+        ? "Usado no treinamento"
       : item.category === "boss"
         ? "Item raro de boss"
         : "Uso apenas em batalha"

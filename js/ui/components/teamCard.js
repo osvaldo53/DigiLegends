@@ -1,28 +1,40 @@
 import { getDigimonSpecies } from "../../data/digimons.js";
 import { getItemById } from "../../data/items.js";
 import { escapeHtml } from "../../core/utils.js";
-import { getAvailableEvolutions } from "../../systems/evolutionSystem.js";
+import {
+  EVOLUTION_STAT_LABELS,
+  getAvailableEvolutions
+} from "../../systems/evolutionSystem.js";
+import { getLevelCapForDigimon } from "../../systems/digimonProgressionSystem.js";
 
 function formatPartnerOption(partner) {
-  const speciesName =
-    getDigimonSpecies(partner.speciesId)?.name || partner.speciesId;
+  const speciesName = getDigimonSpecies(partner.speciesId)?.name || partner.speciesId;
   const displayName = partner.nickname?.trim() || speciesName;
 
   return `${displayName} · Lv. ${partner.level} · Bond ${Number(partner.bond ?? 0).toFixed(1)}`;
 }
 
+function formatStatRequirements(requirements) {
+  return Object.entries(requirements.minStats || {})
+    .map(([statKey, minValue]) => `${EVOLUTION_STAT_LABELS[statKey] || statKey.toUpperCase()} ${minValue}`)
+    .join(" · ");
+}
+
 function formatEvolutionRequirements(evolution) {
+  const statRequirements = formatStatRequirements(evolution.requirements);
+  const statSuffix = statRequirements ? ` · ${statRequirements}` : "";
+
   if (evolution.requirements.type === "armor") {
     const requiredItem =
       getItemById(evolution.requirements.requiredItemId)?.name ||
       evolution.requirements.requiredItemId;
     const itemStatus = evolution.hasRequiredItem ? "Disponivel" : "Nao possui";
 
-    return `Armor: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond} · ${requiredItem} (${itemStatus})`;
+    return `Armor: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix} · ${requiredItem} (${itemStatus})`;
   }
 
   if (evolution.requirements.type !== "dna") {
-    return `Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}`;
+    return `Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix}`;
   }
 
   const partnerSpecies =
@@ -30,10 +42,18 @@ function formatEvolutionRequirements(evolution) {
     evolution.requirements.partnerSpeciesId;
   const partnerHint =
     evolution.dnaPartners.length > 0
-      ? ` · Parceiros elegíveis: ${evolution.dnaPartners.length}`
+      ? ` · Parceiros elegiveis: ${evolution.dnaPartners.length}`
       : "";
 
-  return `DNA: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond} + ${partnerSpecies} Lv. ${evolution.requirements.partnerMinLevel} · Bond ${evolution.requirements.partnerMinBond}${partnerHint}`;
+  return `DNA: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix} + ${partnerSpecies} Lv. ${evolution.requirements.partnerMinLevel} · Bond ${evolution.requirements.partnerMinBond}${partnerHint}`;
+}
+
+function formatMissingRequirements(evolution) {
+  if (evolution.isAvailable || !evolution.missingRequirements?.length) {
+    return "Pronto para evoluir.";
+  }
+
+  return `Faltando: ${evolution.missingRequirements.join(" · ")}`;
 }
 
 function renderEvolutionAction(playerDigimon, evolution) {
@@ -75,7 +95,7 @@ function renderEvolutionAction(playerDigimon, evolution) {
           `
                 )
                 .join("")
-            : '<option value="">Nenhum parceiro elegível</option>'
+            : '<option value="">Nenhum parceiro elegivel</option>'
         }
       </select>
 
@@ -92,16 +112,6 @@ function renderEvolutionAction(playerDigimon, evolution) {
   `;
 }
 
-/**
- * Card colapsável de Digimon.
- *
- * Pode ser usado tanto para Digimons da party quanto do storage.
- *
- * Opções:
- * - context: "party" | "storage"
- * - isLeader: boolean
- * - save: object
- */
 export function renderTeamCard(playerDigimon, options = {}) {
   const species = getDigimonSpecies(playerDigimon.speciesId);
   const context = options.context || "party";
@@ -113,7 +123,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
   if (!species) {
     return `
       <article class="team-card">
-        <h3>Digimon inválido</h3>
+        <h3>Digimon invalido</h3>
       </article>
     `;
   }
@@ -121,19 +131,20 @@ export function renderTeamCard(playerDigimon, options = {}) {
   const displayName = playerDigimon.nickname?.trim() || species.name;
   const bond = Number(playerDigimon.bond ?? 0).toFixed(1);
   const evolutions = getAvailableEvolutions(playerDigimon, save);
+  const levelCap = getLevelCapForDigimon(playerDigimon);
 
   const leaderAction =
     context === "party"
       ? isLeader
         ? `
-          <span class="status-pill">Líder</span>
+          <span class="status-pill">Lider</span>
         `
         : `
           <button
             class="btn btn-secondary js-set-party-leader"
             data-digimon-uid="${escapeHtml(playerDigimon.uid)}"
           >
-            Definir líder
+            Definir lider
           </button>
         `
       : "";
@@ -162,7 +173,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
     evolutions.length
       ? `
         <div class="team-evolution-section">
-          <h4 class="team-evolution-section__title">Evoluções</h4>
+          <h4 class="team-evolution-section__title">Evolucoes</h4>
 
           <div class="team-evolution-list">
             ${evolutions
@@ -172,6 +183,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
                 <div class="team-evolution-item__info">
                   <strong>${escapeHtml(evolution.targetSpecies.name)}</strong>
                   <small>${escapeHtml(formatEvolutionRequirements(evolution))}</small>
+                  <small>${escapeHtml(formatMissingRequirements(evolution))}</small>
                 </div>
 
                 ${renderEvolutionAction(playerDigimon, evolution)}
@@ -184,8 +196,8 @@ export function renderTeamCard(playerDigimon, options = {}) {
       `
       : `
           <div class="team-evolution-section">
-            <h4 class="team-evolution-section__title">Evoluções</h4>
-            <p class="empty-state">Nenhuma evolução disponível para esta espécie no momento.</p>
+            <h4 class="team-evolution-section__title">Evolucoes</h4>
+            <p class="empty-state">Nenhuma evolucao disponivel para esta especie no momento.</p>
           </div>
         `;
 
@@ -203,7 +215,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
 
         <div class="team-card__summary-text">
           <h3>${escapeHtml(displayName)}</h3>
-          <small>Lv. ${playerDigimon.level}</small>
+          <small>Lv. ${playerDigimon.level} / ${levelCap}</small>
           ${
             storageSelectionMode
               ? `<small>${isSelectedForTrade ? "Selecionado para exclusao" : "Toque para selecionar"}</small>`
@@ -211,7 +223,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           }
         </div>
 
-        <span class="team-card__chevron">⌄</span>
+        <span class="team-card__chevron">^</span>
       </summary>
 
       <div class="team-card__details">
@@ -227,7 +239,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-meta-pill">
-            <span class="team-meta-pill__label">Família</span>
+            <span class="team-meta-pill__label">Familia</span>
             <span class="team-meta-pill__value">${escapeHtml(species.family)}</span>
           </div>
 
@@ -239,7 +251,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
 
         <div class="team-stat-grid">
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">❤</span>
+            <span class="team-stat-item__icon">HP</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">HP</span>
               <strong>${playerDigimon.currentHP}/${playerDigimon.finalStats.hp}</strong>
@@ -247,7 +259,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">✦</span>
+            <span class="team-stat-item__icon">SP</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">SP</span>
               <strong>${playerDigimon.currentSP}/${playerDigimon.finalStats.sp}</strong>
@@ -255,7 +267,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">⚔</span>
+            <span class="team-stat-item__icon">AT</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">ATK</span>
               <strong>${playerDigimon.finalStats.atk}</strong>
@@ -263,7 +275,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">🛡</span>
+            <span class="team-stat-item__icon">DF</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">DEF</span>
               <strong>${playerDigimon.finalStats.def}</strong>
@@ -271,7 +283,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">✧</span>
+            <span class="team-stat-item__icon">IN</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">INT</span>
               <strong>${playerDigimon.finalStats.int}</strong>
@@ -279,7 +291,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item">
-            <span class="team-stat-item__icon">➤</span>
+            <span class="team-stat-item__icon">SP</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">SPD</span>
               <strong>${playerDigimon.finalStats.spd}</strong>
@@ -287,7 +299,7 @@ export function renderTeamCard(playerDigimon, options = {}) {
           </div>
 
           <div class="team-stat-item team-stat-item--wide">
-            <span class="team-stat-item__icon">⬆</span>
+            <span class="team-stat-item__icon">XP</span>
             <div class="team-stat-item__content">
               <span class="team-stat-item__label">EXP</span>
               <strong>${playerDigimon.exp}</strong>
@@ -299,7 +311,6 @@ export function renderTeamCard(playerDigimon, options = {}) {
           ${leaderAction}
           ${storageAction}
         </div>
-
         ${evolutionSection}
       </div>
     </details>

@@ -259,8 +259,19 @@ export const DIGIMONS = {
     element: "Dark",
     family: "Lesser",
     baseStats: { hp: 23, sp: 12, atk: 4, def: 4, int: 5, spd: 6 },
-    evolutions: ["dorumon", "gaomon"],
+    evolutions: ["dorumon", "gaomon", "kudamon"],
     sprite: "./assets/sprites/wanyamon.png"
+  },
+
+  kudamon: {
+    id: "kudamon",
+    name: "Kudamon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 38, sp: 21, atk: 8, def: 7, int: 11, spd: 11 },
+    evolutions: ["reppamon"],
+    sprite: "./assets/sprites/kudamon.png"
   },
 
   veemon: {
@@ -989,6 +1000,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/gaogamon.png"
   },
 
+  reppamon: {
+    id: "reppamon",
+    name: "Reppamon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 61, sp: 29, atk: 15, def: 11, int: 16, spd: 14 },
+    evolutions: ["chirinmon"],
+    sprite: "./assets/sprites/reppamon.png"
+  },
+
   coredramon_blue: {
     id: "coredramon_blue",
     name: "Coredramon (Blue)",
@@ -1198,6 +1220,17 @@ export const DIGIMONS = {
     sprite: "./assets/sprites/ladydevimon.png"
   },
 
+  chirinmon: {
+    id: "chirinmon",
+    name: "Chirinmon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Beast",
+    baseStats: { hp: 86, sp: 37, atk: 23, def: 16, int: 22, spd: 17 },
+    evolutions: ["sleipmon"],
+    sprite: "./assets/sprites/chirinmon.png"
+  },
+
   gallantmon: {
     id: "gallantmon",
     name: "Gallantmon",
@@ -1339,6 +1372,17 @@ export const DIGIMONS = {
     baseStats: { hp: 118, sp: 48, atk: 34, def: 23, int: 32, spd: 21 },
     evolutions: ["beelzemon_bm"],
     sprite: "./assets/sprites/beelzemon.png"
+  },
+
+  sleipmon: {
+    id: "sleipmon",
+    name: "Sleipmon",
+    type: "Vaccine",
+    element: "Light",
+    family: "Holy Warrior",
+    baseStats: { hp: 126, sp: 50, atk: 33, def: 28, int: 34, spd: 21 },
+    evolutions: [],
+    sprite: "./assets/sprites/sleipmon.png"
   },
 
   lilithmon: {

@@ -47,6 +47,12 @@ export function renderHomeScreen() {
           </div>
 
           <div class="menu-tile">
+            <h3>Treinamento</h3>
+            <p>Use itens de treino para melhorar atributos e abrir rotas evolutivas.</p>
+            <button class="btn btn-primary" id="btn-go-training">Abrir treinamento</button>
+          </div>
+
+          <div class="menu-tile">
             <h3>Loja</h3>
             <p>Comprar itens de cura com seus Bits.</p>
             <button class="btn btn-primary" id="btn-go-shop">Abrir loja</button>
@@ -88,6 +94,10 @@ export function bindHomeScreen() {
 
   document.getElementById("btn-go-items")?.addEventListener("click", () => {
     goToScreen("items");
+  });
+
+  document.getElementById("btn-go-training")?.addEventListener("click", () => {
+    goToScreen("training");
   });
 
   document.getElementById("btn-go-shop")?.addEventListener("click", () => {

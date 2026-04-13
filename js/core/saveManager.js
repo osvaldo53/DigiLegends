@@ -21,6 +21,53 @@ function normalizeBonusStats(bonusStats) {
   };
 }
 
+function normalizeTrainingJob(job, validDigimonUids) {
+  if (!job || typeof job !== "object") {
+    return null;
+  }
+
+  const digimonUid = String(job.digimonUid || "").trim();
+  const statKey = String(job.statKey || "").trim();
+  const itemId = String(job.itemId || "").trim();
+
+  if (!validDigimonUids.has(digimonUid)) {
+    return null;
+  }
+
+  if (!["hp", "sp", "atk", "def", "int", "spd"].includes(statKey)) {
+    return null;
+  }
+
+  if (!getItemById(itemId)) {
+    return null;
+  }
+
+  const quantity = Math.max(1, Math.floor(toSafeNumber(job.quantity, 1)));
+  const gainPerPoint = Math.max(1, Math.floor(toSafeNumber(job.gainPerPoint, 1)));
+  const startedAt = Math.max(0, Math.floor(toSafeNumber(job.startedAt, 0)));
+  const endsAt = Math.max(startedAt, Math.floor(toSafeNumber(job.endsAt, startedAt)));
+
+  return {
+    digimonUid,
+    statKey,
+    quantity,
+    gainPerPoint,
+    itemId,
+    startedAt,
+    endsAt
+  };
+}
+
+function normalizeTrainingState(training, validDigimonUids) {
+  const rawJobs = Array.isArray(training?.jobs) ? training.jobs : [];
+
+  return {
+    jobs: rawJobs
+      .map((job) => normalizeTrainingJob(job, validDigimonUids))
+      .filter(Boolean)
+  };
+}
+
 function normalizeOwnedDigimon(rawDigimon, usedUids) {
   if (!rawDigimon || typeof rawDigimon !== "object") {
     return null;
@@ -310,6 +357,10 @@ export function migrateSaveIfNeeded(saveData) {
   const normalizedSeen = normalizeDigidexEntries(saveData.digidex?.seen);
   const normalizedOwned = normalizeDigidexEntries(saveData.digidex?.owned);
   const normalizedCombat = normalizeCombatSettings(saveData.combat, base.combat);
+  const validDigimonUids = new Set(
+    [...normalizedParty, ...normalizedStorage].map((digimon) => digimon.uid)
+  );
+  const normalizedTraining = normalizeTrainingState(saveData.training, validDigimonUids);
 
   for (const digimon of [...normalizedParty, ...normalizedStorage]) {
     uniquePush(normalizedSeen, digimon.speciesId);
@@ -353,6 +404,7 @@ export function migrateSaveIfNeeded(saveData) {
     },
 
     combat: normalizedCombat,
+    training: normalizedTraining,
     inventory: normalizedInventory,
     scanData: normalizedScanData
   };

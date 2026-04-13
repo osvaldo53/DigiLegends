@@ -8,7 +8,7 @@ describe("teamCard", () => {
     const save = createEmptySave();
     const agumon = createPlayerDigimon("agumon", {
       uid: "storage-agumon",
-      level: 10,
+      level: 17,
       bond: 5
     });
 

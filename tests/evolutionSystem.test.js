@@ -10,7 +10,7 @@ import {
 describe("evolutionSystem", () => {
   it("identifica quando o Digimon pode evoluir", () => {
     const agumon = createPlayerDigimon("agumon", {
-      level: 10,
+      level: 17,
       bond: 5
     });
 
@@ -102,7 +102,7 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(wanyamon, "dorumon")).toBe(true);
   });
 
-  it("lista as duas linhas evolutivas do Wanyamon", () => {
+  it("lista as tres linhas evolutivas do Wanyamon", () => {
     const wanyamon = createPlayerDigimon("wanyamon", {
       level: 3,
       bond: 1
@@ -110,10 +110,11 @@ describe("evolutionSystem", () => {
 
     const evolutions = getAvailableEvolutions(wanyamon);
 
-    expect(evolutions).toHaveLength(2);
+    expect(evolutions).toHaveLength(3);
     expect(evolutions.map((evolution) => evolution.targetSpeciesId)).toEqual([
       "dorumon",
-      "gaomon"
+      "gaomon",
+      "kudamon"
     ]);
   });
 
@@ -144,7 +145,7 @@ describe("evolutionSystem", () => {
   it("evolui e registra a especie no digidex", () => {
     const save = createEmptySave();
     const agumon = createPlayerDigimon("agumon", {
-      level: 10,
+      level: 17,
       bond: 5
     });
 
@@ -193,9 +194,66 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(dorumon, "raptordramon")).toBe(true);
   });
 
+  it("permite a nova linha Wanyamon ate Kudamon", () => {
+    const wanyamon = createPlayerDigimon("wanyamon", {
+      level: 3,
+      bond: 0
+    });
+
+    expect(canEvolveTo(wanyamon, "kudamon")).toBe(true);
+  });
+
+  it("nao exige bond para Kudamon evoluir em Reppamon", () => {
+    const kudamon = createPlayerDigimon("kudamon", {
+      level: 20,
+      bond: 0,
+      bonusStats: {
+        int: 2,
+        spd: 3
+      }
+    });
+
+    expect(canEvolveTo(kudamon, "reppamon")).toBe(true);
+  });
+
+  it("permite evoluir Reppamon para Chirinmon com foco em velocidade", () => {
+    const reppamon = createPlayerDigimon("reppamon", {
+      level: 35,
+      bond: 22,
+      bonusStats: {
+        int: 4,
+        spd: 6
+      }
+    });
+
+    expect(canEvolveTo(reppamon, "chirinmon")).toBe(true);
+  });
+
+  it("permite evoluir Chirinmon para Sleipmon com treino avancado", () => {
+    const chirinmon = createPlayerDigimon("chirinmon", {
+      level: 50,
+      bond: 38,
+      bonusStats: {
+        int: 6,
+        spd: 10
+      }
+    });
+
+    expect(canEvolveTo(chirinmon, "sleipmon")).toBe(true);
+  });
+
+  it("bloqueia a linha do Kudamon sem treino mesmo no cap do estagio", () => {
+    const kudamon = createPlayerDigimon("kudamon", {
+      level: 20,
+      bond: 0
+    });
+
+    expect(canEvolveTo(kudamon, "reppamon")).toBe(false);
+  });
+
   it("permite evoluir Dracomon para Ginryumon", () => {
     const dracomon = createPlayerDigimon("dracomon", {
-      level: 10,
+      level: 17,
       bond: 5
     });
 
@@ -204,8 +262,11 @@ describe("evolutionSystem", () => {
 
   it("lista as tres linhas evolutivas do Dracomon", () => {
     const dracomon = createPlayerDigimon("dracomon", {
-      level: 10,
-      bond: 5
+      level: 18,
+      bond: 5,
+      bonusStats: {
+        def: 1
+      }
     });
 
     const evolutions = getAvailableEvolutions(dracomon);
@@ -220,8 +281,11 @@ describe("evolutionSystem", () => {
 
   it("lista as duas linhas evolutivas do Guilmon", () => {
     const guilmon = createPlayerDigimon("guilmon", {
-      level: 10,
-      bond: 5
+      level: 18,
+      bond: 5,
+      bonusStats: {
+        def: 1
+      }
     });
 
     const evolutions = getAvailableEvolutions(guilmon);
@@ -235,8 +299,11 @@ describe("evolutionSystem", () => {
 
   it("lista as duas linhas evolutivas do Impmon", () => {
     const impmon = createPlayerDigimon("impmon", {
-      level: 10,
-      bond: 6
+      level: 18,
+      bond: 6,
+      bonusStats: {
+        spd: 1
+      }
     });
 
     const evolutions = getAvailableEvolutions(impmon);
@@ -251,7 +318,7 @@ describe("evolutionSystem", () => {
   it("exige Digi-Ovo da Coragem para evoluir Veemon em Flamedramon", () => {
     const save = createEmptySave();
     const veemon = createPlayerDigimon("veemon", {
-      level: 10,
+      level: 18,
       bond: 6
     });
 
@@ -270,7 +337,7 @@ describe("evolutionSystem", () => {
   it("consome o Digi-Ovo ao realizar Armor Evolution", () => {
     const save = createEmptySave();
     const veemon = createPlayerDigimon("veemon", {
-      level: 10,
+      level: 19,
       bond: 6
     });
 
@@ -290,7 +357,7 @@ describe("evolutionSystem", () => {
   it("permite Armor Evolution de Patamon para Pegasusmon com Digi-Ovo da Esperanca", () => {
     const save = createEmptySave();
     const patamon = createPlayerDigimon("patamon", {
-      level: 10,
+      level: 19,
       bond: 8
     });
 
@@ -616,7 +683,7 @@ describe("evolutionSystem", () => {
   it("permite DNA evolution de ExVeemon para Paildramon quando o parceiro existe", () => {
     const save = createEmptySave();
     const exveemon = createPlayerDigimon("exveemon", {
-      level: 24,
+      level: 25,
       bond: 24
     });
     const stingmon = createPlayerDigimon("stingmon", {
@@ -671,7 +738,7 @@ describe("evolutionSystem", () => {
   it("consome o parceiro ao realizar DNA evolution para Paildramon", () => {
     const save = createEmptySave();
     const exveemon = createPlayerDigimon("exveemon", {
-      level: 24,
+      level: 25,
       bond: 24
     });
     const stingmon = createPlayerDigimon("stingmon", {

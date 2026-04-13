@@ -53,13 +53,19 @@ export function createEmptySave() {
       }
     },
 
+    training: {
+      jobs: []
+    },
+
     /**
      * Inventário do jogador
      */
     inventory: [
       { itemId: "bandage", quantity: 3 },
       { itemId: "small_recovery", quantity: 1 },
-      { itemId: "small_sp_disk", quantity: 1 }
+      { itemId: "small_sp_disk", quantity: 1 },
+      { itemId: "training_chip_atk", quantity: 1 },
+      { itemId: "training_chip_spd", quantity: 1 }
     ],
 
     /**

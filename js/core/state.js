@@ -41,6 +41,9 @@ export const state = {
         }
       }
     },
+    training: {
+      jobs: []
+    },
     inventory: [],
     scanData: {}
   },

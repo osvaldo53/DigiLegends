@@ -116,7 +116,7 @@ export function renderShopScreen() {
     <section class="screen">
       <div class="panel">
         <h2>Loja</h2>
-        <p>Compre itens de cura usando seus Bits.</p>
+        <p>Compre itens de cura, treino e evolucao usando seus Bits.</p>
 
         <div class="button-row" style="margin-bottom:16px;">
           <span class="status-pill">Bits atuais: ${state.save.bits}</span>

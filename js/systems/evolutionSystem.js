@@ -6,6 +6,14 @@ import {
 import { recalculatePlayerDigimon } from "../factories/digimonFactory.js";
 import { uniquePush } from "../core/utils.js";
 import { consumeItem, getInventoryEntry } from "./itemSystem.js";
+import { getLevelCapForDigimon } from "./digimonProgressionSystem.js";
+
+export const EVOLUTION_STAT_LABELS = {
+  atk: "ATK",
+  def: "DEF",
+  int: "INT",
+  spd: "SPD"
+};
 
 function isDnaEvolutionRule(rule) {
   return rule?.type === "dna";
@@ -97,6 +105,42 @@ function hasRequiredEvolutionItem(save, itemId) {
   return Boolean(inventoryEntry && inventoryEntry.quantity > 0);
 }
 
+function getRuleMinStats(rule) {
+  return rule?.minStats && typeof rule.minStats === "object" ? rule.minStats : {};
+}
+
+function getMissingEvolutionRequirements(playerDigimon, rule, save, options = {}) {
+  const missing = [];
+  const level = Number(playerDigimon.level ?? 0);
+  const bond = Number(playerDigimon.bond ?? 0);
+
+  if (level < Number(rule.minLevel ?? 0)) {
+    missing.push(`Lv. ${rule.minLevel}`);
+  }
+
+  if (bond < Number(rule.minBond ?? 0)) {
+    missing.push(`Bond ${rule.minBond}`);
+  }
+
+  Object.entries(getRuleMinStats(rule)).forEach(([statKey, minValue]) => {
+    const currentValue = Number(playerDigimon.finalStats?.[statKey] ?? 0);
+
+    if (currentValue < Number(minValue ?? 0)) {
+      missing.push(`${EVOLUTION_STAT_LABELS[statKey] || statKey.toUpperCase()} ${minValue}`);
+    }
+  });
+
+  if (isArmorEvolutionRule(rule) && !hasRequiredEvolutionItem(save, rule.requiredItemId)) {
+    missing.push("Item de Armor");
+  }
+
+  if (isDnaEvolutionRule(rule) && !findSelectedDnaPartner(playerDigimon, rule, save, options.partnerUid)) {
+    missing.push("Parceiro DNA");
+  }
+
+  return missing;
+}
+
 /**
  * Verifica se uma instância de Digimon pode evoluir para a espécie alvo.
  *
@@ -119,26 +163,7 @@ export function canEvolveTo(playerDigimon, targetSpeciesId, save, options = {}) 
     return false;
   }
 
-  const level = Number(playerDigimon.level ?? 0);
-  const bond = Number(playerDigimon.bond ?? 0);
-
-  if (level < Number(rule.minLevel ?? 0)) {
-    return false;
-  }
-
-  if (bond < Number(rule.minBond ?? 0)) {
-    return false;
-  }
-
-  if (isArmorEvolutionRule(rule) && !hasRequiredEvolutionItem(save, rule.requiredItemId)) {
-    return false;
-  }
-
-  if (isDnaEvolutionRule(rule) && !findSelectedDnaPartner(playerDigimon, rule, save, options.partnerUid)) {
-    return false;
-  }
-
-  return true;
+  return getMissingEvolutionRequirements(playerDigimon, rule, save, options).length === 0;
 }
 
 /**
@@ -174,6 +199,11 @@ export function getAvailableEvolutions(playerDigimon, save) {
       const hasRequiredItem = isArmorEvolutionRule(requirements)
         ? hasRequiredEvolutionItem(save, requirements.requiredItemId)
         : false;
+      const missingRequirements = getMissingEvolutionRequirements(
+        playerDigimon,
+        requirements,
+        save
+      );
 
       return {
         targetSpeciesId,
@@ -182,7 +212,9 @@ export function getAvailableEvolutions(playerDigimon, save) {
         dnaPartners,
         dnaPartner: dnaPartners[0] || null,
         hasRequiredItem,
-        isAvailable: canEvolveTo(playerDigimon, targetSpeciesId, save)
+        levelCap: getLevelCapForDigimon(playerDigimon),
+        missingRequirements,
+        isAvailable: missingRequirements.length === 0
       };
     })
     .filter(Boolean);

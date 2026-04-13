@@ -48,6 +48,30 @@ export const SHOP_CATALOG = [
     price: 420
   },
   {
+    itemId: "training_chip_hp",
+    price: 1500
+  },
+  {
+    itemId: "training_chip_sp",
+    price: 1500
+  },
+  {
+    itemId: "training_chip_atk",
+    price: 1500
+  },
+  {
+    itemId: "training_chip_def",
+    price: 1500
+  },
+  {
+    itemId: "training_chip_int",
+    price: 1500
+  },
+  {
+    itemId: "training_chip_spd",
+    price: 1500
+  },
+  {
     itemId: "digi_egg_courage",
     price: 20000
   },

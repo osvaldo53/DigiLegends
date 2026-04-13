@@ -207,6 +207,78 @@ export const ITEMS = {
     usableInBattle: false
   },
 
+  training_chip_hp: {
+    id: "training_chip_hp",
+    name: "HP Training Chip",
+    description: "Usado na tela de treinamento para aumentar HP.",
+    sprite: "./assets/items/training_chip_hp.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  training_chip_sp: {
+    id: "training_chip_sp",
+    name: "SP Training Chip",
+    description: "Usado na tela de treinamento para aumentar SP.",
+    sprite: "./assets/items/training_chip_sp.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  training_chip_atk: {
+    id: "training_chip_atk",
+    name: "ATK Training Chip",
+    description: "Usado na tela de treinamento para aumentar ATK.",
+    sprite: "./assets/items/training_chip_atk.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  training_chip_def: {
+    id: "training_chip_def",
+    name: "DEF Training Chip",
+    description: "Usado na tela de treinamento para aumentar DEF.",
+    sprite: "./assets/items/training_chip_def.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  training_chip_int: {
+    id: "training_chip_int",
+    name: "INT Training Chip",
+    description: "Usado na tela de treinamento para aumentar INT.",
+    sprite: "./assets/items/training_chip_int.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
+  training_chip_spd: {
+    id: "training_chip_spd",
+    name: "SPD Training Chip",
+    description: "Usado na tela de treinamento para aumentar SPD.",
+    sprite: "./assets/items/training_chip_spd.png",
+    category: "training",
+    target: "single_ally",
+    effect: {},
+    usableInMenu: false,
+    usableInBattle: false
+  },
+
   omni_sword: {
     id: "omni_sword",
     name: "Omni Sword",

@@ -8,6 +8,7 @@ import { bindDigiDexScreen, renderDigiDexScreen } from "./screens/digidexScreen.
 import { bindHuntsScreen, renderHuntsScreen } from "./screens/huntsScreen.js";
 import { bindBossesScreen, renderBossesScreen } from "./screens/bossesScreen.js";
 import { bindItemsScreen, renderItemsScreen } from "./screens/itemsScreen.js";
+import { bindTrainingScreen, renderTrainingScreen } from "./screens/trainingScreen.js";
 import { bindShopScreen, renderShopScreen } from "./screens/shopScreen.js";
 import { bindConversionScreen, renderConversionScreen } from "./screens/conversionScreen.js";
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
@@ -54,6 +55,10 @@ export function renderApp() {
 
     case "items":
       screenMarkup = renderItemsScreen();
+      break;
+
+    case "training":
+      screenMarkup = renderTrainingScreen();
       break;
 
     case "shop":
@@ -113,6 +118,10 @@ export function renderApp() {
 
     case "items":
       bindItemsScreen();
+      break;
+
+    case "training":
+      bindTrainingScreen();
       break;
 
     case "shop":
