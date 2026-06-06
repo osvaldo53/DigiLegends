@@ -18,8 +18,8 @@ export function renderTamerProgress(save, options = {}) {
     <div class="tamer-progress ${options.compact ? "tamer-progress--compact" : ""}">
       <div class="tamer-progress__top">
         <div>
-          <span class="tamer-progress__eyebrow">Tamer</span>
-          <strong>${escapeHtml(playerName)} · Lv. ${tamer.level}</strong>
+          <span class="tamer-progress__eyebrow">${escapeHtml(playerName)}</span>
+          <strong>Lv. ${tamer.level}</strong>
         </div>
         <span>${isMaxLevel ? "MAX" : `${tamer.exp}/${expToNextLevel}`}</span>
       </div>
