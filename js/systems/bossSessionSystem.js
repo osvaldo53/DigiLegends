@@ -15,6 +15,10 @@ import {
   startBattleFromScenario
 } from "./battleSystem.js";
 import { showEvolutionAnimation } from "./evolutionAnimationSystem.js";
+import {
+  addTamerExp,
+  getTamerBossCompletionBonus
+} from "./tamerProgressionSystem.js";
 
 const FIRST_STAGE_DELAY_MS = 900;
 const TURN_CHARGE_DELAY_MS = 1600;
@@ -78,6 +82,7 @@ function resetBossSessionState() {
   state.bossSession.totalDefeats = 0;
   state.bossSession.totalBitsEarned = 0;
   state.bossSession.totalExpEarned = 0;
+  state.bossSession.totalTamerExpEarned = 0;
   state.bossSession.turnOwner = null;
   state.bossSession.status = "stopped";
   state.bossSession.drops = [];
@@ -139,6 +144,7 @@ function finalizeBossSummary(reason, options = {}) {
     totalDefeats: state.bossSession.totalDefeats,
     totalBitsEarned: state.bossSession.totalBitsEarned,
     totalExpEarned: state.bossSession.totalExpEarned,
+    totalTamerExpEarned: state.bossSession.totalTamerExpEarned,
     drops: buildDropSummary(),
     healedDigimons: options.healedDigimons || [],
     message: options.message || "",
@@ -373,14 +379,20 @@ function finishBossBattleCycle() {
     state.bossSession.totalWins += 1;
     state.bossSession.totalBitsEarned += state.battle.rewards?.bits || 0;
     state.bossSession.totalExpEarned += state.battle.rewards?.exp || 0;
+    state.bossSession.totalTamerExpEarned =
+      (state.bossSession.totalTamerExpEarned || 0) + (state.battle.rewards?.tamerExp || 0);
 
     const isLastStage = state.bossSession.stageIndex >= (boss?.stages.length || 0) - 1;
 
     if (isLastStage) {
       const healedDigimons = restorePartyAfterBossEnd();
       const rewardDrops = rollBossRewardDrops(boss.id);
+      const completionTamerExp = getTamerBossCompletionBonus(boss);
 
       rewardDrops.forEach((drop) => registerDrop(drop));
+      addTamerExp(state.save, completionTamerExp);
+      state.bossSession.totalTamerExpEarned =
+        (state.bossSession.totalTamerExpEarned || 0) + completionTamerExp;
       state.save.progress.bossesCompleted += 1;
 
       endBossSession("victory", {
@@ -484,6 +496,7 @@ export function startBossSession(bossId) {
   state.bossSession.totalDefeats = 0;
   state.bossSession.totalBitsEarned = 0;
   state.bossSession.totalExpEarned = 0;
+  state.bossSession.totalTamerExpEarned = 0;
   state.bossSession.turnOwner = null;
   state.bossSession.status = "preparing";
   state.bossSession.drops = [];

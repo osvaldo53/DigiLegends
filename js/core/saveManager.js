@@ -3,6 +3,7 @@ import { getDigimonSpecies } from "../data/digimons.js";
 import { getItemById } from "../data/items.js";
 import { createEmptySave } from "../factories/saveFactory.js";
 import { recalculatePlayerDigimon } from "../factories/digimonFactory.js";
+import { normalizeTamerProgression } from "../systems/tamerProgressionSystem.js";
 import { uniquePush } from "./utils.js";
 
 function toSafeNumber(value, fallback = 0) {
@@ -380,6 +381,7 @@ export function migrateSaveIfNeeded(saveData) {
     ...saveData,
     playerName: String(saveData.playerName || "").trim(),
     bits: Math.max(0, Math.floor(toSafeNumber(saveData.bits, base.bits))),
+    tamer: normalizeTamerProgression(saveData.tamer || base.tamer),
     party: normalizedParty,
     storage: normalizedStorage,
 

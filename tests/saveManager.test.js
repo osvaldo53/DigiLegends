@@ -17,6 +17,10 @@ describe("saveManager", () => {
     const migrated = migrateSaveIfNeeded({
       playerName: "  Osval  ",
       bits: -50,
+      tamer: {
+        level: 4,
+        exp: 33
+      },
       party: [
         {
           uid: "agumon-1",
@@ -57,6 +61,7 @@ describe("saveManager", () => {
 
     expect(migrated.playerName).toBe("Osval");
     expect(migrated.bits).toBe(0);
+    expect(migrated.tamer).toEqual({ level: 4, exp: 33 });
     expect(migrated.party).toHaveLength(1);
     expect(migrated.storage).toHaveLength(1);
     expect(migrated.party[0].finalStats.hp).toBeGreaterThan(0);

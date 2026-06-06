@@ -9,6 +9,10 @@ import { getElementMultiplier } from "./elementChart.js";
 import { getSkillsForSpecies, getSkillById } from "../data/skills.js";
 import { addScanOnDefeat } from "./scanSystem.js";
 import { setPartyLeader } from "./storageSystem.js";
+import {
+  addTamerExp,
+  getTamerExpFromBattleRewards
+} from "./tamerProgressionSystem.js";
 
 const BASIC_ATTACK_SKILL = {
   id: "basic_attack",
@@ -269,18 +273,22 @@ function finalizeVictory() {
   }
 
   const progression = applyBattleRewards(player, battleRewards, state.save);
+  const tamerExp = getTamerExpFromBattleRewards(battleRewards, state.battle.context);
+  const tamerProgression = addTamerExp(state.save, tamerExp);
   const scanResult = addScanOnDefeat(state.save, enemy.speciesId);
 
   state.battle.result = "victory";
   state.battle.rewards = {
     ...battleRewards,
     gainedLevels: progression.gainedLevels,
+    tamerExp,
+    tamerGainedLevels: tamerProgression.gainedLevels,
     scanGained: scanResult.gained,
     scanTotal: scanResult.total,
     scannedSpeciesId: enemy.speciesId
   };
 
-  pushLog(`Vitoria. Recompensas: +${battleRewards.bits} Bits, +${battleRewards.exp} EXP.`);
+  pushLog(`Vitoria. Recompensas: +${battleRewards.bits} Bits, +${battleRewards.exp} EXP, +${tamerExp} Tamer EXP.`);
   pushLog(
     `Scan obtido: +${scanResult.gained}% de ${getDigimonSpecies(enemy.speciesId)?.name || enemy.speciesId} (total: ${scanResult.total}%).`
   );
@@ -289,6 +297,10 @@ function finalizeVictory() {
     pushLog(
       `${getDigimonSpecies(player.speciesId)?.name || "Seu Digimon"} subiu ${progression.gainedLevels} nivel(is).`
     );
+  }
+
+  if (tamerProgression.gainedLevels > 0) {
+    pushLog(`Tamer subiu ${tamerProgression.gainedLevels} nivel(is).`);
   }
 
   saveGame(state.save);

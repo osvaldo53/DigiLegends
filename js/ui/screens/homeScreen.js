@@ -1,5 +1,6 @@
 import { goToScreen } from "../../core/router.js";
 import { state } from "../../core/state.js";
+import { renderTamerProgress } from "../components/tamerProgress.js";
 
 export function renderHomeScreen() {
   return `
@@ -13,6 +14,7 @@ export function renderHomeScreen() {
       </div>
 
       <div class="panel">
+        ${renderTamerProgress(state.save)}
         <p>Base atual com hunt AFK, bosses, DigiDex, time, itens, loja, evolucao e conversao por scan.</p>
 
         <div class="menu-grid">

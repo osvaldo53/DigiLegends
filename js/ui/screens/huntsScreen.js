@@ -3,6 +3,7 @@ import { goToScreen } from "../../core/router.js";
 import { state } from "../../core/state.js";
 import { renderHuntCard } from "../components/huntCard.js";
 import { renderBattleSessionView, bindBattleSessionView } from "../components/battleSessionView.js";
+import { renderTamerProgress } from "../components/tamerProgress.js";
 import {
   startHuntSession,
   stopHuntSession,
@@ -69,6 +70,7 @@ function renderHuntSummaryPanel() {
           <h3>Recompensas da sessao</h3>
           <p>Bits ganhos: ${summary.totalBitsEarned}</p>
           <p>EXP ganha: ${summary.totalExpEarned}</p>
+          <p>Tamer EXP ganha: ${summary.totalTamerExpEarned || 0}</p>
           ${penaltyHtml}
           ${summary.message ? `<p>${escapeHtml(summary.message)}</p>` : ""}
           ${healHtml}
@@ -99,7 +101,8 @@ function renderActiveSessionPanel() {
       `Vitorias: ${state.huntSession.totalWins}`,
       `Derrotas: ${state.huntSession.totalDefeats}`,
       `Bits: ${state.huntSession.totalBitsEarned}`,
-      `EXP: ${state.huntSession.totalExpEarned}`
+      `EXP: ${state.huntSession.totalExpEarned}`,
+      `Tamer EXP: ${state.huntSession.totalTamerExpEarned || 0}`
     ],
     stopButtonText: "Parar hunt",
     getEligibleItemTargets: getBattleItemEligibleTargets,
@@ -141,6 +144,7 @@ export function renderHuntsScreen() {
       <div class="panel">
         <h2>Hunts</h2>
         <p>Escolha uma area para iniciar uma hunt automatica.</p>
+        ${renderTamerProgress(state.save, { compact: true })}
 
         <div class="button-row" style="margin-bottom:16px;">
           <span class="status-pill">Nivel do lider: ${playerLevel}</span>

@@ -12,6 +12,10 @@ export function createEmptySave() {
     version: SAVE_VERSION,
     playerName: "",
     bits: 100,
+    tamer: {
+      level: 1,
+      exp: 0
+    },
 
     /**
      * Digimons ativos no time

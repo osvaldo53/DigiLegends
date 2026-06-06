@@ -17,6 +17,7 @@ import {
   useBossItemTurn
 } from "../../systems/bossSessionSystem.js";
 import { renderBattleSessionView, bindBattleSessionView } from "../components/battleSessionView.js";
+import { renderTamerProgress } from "../components/tamerProgress.js";
 
 function renderDrops(items) {
   if (!items.length) {
@@ -66,6 +67,7 @@ function renderBossSummaryPanel() {
           <h3>Recompensas da sessao</h3>
           <p>Bits ganhos: ${summary.totalBitsEarned}</p>
           <p>EXP ganha: ${summary.totalExpEarned}</p>
+          <p>Tamer EXP ganha: ${summary.totalTamerExpEarned || 0}</p>
           ${summary.message ? `<p>${escapeHtml(summary.message)}</p>` : ""}
           ${healHtml}
         </div>
@@ -113,7 +115,8 @@ function renderActiveBossSessionPanel() {
       `Vitorias: ${state.bossSession.totalWins}`,
       `Derrotas: ${state.bossSession.totalDefeats}`,
       `Bits: ${state.bossSession.totalBitsEarned}`,
-      `EXP: ${state.bossSession.totalExpEarned}`
+      `EXP: ${state.bossSession.totalExpEarned}`,
+      `Tamer EXP: ${state.bossSession.totalTamerExpEarned || 0}`
     ],
     stopButtonText: "Parar desafio",
     getEligibleItemTargets: getBossItemEligibleTargets,
@@ -150,6 +153,7 @@ export function renderBossesScreen() {
       <div class="panel">
         <h2>Bosses</h2>
         <p>Desafios especiais com inimigos definidos e muito mais poderosos que as hunts comuns.</p>
+        ${renderTamerProgress(state.save, { compact: true })}
 
         <div class="button-row" style="margin-bottom:16px;">
           <span class="status-pill">Bosses concluidos: ${state.save.progress.bossesCompleted || 0}</span>

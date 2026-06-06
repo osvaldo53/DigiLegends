@@ -18,6 +18,10 @@ export const state = {
     version: 3,
     playerName: "",
     bits: 100,
+    tamer: {
+      level: 1,
+      exp: 0
+    },
     party: [],
     storage: [],
     digidex: {
@@ -86,6 +90,7 @@ export const state = {
     totalDefeats: 0,
     totalBitsEarned: 0,
     totalExpEarned: 0,
+    totalTamerExpEarned: 0,
     currentBattleNumber: 0,
     turnOwner: null, // null | "player" | "enemy"
     status: "idle", // idle | searching | battling | resolving | stopped
@@ -119,6 +124,7 @@ export const state = {
     totalDefeats: 0,
     totalBitsEarned: 0,
     totalExpEarned: 0,
+    totalTamerExpEarned: 0,
     turnOwner: null,
     status: "idle",
     drops: [],

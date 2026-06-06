@@ -96,6 +96,7 @@ function resetActiveHuntSession() {
   state.huntSession.totalDefeats = 0;
   state.huntSession.totalBitsEarned = 0;
   state.huntSession.totalExpEarned = 0;
+  state.huntSession.totalTamerExpEarned = 0;
   state.huntSession.currentBattleNumber = 0;
   state.huntSession.turnOwner = null;
   state.huntSession.status = "stopped";
@@ -147,6 +148,7 @@ function finalizeHuntSummary(reason, options = {}) {
     totalDefeats: state.huntSession.totalDefeats,
     totalBitsEarned: state.huntSession.totalBitsEarned,
     totalExpEarned: state.huntSession.totalExpEarned,
+    totalTamerExpEarned: state.huntSession.totalTamerExpEarned,
     drops: buildDropSummary(),
     penaltyBits: options.penaltyBits || 0,
     healedDigimons: options.healedDigimons || [],
@@ -370,6 +372,8 @@ function finishBattleCycle() {
     state.huntSession.totalWins += 1;
     state.huntSession.totalBitsEarned += state.battle.rewards?.bits || 0;
     state.huntSession.totalExpEarned += state.battle.rewards?.exp || 0;
+    state.huntSession.totalTamerExpEarned =
+      (state.huntSession.totalTamerExpEarned || 0) + (state.battle.rewards?.tamerExp || 0);
 
     const drops = rollBattleDrops(state.battle.enemy?.speciesId);
     drops.forEach((drop) => registerDrop(drop));
@@ -482,6 +486,7 @@ export function startHuntSession(huntId) {
   state.huntSession.totalDefeats = 0;
   state.huntSession.totalBitsEarned = 0;
   state.huntSession.totalExpEarned = 0;
+  state.huntSession.totalTamerExpEarned = 0;
   state.huntSession.currentBattleNumber = 0;
   state.huntSession.turnOwner = null;
   state.huntSession.status = "searching";
