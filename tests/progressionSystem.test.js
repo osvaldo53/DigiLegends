@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createPlayerDigimon } from "../js/factories/digimonFactory.js";
 import { applyExpGain } from "../js/systems/progressionSystem.js";
-import { getLevelCapForDigimon } from "../js/systems/digimonProgressionSystem.js";
+import {
+  getLevelCapForDigimon,
+  getTrainingCapForStage
+} from "../js/systems/digimonProgressionSystem.js";
 
 describe("progressionSystem", () => {
   it("respeita o level cap do estagio atual", () => {
@@ -50,5 +53,15 @@ describe("progressionSystem", () => {
 
     expect(getLevelCapForDigimon(flamedramon)).toBe(100);
     expect(flamedramon.level).toBe(100);
+  });
+
+  it("define a capacidade de treino dobrando a partir de Rookie", () => {
+    expect(getTrainingCapForStage("In-Training")).toBe(0);
+    expect(getTrainingCapForStage("Rookie")).toBe(4);
+    expect(getTrainingCapForStage("Champion")).toBe(8);
+    expect(getTrainingCapForStage("Armor")).toBe(8);
+    expect(getTrainingCapForStage("Ultimate")).toBe(16);
+    expect(getTrainingCapForStage("Mega")).toBe(32);
+    expect(getTrainingCapForStage("Ultra")).toBe(64);
   });
 });

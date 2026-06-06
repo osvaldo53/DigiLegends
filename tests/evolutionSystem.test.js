@@ -158,6 +158,28 @@ describe("evolutionSystem", () => {
     expect(save.digidex.owned).toContain("greymon");
   });
 
+  it("mantem os pontos treinados quando evolui", () => {
+    const save = createEmptySave();
+    const agumon = createPlayerDigimon("agumon", {
+      level: 17,
+      bond: 5,
+      bonusStats: {
+        hp: 6,
+        atk: 2
+      }
+    });
+
+    save.party = [agumon];
+
+    evolveDigimon(agumon, "greymon", save);
+
+    expect(agumon.speciesId).toBe("greymon");
+    expect(agumon.bonusStats.hp).toBe(6);
+    expect(agumon.bonusStats.atk).toBe(2);
+    expect(agumon.currentHP).toBe(agumon.finalStats.hp);
+    expect(agumon.currentSP).toBe(agumon.finalStats.sp);
+  });
+
   it("permite a nova etapa mega quando os requisitos forem atendidos", () => {
     const metalgreymon = createPlayerDigimon("metalgreymon", {
       level: 34,
@@ -242,13 +264,13 @@ describe("evolutionSystem", () => {
     expect(canEvolveTo(chirinmon, "sleipmon")).toBe(true);
   });
 
-  it("bloqueia a linha do Kudamon sem treino mesmo no cap do estagio", () => {
+  it("permite a linha do Kudamon sem treino por enquanto", () => {
     const kudamon = createPlayerDigimon("kudamon", {
       level: 20,
       bond: 0
     });
 
-    expect(canEvolveTo(kudamon, "reppamon")).toBe(false);
+    expect(canEvolveTo(kudamon, "reppamon")).toBe(true);
   });
 
   it("permite evoluir Dracomon para Ginryumon", () => {

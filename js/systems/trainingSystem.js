@@ -19,7 +19,7 @@ export const TRAINING_GAIN_BY_STAT = {
   int: 1,
   spd: 1
 };
-export const TRAINING_DURATION_PER_POINT_MS = 15 * 60 * 1000;
+export const TRAINING_DURATION_PER_POINT_MS = 10 * 60 * 1000;
 
 function ensureTrainingState(save) {
   if (!save.training || typeof save.training !== "object") {

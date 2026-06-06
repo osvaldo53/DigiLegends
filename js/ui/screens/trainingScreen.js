@@ -257,7 +257,7 @@ export function renderTrainingScreen() {
     <section class="screen">
       <div class="panel">
         <h2>Treinamento</h2>
-        <p>Selecione o treino pelos botoes, depois escolha o Digimon no combo. Cada chip consome 15 minutos e o treino continua mesmo com o jogo fechado.</p>
+        <p>Selecione o treino pelos botoes, depois escolha o Digimon no combo. Cada chip consome ${formatDuration(TRAINING_DURATION_PER_POINT_MS)} e o treino continua mesmo com o jogo fechado.</p>
 
         <div class="button-row" style="margin-bottom:16px;">
           <span class="status-pill">Treino selecionado: ${escapeHtml(selectedItem?.name || trainingViewState.selectedStatKey)}</span>

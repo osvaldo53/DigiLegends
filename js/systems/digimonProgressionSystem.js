@@ -14,12 +14,12 @@ export const LEVEL_CAPS_BY_STAGE = {
 
 export const TRAINING_CAPS_BY_STAGE = {
   "In-Training": 0,
-  Rookie: 6,
-  Champion: 10,
-  Armor: 10,
+  Rookie: 4,
+  Champion: 8,
+  Armor: 8,
   Ultimate: 16,
-  Mega: 22,
-  Ultra: 28
+  Mega: 32,
+  Ultra: 64
 };
 
 export function getDigimonStage(speciesId) {

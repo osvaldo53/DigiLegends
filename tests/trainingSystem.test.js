@@ -63,15 +63,13 @@ describe("trainingSystem", () => {
       level: 20,
       bonusStats: {
         atk: 2,
-        def: 2,
-        int: 1,
-        spd: 1
+        def: 2
       }
     });
 
     save.party = [agumon];
 
-    expect(getUsedTrainingPoints(agumon)).toBe(6);
+    expect(getUsedTrainingPoints(agumon)).toBe(4);
     expect(getMaxTrainingQuantity(save, agumon, "atk")).toBe(0);
     expect(() => startTrainingJob(save, agumon.uid, "atk", 1, 1000)).toThrow();
   });
