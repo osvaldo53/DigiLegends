@@ -20,9 +20,14 @@ function formatStatRequirements(requirements) {
     .join(" · ");
 }
 
+function formatBondRequirement(minBond) {
+  return minBond == null ? "" : ` · Bond ${minBond}`;
+}
+
 function formatEvolutionRequirements(evolution) {
   const statRequirements = formatStatRequirements(evolution.requirements);
   const statSuffix = statRequirements ? ` · ${statRequirements}` : "";
+  const bondSuffix = formatBondRequirement(evolution.requirements.minBond);
 
   if (evolution.requirements.type === "armor") {
     const requiredItem =
@@ -30,11 +35,11 @@ function formatEvolutionRequirements(evolution) {
       evolution.requirements.requiredItemId;
     const itemStatus = evolution.hasRequiredItem ? "Disponivel" : "Nao possui";
 
-    return `Armor: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix} · ${requiredItem} (${itemStatus})`;
+    return `Armor: Lv. ${evolution.requirements.minLevel}${bondSuffix}${statSuffix} · ${requiredItem} (${itemStatus})`;
   }
 
   if (evolution.requirements.type !== "dna") {
-    return `Requisitos: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix}`;
+    return `Requisitos: Lv. ${evolution.requirements.minLevel}${bondSuffix}${statSuffix}`;
   }
 
   const partnerSpecies =
@@ -45,7 +50,7 @@ function formatEvolutionRequirements(evolution) {
       ? ` · Parceiros elegiveis: ${evolution.dnaPartners.length}`
       : "";
 
-  return `DNA: Lv. ${evolution.requirements.minLevel} · Bond ${evolution.requirements.minBond}${statSuffix} + ${partnerSpecies} Lv. ${evolution.requirements.partnerMinLevel} · Bond ${evolution.requirements.partnerMinBond}${partnerHint}`;
+  return `DNA: Lv. ${evolution.requirements.minLevel}${bondSuffix}${statSuffix} + ${partnerSpecies} Lv. ${evolution.requirements.partnerMinLevel}${formatBondRequirement(evolution.requirements.partnerMinBond)}${partnerHint}`;
 }
 
 function formatMissingRequirements(evolution) {

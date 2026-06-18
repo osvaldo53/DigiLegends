@@ -14,13 +14,46 @@ import { bindConversionScreen, renderConversionScreen } from "./screens/conversi
 import { renderNotFoundScreen } from "./screens/notFoundScreen.js";
 import { renderEvolutionModal } from "./components/evolutionModal.js";
 
+let lastScrollKey = null;
+
+function scrollToScreenTop() {
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+
+  window.scrollTo({ top: 0, left: 0 });
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  });
+  window.setTimeout(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, 0);
+}
+
+function getScrollKey(currentScreen) {
+  if (currentScreen === "hunts") {
+    if (state.huntSession.active) return "hunts:active";
+    if (state.huntSession.summary) return "hunts:summary";
+    return "hunts:list";
+  }
+
+  if (currentScreen === "bosses") {
+    if (state.bossSession.active) return "bosses:active";
+    if (state.bossSession.summary) return "bosses:summary";
+    return "bosses:list";
+  }
+
+  return currentScreen;
+}
+
 export function renderApp() {
   const app = document.getElementById("app");
   if (!app) return;
 
   let screenMarkup = "";
+  const currentScreen = state.app.currentScreen;
 
-  switch (state.app.currentScreen) {
+  switch (currentScreen) {
     case "title":
       screenMarkup = renderTitleScreen();
       break;
@@ -83,7 +116,14 @@ export function renderApp() {
     ${renderEvolutionModal(state.app.evolutionAnimation)}
   `;
 
-  switch (state.app.currentScreen) {
+  const scrollKey = getScrollKey(currentScreen);
+
+  if (lastScrollKey !== scrollKey) {
+    scrollToScreenTop();
+    lastScrollKey = scrollKey;
+  }
+
+  switch (currentScreen) {
     case "title":
       bindTitleScreen();
       break;

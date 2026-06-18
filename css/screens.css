@@ -12,15 +12,15 @@
   width: 100%;
 }
 
-.team-header {
-  margin-bottom: 10px;
-}
-
 .battle-result {
   padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(53, 208, 255, 0.10);
-  border: 1px solid rgba(53, 208, 255, 0.18);
+  border: 2px solid rgba(255, 215, 51, 0.28);
+  border-radius: var(--radius-md);
+  color: #fff8d2;
+  background:
+    linear-gradient(90deg, rgba(255, 63, 110, 0.16), rgba(255, 138, 24, 0.14), rgba(34, 216, 255, 0.12)),
+    rgba(0, 0, 0, 0.22);
+  font-weight: 900;
 }
 
 @media (min-width: 768px) {
@@ -29,7 +29,7 @@
   }
 
   .new-game-panel {
-    max-width: 760px;
+    max-width: 980px;
     margin: 0 auto;
   }
 }

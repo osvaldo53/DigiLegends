@@ -1,6 +1,8 @@
 import { goToScreen } from "../../core/router.js";
 import { state } from "../../core/state.js";
 import { deleteSave, hasSave, importSaveFromText } from "../../core/saveManager.js";
+import { getDigimonSpecies } from "../../data/digimons.js";
+import { escapeHtml } from "../../core/utils.js";
 import { renderApp } from "../renderApp.js";
 
 function resetTransientState() {
@@ -48,24 +50,63 @@ function setTitleFeedback(message, tone = "muted") {
   feedback.textContent = message;
 }
 
+function renderTitleSprites() {
+  const featuredIds = ["wargreymon", "agumon", "metalgarurumon"];
+  const spriteClasses = ["title-sprite--left", "title-sprite--center", "title-sprite--right"];
+
+  return featuredIds
+    .map((speciesId, index) => {
+      const species = getDigimonSpecies(speciesId);
+
+      if (!species) {
+        return "";
+      }
+
+      return `
+        <img
+          class="title-sprite ${spriteClasses[index]}"
+          src="${escapeHtml(species.sprite || "")}"
+          alt="${escapeHtml(species.name)}"
+          onerror="this.style.display='none'"
+        />
+      `;
+    })
+    .join("");
+}
+
 export function renderTitleScreen() {
   const saveExists = hasSave();
 
   return `
     <section class="screen screen--centered">
       <div class="panel title-panel">
-        <h1 class="game-title">DigiLegends</h1>
-        <p class="subtitle">Bem vindo ao Digimon Legends!</p>
+        <div class="title-panel__copy">
+          <span class="title-kicker">Anime Battle Arena</span>
+          <h1 class="game-title"><span>Digi</span>Legends</h1>
+          <p class="subtitle">Monte seu time, entre na arena digital e evolua seus parceiros em batalhas de energia pura.</p>
 
-        <div class="button-row" style="justify-content:center;">
-          <button class="btn btn-primary" id="btn-new-game">Novo jogo</button>
-          <button class="btn btn-secondary" id="btn-import-save-title">Importar save</button>
-          <input type="file" id="input-import-save-title" accept=".json,application/json" style="display:none;" />
-          ${saveExists ? '<button class="btn btn-secondary" id="btn-continue">Continuar</button>' : ""}
-          ${saveExists ? '<button class="btn btn-danger" id="btn-delete-save">Apagar save</button>' : ""}
+          <div class="title-panel__stats">
+            <span class="status-pill">Hunts AFK</span>
+            <span class="status-pill">Boss Rush</span>
+            <span class="status-pill">DigiDex</span>
+          </div>
+
+          <div class="button-row">
+            <button class="btn btn-primary" id="btn-new-game">Novo jogo</button>
+            <button class="btn btn-secondary" id="btn-import-save-title">Importar save</button>
+            <input type="file" id="input-import-save-title" accept=".json,application/json" style="display:none;" />
+            ${saveExists ? '<button class="btn btn-secondary" id="btn-continue">Continuar</button>' : ""}
+            ${saveExists ? '<button class="btn btn-danger" id="btn-delete-save">Apagar save</button>' : ""}
+          </div>
+
+          <p id="title-feedback" class="hunt-session__muted" style="margin-top:4px;"></p>
         </div>
 
-        <p id="title-feedback" class="hunt-session__muted" style="margin-top:16px;"></p>
+        <div class="title-hero-art" aria-hidden="true">
+          <div class="title-sprite-stage">
+            ${renderTitleSprites()}
+          </div>
+        </div>
       </div>
     </section>
   `;

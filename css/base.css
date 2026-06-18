@@ -1,41 +1,53 @@
 :root {
-  --bg: #0a1020;
-  --bg-2: #11182d;
-  --surface: #151d35;
-  --surface-2: #1b2645;
-  --surface-3: #243154;
+  --bg: #070812;
+  --bg-2: #12101d;
+  --surface: #171827;
+  --surface-2: #211a28;
+  --surface-3: #2a2130;
 
-  --text: #f4f7ff;
-  --muted: #9daccc;
-  --muted-2: #7f90b4;
+  --text: #fff8e8;
+  --text-strong: #ffffff;
+  --muted: #c5c9d8;
+  --muted-2: #8f96ad;
 
-  --primary: #35d0ff;
-  --primary-strong: #00b8ff;
-  --primary-soft: rgba(53, 208, 255, 0.14);
+  --primary: #ffd733;
+  --primary-strong: #ff8a18;
+  --primary-soft: rgba(255, 215, 51, 0.16);
 
-  --success: #41d36b;
-  --success-soft: rgba(65, 211, 107, 0.16);
+  --secondary: #22d8ff;
+  --secondary-strong: #168bff;
+  --secondary-soft: rgba(34, 216, 255, 0.15);
 
-  --sp: #8e7dff;
-  --sp-soft: rgba(142, 125, 255, 0.18);
+  --accent: #ff3f6e;
+  --accent-soft: rgba(255, 63, 110, 0.16);
 
-  --danger: #ff6b6b;
-  --danger-soft: rgba(255, 107, 107, 0.18);
+  --success: #33e37d;
+  --success-soft: rgba(51, 227, 125, 0.16);
 
-  --warning: #ffb84d;
-  --warning-soft: rgba(255, 184, 77, 0.18);
+  --sp: #9567ff;
+  --sp-soft: rgba(149, 103, 255, 0.18);
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --danger: #ff355d;
+  --danger-soft: rgba(255, 53, 93, 0.18);
 
-  --shadow-card: 0 16px 36px rgba(0, 0, 0, 0.28);
-  --shadow-soft: 0 10px 22px rgba(0, 0, 0, 0.18);
+  --warning: #ffb12a;
+  --warning-soft: rgba(255, 177, 42, 0.18);
 
-  --radius-xs: 10px;
-  --radius-sm: 14px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --radius-xl: 30px;
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --border-hot: rgba(255, 215, 51, 0.52);
+  --border-cool: rgba(34, 216, 255, 0.42);
+
+  --shadow-card: 0 22px 48px rgba(0, 0, 0, 0.38);
+  --shadow-soft: 0 14px 26px rgba(0, 0, 0, 0.26);
+  --glow-hot: 0 0 28px rgba(255, 138, 24, 0.26);
+  --glow-cool: 0 0 26px rgba(34, 216, 255, 0.2);
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -45,28 +57,45 @@
   --space-6: 24px;
   --space-7: 32px;
 
-  --font-base: "Inter", "Rubik", "Segoe UI", Arial, sans-serif;
+  --font-base: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  --font-display: "Arial Black", "Trebuchet MS", "Segoe UI", Arial, sans-serif;
 }
 
 html {
   font-size: 16px;
+  background: var(--bg);
 }
 
 body {
+  position: relative;
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   color: var(--text);
   font-family: var(--font-base);
   background:
-    radial-gradient(circle at top, rgba(53, 208, 255, 0.10), transparent 30%),
-    radial-gradient(circle at bottom, rgba(142, 125, 255, 0.08), transparent 26%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.026) 0 1px, transparent 1px 44px),
+    linear-gradient(124deg, rgba(255, 138, 24, 0.18) 0 13%, transparent 13% 28%, rgba(34, 216, 255, 0.15) 28% 43%, transparent 43% 58%, rgba(255, 63, 110, 0.14) 58% 72%, transparent 72%),
+    linear-gradient(180deg, #070812 0%, #15101d 46%, #080a16 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(152deg, transparent 0 18%, rgba(255, 215, 51, 0.12) 18% 19%, transparent 19% 54%, rgba(34, 216, 255, 0.1) 54% 55%, transparent 55%),
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(255, 255, 255, 0.028) 18px 20px);
+  mix-blend-mode: screen;
 }
 
 #app {
-  width: min(100%, 560px);
+  width: min(100%, 600px);
   margin: 0 auto;
-  padding: 16px 16px 28px;
+  padding: 14px 12px 28px;
 }
 
 h1,
@@ -80,29 +109,47 @@ p {
 h1,
 h2,
 h3 {
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: 2.65rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.58),
+    0 0 24px rgba(255, 138, 24, 0.34);
 }
 
 h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.46);
 }
 
 h3 {
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  color: var(--text-strong);
+  font-size: 1.02rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+h4 {
+  color: var(--text-strong);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0;
 }
 
 p {
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--text);
 }
 
@@ -116,21 +163,40 @@ img {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(255, 215, 51, 0.48);
+  outline-offset: 2px;
+}
+
+::selection {
+  color: #120a00;
+  background: var(--primary);
 }
 
 @media (min-width: 768px) {
   #app {
-    width: min(100%, 980px);
-    padding: 24px 20px 40px;
+    width: min(100%, 1120px);
+    padding: 24px 20px 42px;
   }
 
   h1 {
-    font-size: 2.4rem;
+    font-size: 4.35rem;
   }
 
   h2 {
-    font-size: 1.7rem;
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1180px) {
+  #app {
+    width: min(100%, 1240px);
   }
 }
