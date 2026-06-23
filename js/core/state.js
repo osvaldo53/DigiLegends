@@ -93,7 +93,7 @@ export const state = {
     totalTamerExpEarned: 0,
     currentBattleNumber: 0,
     turnOwner: null, // null | "player" | "enemy"
-    status: "idle", // idle | searching | battling | resolving | stopped
+    status: "idle", // idle | exploring | battling | resolving | stopped
 
     /**
      * Itens acumulados durante a sessão.
@@ -111,7 +111,8 @@ export const state = {
     phaseDurationMs: 0,
     phaseStartedAt: 0,
     summary: null,
-    pendingBattleItem: null
+    pendingBattleItem: null,
+    map: null
   },
 
   bossSession: {

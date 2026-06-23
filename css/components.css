@@ -815,6 +815,325 @@ input[type="number"]:focus {
   transition: width 0.12s linear;
 }
 
+.hunt-exploration-panel {
+  gap: 16px;
+}
+
+.hunt-map-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.hunt-map {
+  display: grid;
+  grid-template-columns: repeat(var(--map-cols), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--map-rows), minmax(0, 1fr));
+  overflow: hidden;
+  border: 2px solid rgba(255, 215, 51, 0.22);
+  border-radius: var(--radius-md);
+  aspect-ratio: 11 / 9;
+  background:
+    linear-gradient(145deg, rgba(38, 93, 65, 0.92), rgba(17, 58, 83, 0.92) 48%, rgba(90, 55, 32, 0.86));
+  box-shadow: var(--shadow-soft), inset 0 -22px 34px rgba(0, 0, 0, 0.22);
+}
+
+.hunt-map--rookie {
+  background: linear-gradient(145deg, rgba(24, 89, 57, 0.94), rgba(26, 78, 98, 0.9) 52%, rgba(112, 72, 34, 0.82));
+}
+
+.hunt-map--champion {
+  background: linear-gradient(145deg, rgba(94, 62, 54, 0.95), rgba(38, 63, 91, 0.92) 48%, rgba(84, 91, 47, 0.84));
+}
+
+.hunt-map--ultimate,
+.hunt-map--mega {
+  background: linear-gradient(145deg, rgba(41, 49, 78, 0.96), rgba(96, 62, 42, 0.88) 42%, rgba(23, 92, 98, 0.88));
+}
+
+.hunt-map__cell {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hunt-map__cell--floor {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.04)),
+    rgba(35, 92, 92, 0.28);
+}
+
+.hunt-map__cell--floor:nth-child(odd) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.035)),
+    rgba(47, 104, 79, 0.24);
+}
+
+.hunt-map__cell--wall {
+  border-color: rgba(0, 0, 0, 0.25);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.28)),
+    rgba(17, 20, 31, 0.96);
+  box-shadow: inset 0 0 0 1px rgba(255, 215, 51, 0.045);
+}
+
+.hunt-map__cell--portal {
+  background:
+    radial-gradient(circle, rgba(34, 216, 255, 0.28), rgba(34, 216, 255, 0.07) 45%, rgba(35, 92, 92, 0.28)),
+    rgba(35, 92, 92, 0.28);
+}
+
+.hunt-map__cell--exit {
+  background:
+    radial-gradient(circle, rgba(255, 215, 51, 0.32), rgba(255, 138, 24, 0.08) 50%, rgba(35, 92, 92, 0.28)),
+    rgba(35, 92, 92, 0.28);
+}
+
+.hunt-map__cell--boss {
+  background:
+    radial-gradient(circle, rgba(255, 63, 110, 0.32), rgba(255, 63, 110, 0.08) 48%, rgba(35, 92, 92, 0.28)),
+    rgba(35, 92, 92, 0.28);
+}
+
+.hunt-map__entity {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border: 0;
+  background: transparent;
+}
+
+.hunt-map__entity img {
+  width: min(92%, 54px);
+  height: min(92%, 54px);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 7px rgba(0, 0, 0, 0.46));
+}
+
+.hunt-map__entity--wild {
+  pointer-events: none;
+}
+
+.hunt-map__entity--boss img {
+  width: min(100%, 62px);
+  height: min(100%, 62px);
+  filter:
+    drop-shadow(0 10px 7px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 12px rgba(255, 63, 110, 0.42));
+}
+
+.hunt-map__entity--wild::before,
+.hunt-map__entity--player::before {
+  content: "";
+  position: absolute;
+  right: 8%;
+  bottom: 2px;
+  left: 8%;
+  height: 16px;
+  border: 1px solid rgba(255, 215, 51, 0.24);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.24);
+  transform: perspective(140px) rotateX(60deg);
+}
+
+.hunt-map__entity--wild img,
+.hunt-map__entity--player img {
+  position: relative;
+  z-index: 1;
+}
+
+.hunt-map__entity--wild span {
+  position: absolute;
+  right: 2px;
+  bottom: 1px;
+  left: 50%;
+  z-index: 3;
+  max-width: 62px;
+  min-height: 20px;
+  padding: 2px 6px;
+  overflow: hidden;
+  border: 1px solid rgba(34, 216, 255, 0.28);
+  border-radius: 999px;
+  color: #eafaff;
+  background: rgba(5, 10, 22, 0.82);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.hunt-map__entity--player {
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hunt-map__entity--player::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  width: 0;
+  height: 0;
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  border-bottom: 10px solid var(--primary);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+  transform-origin: 50% 80%;
+}
+
+.hunt-map__entity--facing-up::after {
+  top: -5px;
+  transform: rotate(0deg);
+}
+
+.hunt-map__entity--facing-right::after {
+  right: -7px;
+  transform: rotate(90deg);
+}
+
+.hunt-map__entity--facing-down::after {
+  bottom: -5px;
+  transform: rotate(180deg);
+}
+
+.hunt-map__entity--facing-left::after {
+  left: -7px;
+  transform: rotate(-90deg);
+}
+
+.hunt-map__marker {
+  display: grid;
+  width: 68%;
+  height: 68%;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 900;
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.26);
+}
+
+.hunt-map__marker--chest {
+  color: #221100;
+  background: linear-gradient(180deg, #ffe066, #ff9f1c);
+}
+
+.hunt-map__marker--portal {
+  color: #04131a;
+  background: linear-gradient(180deg, #8af0ff, var(--secondary));
+  animation: placeholderPulse 1.25s ease-in-out infinite;
+}
+
+.hunt-map__marker--exit {
+  color: #1f1100;
+  background: linear-gradient(180deg, #fff15d, var(--primary));
+}
+
+.hunt-map-sidebar {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.hunt-map-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 54px);
+  justify-content: center;
+  gap: 8px;
+}
+
+.hunt-map-controls .btn {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  min-height: 54px;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+.hunt-map-controls__core {
+  display: block;
+  width: 54px;
+  height: 54px;
+  border: 2px solid rgba(255, 215, 51, 0.22);
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, rgba(255, 215, 51, 0.16), rgba(34, 216, 255, 0.12)),
+    rgba(255, 255, 255, 0.045);
+}
+
+.hunt-map-signal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hunt-minimap {
+  display: grid;
+  grid-template-columns: repeat(var(--minimap-cols), minmax(0, 1fr));
+  gap: 1px;
+  width: 100%;
+  max-width: 360px;
+  padding: 6px;
+  border: 1px solid rgba(34, 216, 255, 0.24);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.hunt-minimap__tile {
+  aspect-ratio: 1;
+  min-width: 0;
+  border-radius: 1px;
+}
+
+.hunt-minimap__tile--hidden {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.hunt-minimap__tile--floor {
+  background: rgba(34, 216, 255, 0.36);
+}
+
+.hunt-minimap__tile--wall {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.hunt-minimap__tile--wild {
+  background: var(--accent);
+}
+
+.hunt-minimap__tile--boss {
+  background: #ff003d;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.hunt-minimap__tile--chest {
+  background: var(--warning);
+}
+
+.hunt-minimap__tile--portal {
+  background: var(--secondary);
+}
+
+.hunt-minimap__tile--exit {
+  background: var(--primary);
+}
+
+.hunt-minimap__tile--player {
+  background: var(--success);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
 .hunt-battle-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -2262,6 +2581,11 @@ input[type="number"]:focus {
     grid-template-columns: 1fr 1fr;
   }
 
+  .hunt-map-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+
   .hunt-battle-card--player,
   .hunt-battle-card--enemy {
     order: initial;
@@ -2363,6 +2687,27 @@ input[type="number"]:focus {
 
   .hunt-skills-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hunt-map {
+    min-height: 250px;
+  }
+
+  .hunt-map__entity--wild span {
+    max-width: 58px;
+    font-size: 0.54rem;
+  }
+
+  .hunt-map-controls {
+    grid-template-columns: repeat(3, 48px);
+  }
+
+  .hunt-map-controls .btn,
+  .hunt-map-controls__core {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
   }
 
   .evolution-modal__content {

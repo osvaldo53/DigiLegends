@@ -325,14 +325,14 @@ function finalizeDefeat() {
   saveGame(state.save);
 }
 
-export function startBattleFromHunt(huntId) {
+export function startBattleFromHunt(huntId, encounterOptions = {}) {
   const player = getFirstAvailablePartyDigimon();
 
   if (!player) {
     throw new Error("Nao ha Digimon com HP suficiente no time.");
   }
 
-  const { hunt, enemy, rewards } = createEncounterFromHunt(huntId, player.level);
+  const { hunt, enemy, rewards } = createEncounterFromHunt(huntId, encounterOptions);
   startBattleFromScenario({
     battleId: hunt.id,
     battleName: hunt.name,

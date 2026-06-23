@@ -75,6 +75,26 @@ describe("encounters", () => {
     randomSpy.mockRestore();
   });
 
+  it("permite criar encontro com uma especie especifica da hunt", () => {
+    const encounter = createEncounterFromHunt("training-bloom", {
+      speciesId: "tokomon",
+      randomFn: () => 0
+    });
+
+    expect(encounter.enemy.speciesId).toBe("tokomon");
+    expect(encounter.enemy.level).toBe(1);
+    expect(encounter.rewards).toEqual({ bits: 10, exp: 11 });
+  });
+
+  it("bloqueia encontro especifico com Digimon fora da hunt", () => {
+    expect(() => {
+      createEncounterFromHunt("training-bloom", {
+        speciesId: "agumon",
+        randomFn: () => 0
+      });
+    }).toThrow("Digimon nao pertence a esta hunt.");
+  });
+
   it("mantem ids de hunt unicos", () => {
     const ids = HUNTS.map((hunt) => hunt.id);
     const uniqueIds = new Set(ids);
